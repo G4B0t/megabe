@@ -9,7 +9,7 @@ use App\Models\m_subcategoria;
 use App\Models\m_categoria;
 use App\Models\m_item;
 
-use App\Controllers\Administracion;
+use App\Controllers\Administracion_1;
 
 use App\Models\m_empleado;
 use App\Models\m_rol;

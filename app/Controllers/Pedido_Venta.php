@@ -9,7 +9,7 @@ use App\Models\m_marca;
 
 
 use App\Controllers\BaseController;
-use App\Controllers\Administracion;
+use App\Controllers\Administracion_1;
 use \CodeIgniter\Exceptions\PageNotFoundException;
 
 class Pedido_Venta extends BaseController {

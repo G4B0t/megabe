@@ -1,7 +1,7 @@
 <?php namespace App\Controllers;
 ;
 use App\Controllers\BaseController;
-use App\Controllers\Administracion;
+use App\Controllers\Administracion_1;
 use \CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\I18n\Time;
 
