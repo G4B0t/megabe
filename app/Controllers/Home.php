@@ -6,7 +6,7 @@ use App\Models\m_categoria;
 use App\Models\m_item;
 
 use App\Controllers\BaseController;
-use App\Controllers\Administracion;
+use App\Controllers\Administracion_1;
 
 use App\Models\m_cliente;
 use App\Models\m_empleado;
@@ -252,7 +252,7 @@ class Home extends BaseController
 		$role = new m_rol();
 		$empleado_rol = new m_empleado_rol();
 		
-		$admin = new Administracion();
+		$admin = new Administracion_1();
 		$sesion = $admin->sesiones();
 
         $dataHeader =[
