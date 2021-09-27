@@ -27,7 +27,7 @@ class m_plan_cuenta extends Model
         return $this->asObject()
             ->select('plan_cuenta.*')
             ->where($restricciones)
-            ->findAll();
+            ->first();
      }
 
      public function getOne($id_cuenta){
@@ -40,9 +40,15 @@ class m_plan_cuenta extends Model
      }
 
      public function getHaber(){
-
-        $restricciones = ['grupo' => 'D','Mercaderia en Almacen'];
+        $restricciones = ['grupo' => 'D','nombre_cuenta'=>'Mercaderia en Almacen'];
         return $this->asArray()
+            ->select('plan_cuenta.*')
+            ->where($restricciones)
+            ->first();
+     }
+     public function getCajaGeneral(){
+        $restricciones = ['grupo' => 'D','nombre_cuenta'=>'Caja General'];
+        return $this->asObject()
             ->select('plan_cuenta.*')
             ->where($restricciones)
             ->first();

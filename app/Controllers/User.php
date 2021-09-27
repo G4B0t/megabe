@@ -42,7 +42,7 @@ class User extends BaseController {
                         'empleado' => $usuario->id
                     ];
                     $session->set($newdata);
-                    return redirect()->to('/home')->with('message', 'Inicio de Sesion exitoso!');
+                    return redirect()->to('/administracion')->with('message', 'Inicio de Sesion exitoso!');
                 }else{
                     return redirect()->to('/login')->with('message', 'Usuario o Contrasena incorrecto');
                 }

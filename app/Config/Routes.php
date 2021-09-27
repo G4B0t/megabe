@@ -41,13 +41,14 @@ $routes->get('/categorias/(:any)', 'Home::menuCategoria/$1');
 $routes->get('/subcategorias/(:any)', 'Home::menuSubcategoria/$1');
 $routes->get('/marcas/(:any)', 'Home::menuMarca/$1');
 
-$routes->get('/administracion', 'Administracion::index');
-$routes->get('/administracion/confirmar_pago/(:any)', 'administracion_1::confirmar_pago/$1');
-$routes->get('/administracion/mostrar_detalle/(:any)', 'administracion_1::mostrar_detalle/$1');
-$routes->get('/administracion/ver_pedidos', 'administracion_1::listar');
-$routes->post('administracion/confirmar_pedido/(:any)', 'administracion_1::confirmar_pedido/$1');
-$routes->get('/administracion/armar_pedido', 'administracion_1::armar_pedido');
-$routes->post('/administracion/agregar_carrito/(:any)', 'administracion_1::agregar_carrito/$1');
+$routes->get('/administracion', 'Administracion_1::index');
+$routes->get('/administracion/confirmar_pago/(:any)', 'Administracion_1::confirmar_pago/$1');
+$routes->get('/administracion/mostrar_detalle/(:any)', 'Administracion_1::mostrar_detalle/$1');
+$routes->get('/administracion/ver_pedidos', 'Administracion_1::listar');
+$routes->post('administracion/confirmar_pedido/(:any)', 'Administracion_1::confirmar_pedido/$1');
+$routes->get('/administracion/armar_pedido', 'Administracion_1::armar_pedido');
+$routes->post('/administracion/agregar_carrito/(:any)', 'Administracion_1::agregar_carrito/$1');
+$routes->post('/administracion/movimiento_caja/(:any)', 'Administracion_1::movimiento_caja/$1');
 
 
 $routes->get('/imagen/(:any)/(:any)', 'Home::imagen/$1/$2',['as' =>'get_image']);

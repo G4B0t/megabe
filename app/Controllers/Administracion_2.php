@@ -23,24 +23,18 @@ use App\Models\m_persona;
 use App\Models\m_rol;
 use App\Models\m_empleado_rol;
 
-class Administracion extends BaseController{
+class Administracion_2 extends BaseController{
 
     public function index(){
 
-
-
+        $this->_loadDefaultView( 'Administracion',$data,'index');
     }
 
-    public function retiro_caja(){
-
-    }
-
-    public function deposito_caja(){
-
-    }
+    
     private function _loadDefaultView($title,$data,$view){
 
-        $sesion = $this->sesiones();
+        $administracion = new administracion_1();
+        $sesion = $administracion->sesiones();
 
         $dataHeader =[
             'title' => $title,

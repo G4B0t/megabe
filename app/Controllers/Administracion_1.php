@@ -25,9 +25,119 @@ use App\Models\m_empleado_rol;
 class Administracion_1 extends BaseController{
 
     public function index(){
+        $marca = new m_marca();
+		$categoria = new m_categoria();
+		$subcategoria = new m_subcategoria();
 
+		$data = [
+			'subcategoria' => $subcategoria->asObject()
+            ->select('subcategoria.*,categoria.nombre as categoria')
+            ->join('categoria','categoria.id = subcategoria.id_categoria')
+            ->paginate(10,'subcategoria'),
 
+			'marca' => $marca->asObject()
+			->select('marca.*,subcategoria.nombre as subcategoria')
+            ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
+            ->paginate(10,'marca'),
 
+			'categoria' => $categoria->asObject()
+            ->select('categoria.*')
+            ->paginate(10,'categoria')
+        ];
+
+		$this->_loadDefaultView( '',$data,'index','');
+    }
+
+    public function movimiento_caja($accion){
+        if($accion == 'abono'){
+            return $this->deposito_caja();
+        }else if($accion == 'retiro'){
+            return $this->retiro_caja();
+        }
+    }
+
+    public function retiro_caja(){
+        $session = session();
+        $empleado = new m_empleado();
+        $plan_cuenta = new m_plan_cuenta();
+        $comprobante = new m_comprobante();
+        $detalle_comprobante = new m_detalle_comprobante();
+
+        $id_empleado = $session->empleado;
+
+        $cajero_general = $empleado->getCajeroGeneral();
+        $trabajador = $empleado->getOne($id_empleado);
+        $cDate = date('Y-m-d H:i:s');
+        $caja = $plan_cuenta->getCaja($trabajador['caja']);
+        $caja_general = $plan_cuenta->getCajaGeneral();
+
+        $body_comprobante = ['beneficiario' => $cajero_general->fullname,
+                            'glosa' => 'Retiro de '.$trabajador['caja'].' a la Caja General',
+                            'fecha' => $cDate,
+                            'tipo_respaldo'=> 'retiro de caja'];
+        if($id=$comprobante->insert($body_comprobante)){
+
+            $detalle_debe = ['id_comprobante' => $comprobante->getInsertID(),
+                        'id_cuenta'=>$caja_general->id,
+                        'debe'=>$this->request->getPost('monto'),
+                        'haber'=>''
+                        ];
+            $detalle_haber= ['id_comprobante' => $comprobante->getInsertID(),
+                        'id_cuenta'=>$caja->id,
+                        'debe'=>'',
+                        'haber'=>$this->request->getPost('monto')
+                        ];
+            if($detalle_comprobante->insert($detalle_debe) && $detalle_comprobante->insert($detalle_haber)){
+            
+                return redirect()->to('/administracion')->with('message', 'Deposito a Caja exitoso!');
+
+            }
+            
+        }else{
+            return redirect()->to('/administracion')->with('message', 'No se pudo realizar el deposito');
+        }
+    }
+
+    public function deposito_caja(){
+        $session = session();
+        $empleado = new m_empleado();
+        $plan_cuenta = new m_plan_cuenta();
+        $comprobante = new m_comprobante();
+        $detalle_comprobante = new m_detalle_comprobante();
+
+        $id_empleado = $session->empleado;
+
+        $cajero_general = $empleado->getCajeroGeneral();
+        $trabajador = $empleado->getOne($id_empleado);
+        $cDate = date('Y-m-d H:i:s');
+        $caja = $plan_cuenta->getCaja($trabajador['caja']);
+        $caja_general = $plan_cuenta->getCajaGeneral();
+
+        $body_comprobante = ['beneficiario' => $cajero_general->fullname,
+                            'glosa' => 'Deposito de Caja General a la '.$trabajador['caja'],
+                            'fecha' => $cDate,
+                            'tipo_respaldo'=> 'deposito a caja'];
+        if($id=$comprobante->insert($body_comprobante)){
+
+            $detalle_debe = ['id_comprobante' => $comprobante->getInsertID(),
+                        'id_cuenta'=>$caja->id,
+                        'debe'=>$this->request->getPost('monto'),
+                        'haber'=>''
+                        ];
+            $detalle_haber= ['id_comprobante' => $comprobante->getInsertID(),
+                        'id_cuenta'=>$caja_general->id,
+                        'debe'=>'',
+                        'haber'=>$this->request->getPost('monto')
+                        ];
+            if($detalle_comprobante->insert($detalle_debe) && $detalle_comprobante->insert($detalle_haber)){
+            
+                return redirect()->to('/administracion')->with('message', 'Deposito a Caja exitoso!');
+
+            }
+            
+        }else{
+            return redirect()->to('/administracion')->with('message', 'No se pudo realizar el deposito');
+        }
     }
 
     public function confirmar_pago($id_pedido){
@@ -474,6 +584,7 @@ class Administracion_1 extends BaseController{
             return $sesion=['rol'=>$rol,'log'=>$log];
 		}
     }
+    
 
     private function _loadDefaultView($title,$data,$view){
 
