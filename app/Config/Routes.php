@@ -49,6 +49,12 @@ $routes->post('administracion/confirmar_pedido/(:any)', 'Administracion_1::confi
 $routes->get('/administracion/armar_pedido', 'Administracion_1::armar_pedido');
 $routes->post('/administracion/agregar_carrito/(:any)', 'Administracion_1::agregar_carrito/$1');
 $routes->post('/administracion/movimiento_caja/(:any)', 'Administracion_1::movimiento_caja/$1');
+$routes->get('/administracion/nuevo_comprobante', 'Administracion_2::comprobante');
+$routes->get('/administracion/ver_comprobante/(:any)', 'Administracion_2::ver_comprobante/$1');
+$routes->post('/administracion/save_comprobante/(:any)', 'Administracion_2::guardar_comprobante/$1');
+$routes->post('/administracion/nuevo_detalle', 'Administracion_2::new_detalle');
+$routes->post('/administracion/editar_detalle/(:any)', 'Administracion_2::edit_detalle/$1');
+$routes->post('/administracion/borrar_detalle/(:any)', 'Administracion_2::delete_detalle/$1');
 
 
 $routes->get('/imagen/(:any)/(:any)', 'Home::imagen/$1/$2',['as' =>'get_image']);

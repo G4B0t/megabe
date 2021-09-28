@@ -15,4 +15,10 @@ class m_detalle_comprobante extends Model
             ->first();
     }
 
+    public function getDetalles($id_comprobante){
+        return $this->asObject()
+            ->where(['id_comprobante' => $id_comprobante])
+            ->findAll();
+    }
+
 }

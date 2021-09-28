@@ -45,7 +45,7 @@ class Administracion_1 extends BaseController{
             ->paginate(10,'categoria')
         ];
 
-		$this->_loadDefaultView( '',$data,'index','');
+		$this->_loadDefaultView( '',$data,'index');
     }
 
     public function movimiento_caja($accion){
@@ -62,6 +62,7 @@ class Administracion_1 extends BaseController{
         $plan_cuenta = new m_plan_cuenta();
         $comprobante = new m_comprobante();
         $detalle_comprobante = new m_detalle_comprobante();
+        $generales = new m_generales();
 
         $id_empleado = $session->empleado;
 
@@ -70,11 +71,15 @@ class Administracion_1 extends BaseController{
         $cDate = date('Y-m-d H:i:s');
         $caja = $plan_cuenta->getCaja($trabajador['caja']);
         $caja_general = $plan_cuenta->getCajaGeneral();
+        $glosa = 'Retiro de '.$trabajador['caja'].' a la Caja General';
+        $tipo_respaldo = 'retiro de caja';
+        $empresa = $generales->getEmpresa();
 
         $body_comprobante = ['beneficiario' => $cajero_general->fullname,
-                            'glosa' => 'Retiro de '.$trabajador['caja'].' a la Caja General',
+                            'glosa' => $glosa,
                             'fecha' => $cDate,
-                            'tipo_respaldo'=> 'retiro de caja'];
+                            'tipo_respaldo'=> $tipo_respaldo
+                            ];
         if($id=$comprobante->insert($body_comprobante)){
 
             $detalle_debe = ['id_comprobante' => $comprobante->getInsertID(),
@@ -88,8 +93,23 @@ class Administracion_1 extends BaseController{
                         'haber'=>$this->request->getPost('monto')
                         ];
             if($detalle_comprobante->insert($detalle_debe) && $detalle_comprobante->insert($detalle_haber)){
+                $dirComp= base_url()."/dashboard/assets/comprobante.html";
+                $file = file_get_contents($dirComp,0);
+                $file = str_ireplace('[RAZON_SOCIAL]',$empresa['nombre_empresa'], $file);
+                $file = str_ireplace('[DIRECCION]',$empresa['direccion'], $file);  
+                $file = str_ireplace('[CONTACTO]',$empresa['contacto'], $file); 
+                $file = str_ireplace('[TIPO_RESPALDO]',$tipo_respaldo, $file);
+                $file = str_ireplace('[BENEFICIARIO]',$cajero_general->fullname, $file);
+                $file = str_ireplace('[FECHA]',$cDate, $file);  
+                $file = str_ireplace('[GLOSA]',$glosa, $file);
+                $sefini="";
+                $debe_comprobante='<tr><td>'.$caja_general->codigo_cuenta.'</td><td>'.$caja_general->nombre_cuenta.'</td><td>'.$this->request->getPost('monto').'</td><td> </td></tr>';      
+                $haber_comprobante='<tr><td>'.$caja->codigo_cuenta.'</td><td>'.$caja->nombre_cuenta.'</td><td></td><td>'.$this->request->getPost('monto').'</td></tr>';
+                $sefini = $debe_comprobante.$haber_comprobante;
+                $file = str_ireplace('[DETALLE]', $sefini, $file);
+                echo $file;
             
-                return redirect()->to('/administracion')->with('message', 'Deposito a Caja exitoso!');
+                //return redirect()->to('/administracion')->with('message', 'Retiro de Caja exitoso!');
 
             }
             
@@ -104,6 +124,7 @@ class Administracion_1 extends BaseController{
         $plan_cuenta = new m_plan_cuenta();
         $comprobante = new m_comprobante();
         $detalle_comprobante = new m_detalle_comprobante();
+        $generales = new m_generales();
 
         $id_empleado = $session->empleado;
 
@@ -112,11 +133,16 @@ class Administracion_1 extends BaseController{
         $cDate = date('Y-m-d H:i:s');
         $caja = $plan_cuenta->getCaja($trabajador['caja']);
         $caja_general = $plan_cuenta->getCajaGeneral();
+        $glosa = 'Deposito de Caja General a la '.$trabajador['caja'];
+        $tipo_respaldo = 'deposito a caja';
+        $empresa = $generales->getEmpresa();
 
         $body_comprobante = ['beneficiario' => $cajero_general->fullname,
-                            'glosa' => 'Deposito de Caja General a la '.$trabajador['caja'],
+                            'glosa' => $glosa,
                             'fecha' => $cDate,
-                            'tipo_respaldo'=> 'deposito a caja'];
+                            'tipo_respaldo'=> $tipo_respaldo
+                            ];
+
         if($id=$comprobante->insert($body_comprobante)){
 
             $detalle_debe = ['id_comprobante' => $comprobante->getInsertID(),
@@ -130,8 +156,24 @@ class Administracion_1 extends BaseController{
                         'haber'=>$this->request->getPost('monto')
                         ];
             if($detalle_comprobante->insert($detalle_debe) && $detalle_comprobante->insert($detalle_haber)){
+               
+                $dirComp= base_url()."/dashboard/assets/comprobante.html";
+                $file = file_get_contents($dirComp,0);
+                $file = str_ireplace('[RAZON_SOCIAL]',$empresa['nombre_empresa'], $file);
+                $file = str_ireplace('[DIRECCION]',$empresa['direccion'], $file);  
+                $file = str_ireplace('[CONTACTO]',$empresa['contacto'], $file); 
+                $file = str_ireplace('[TIPO_RESPALDO]',$tipo_respaldo, $file);
+                $file = str_ireplace('[BENEFICIARIO]',$cajero_general->fullname, $file);
+                $file = str_ireplace('[FECHA]',$cDate, $file);  
+                $file = str_ireplace('[GLOSA]',$glosa, $file);
+                $sefini="";
+                $debe_comprobante='<tr><td>'.$caja->codigo_cuenta.'</td><td>'.$caja->nombre_cuenta.'</td><td>'.$this->request->getPost('monto').'</td><td> </td></tr>';      
+                $haber_comprobante='<tr><td>'.$caja_general->codigo_cuenta.'</td><td>'.$caja_general->nombre_cuenta.'</td><td></td><td>'.$this->request->getPost('monto').'</td></tr>';
+                $sefini = $debe_comprobante.$haber_comprobante;
+                $file = str_ireplace('[DETALLE]', $sefini, $file);
+                echo $file;
             
-                return redirect()->to('/administracion')->with('message', 'Deposito a Caja exitoso!');
+               // return redirect()->to('/administracion')->with('message', 'Deposito a Caja exitoso!');
 
             }
             
@@ -379,7 +421,6 @@ class Administracion_1 extends BaseController{
            
             'bancos' => $bancos
         ];
-
         $this->_loadDefaultView( 'Listado de Pedidos',$data,'confirmacion');
     }
 

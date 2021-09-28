@@ -32,4 +32,13 @@ class m_empleado extends Model
         ->where('caja','Caja General')
         ->first();
     }
+
+    public function getContador($id){
+
+        return $this->asObject()
+        ->select('empleado.*,CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullname')
+        ->join('persona','empleado.id_persona=persona.id')
+        ->where('empleado.id',$id)
+        ->first();
+    }
 }

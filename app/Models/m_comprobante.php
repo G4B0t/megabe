@@ -17,4 +17,11 @@ class m_comprobante extends Model
         ->where($restricciones)
         ->first();
     }
+
+    public function getById($id){
+        $restricciones = ['id' => $id,'estado_sql'=>1];
+        return $this->asObject()
+        ->where($restricciones)
+        ->first();
+    }
 }

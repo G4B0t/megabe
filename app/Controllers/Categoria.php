@@ -1,6 +1,7 @@
 <?php namespace App\Controllers;
 use App\Models\m_categoria;
 use App\Controllers\BaseController;
+use App\Controllers\Administracion_1;
 use \CodeIgniter\Exceptions\PageNotFoundException;
 
 class Categoria extends BaseController {
@@ -161,9 +162,16 @@ class Categoria extends BaseController {
 
     private function _loadDefaultView($title,$data,$view,$tipo){
 
+        $administracion = new administracion_1();
+        $sesion = $administracion->sesiones();
+
         $dataHeader =[
             'title' => $title,
-            'tipo' => $tipo
+            'tipo' => $tipo,
+
+            'rol' => $sesion['rol'],
+
+			'log' => $sesion['log']
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

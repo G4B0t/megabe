@@ -1,7 +1,7 @@
  <!-- ======= Hero Section ======= -->
  <section id="hero">
     <div class="hero-container" data-aos="fade-up" data-aos-delay="150">
-      <h4><?= view("dashboard/partials/_session"); ?></h4>
+      <h2><?= view("dashboard/partials/_session"); ?></h2>
       <h1>Gestion ADMINISTRATIVA</h1>
       <h2>Calidad en trabajo y atecion a clientes</h2>
       <div class="d-flex">

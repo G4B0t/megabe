@@ -95,13 +95,11 @@
       </div>
       <div class="modal-body">
         <form id="confirmForm" action="/administracion/confirmar_pago/<?= $id ?>" method="POST" enctype="multipart/form-data">
-                <?php if($rol == 'Cajero' || $rol == 'Cajero-Vendedor' || $rol == 'Administrador'){?>
+                <?php if($rol == 'Cajero' || $rol == 'Vendedor-Cajero' || $rol == 'Administrador'){?>
                 <div class="mb-3">
                     <input type="checkbox" name="myCheckbox" id="cajaCB" value="Caja" onClick="toggleSelect(this)"/><span>Cuenta Caja</span>
                     <select class="form-select" name="cajas" id="cajas">
-                        <?php foreach ($cajas as $c): ?>
-                            <option <?= $c->id_cuenta_padre !== $c->id ?: "selected"?> value="<?= $c->id ?>"><?= $c->nombre_cuenta ?> </option>
-                        <?php endforeach?>
+                        <option <?= $cajas->id_cuenta_padre !== $cajas->id ?: "selected"?> value="<?= $cajas->id ?>"><?= $cajas->nombre_cuenta ?> </option>
                     </select>
                 </div>
                 <?php } ?>
