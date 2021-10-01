@@ -8,6 +8,10 @@ use App\Models\m_categoria;
 use App\Controllers\BaseController;
 use App\Controllers\Administracion_1;
 
+use App\Models\m_pedido_compra;
+use App\Models\m_detalle_compra;
+use App\Models\m_factura_compra;
+
 use App\Models\m_pedido_venta;
 use App\Models\m_detalle_venta;
 use App\Models\m_item;
@@ -17,6 +21,7 @@ use App\Models\m_plan_cuenta;
 use App\Models\m_comprobante;
 use App\Models\m_detalle_comprobante;
 use App\Models\m_item_almacen;
+use App\Models\m_almacen;
 use App\Models\m_generales;
 
 use App\Models\m_persona;
@@ -29,18 +34,347 @@ class Administracion_2 extends BaseController{
 
         $this->_loadDefaultView( '',$data,'index');
     }
-    public function guardar_comprobante($id){
-        echo "Guardado: ".$id;
+    public function confirmar_compra($id_pedido){
+        $pedido_compra = new m_pedido_compra();
+        $detalle_compra = new m_detalle_compra();
+        $item = new m_item();
+        $item_almacen = new m_item_almacen();
+        $almacen = new m_almacen();
+        $empleado = new m_empleado();
+
+        $session = session();
+        $id_empleado = $session->empleado;
+        $almacenero = $empleado->getAlmacenero($id_empleado);
+
+        if($almacenero->rol=='Almacenes'){
+            $compra = $pedido_compra->getById($id_pedido);
+            $detalles = $detalle_compra->getFullDetalle($compra->id);
+            $almacen_central = $almacen->getOne($almacenero->id_almacen);
+           
+            foreach($detalles as $key => $m){
+                $producto = $item->getByID($m->id_item);
+                
+               
+            }
+        }
+        else{
+            return redirect()->to('/administracion')->with('message', 'No cumple con la funcion de su ROL.');
+        }
+        
+        
     }
 
-    public function new_detalle(){
-        echo 'new';
+    public function new_compra(){
+        $session = session();
+        $id_empleado = $session->empleado;
+
+        $pedido_compra = new m_pedido_compra();
+        // getting current date 
+        $cDate = date('Y-m-d H:i:s');
+        $id = $pedido_compra->insert([
+                'id_empleado' => $id_empleado,
+                'estado' =>'0',
+                'fecha' =>$cDate
+            ]);
+        $id_pedido = $pedido_compra->getInsertID();
+        $this->ver_items($id_pedido);
+    }
+
+    public function ver_items($id_pedido){
+        $item = new m_item();
+        $pedido_compra = new m_pedido_compra();
+		
+		$condiciones = ['item.estado_sql' => '1'];
+        $pedido = $pedido_compra->getById($id_pedido);
+        if($pedido==null){
+            return redirect()->to('/administracion')->with('message', 'No se pudo crear el nuevo Pedido.');
+        }
+		$data = [
+			'item' => $item->asObject()
+            ->select('item.*,marca.id AS marcaId, 
+					marca.nombre AS marca, subcategoria.id AS subcategoriaID, 
+					subcategoria.nombre AS subcategoria, categoria.id AS categoriaID, 
+					categoria.nombre AS categoria')
+			->join('marca','item.id_marca = marca.id')
+			->join('subcategoria','marca.id_subcategoria = subcategoria.id')
+			->join('categoria','subcategoria.id_categoria = categoria.id')
+			->where($condiciones)
+            ->paginate(10,'item'),
+
+            'id_pedido' =>$id_pedido
+        ];
+
+		$this->_loadDefaultView( 'Listado',$data,'productos_compra');
+    }
+
+    public function agregar_linea($id_pedido){
+        $pedido_compra = new m_pedido_compra();
+        $detalle_compra = new m_detalle_compra();
+        $item = new m_item();
+
+        $cantidad = $this->request->getPost('cantidad');
+        $id_item = $this->request->getPost('item_id');
+        $producto = $item->getOne($id_item);
+
+        $total = ($producto->precio_unitario)*$cantidad;
+        
+        $pedido = $pedido_compra->getById($id_pedido);
+        if($pedido ==null){
+            return redirect()->to('/administracion/ver_items/'.$id_pedido)->with('message', 'No se pudo agregar el producto.');
+        }
+        $detalle = $detalle_compra->getDetalle($id_pedido,$producto->id);
+        if($detalle == null){
+            $new_detalle = ['id_pedido_compra'=>$pedido->id,
+                            'id_item'=>$id_item,
+                            'cantidad'=>$cantidad,
+                            'precio_unitario'=>$producto->precio_unitario,
+                            'total'=> $total
+                            ];               
+            if($detalle_compra->insert($new_detalle)){
+                 $this->mostrar_linea($pedido->id);
+            }else{
+                return redirect()->to('/administracion/ver_items/'.$id_pedido)->with('message', 'No se pudo agregar el producto.');
+            }
+        }else{
+            $old_cantidad = $detalle['cantidad'];
+            $old_total = $detalle['total'];
+            $new_cantidad = $old_cantidad + $cantidad;
+            $precio_u = $detalle['precio_unitario'];
+            $new_total = $new_cantidad * $precio_u;
+            $new_detalle = ['id_pedido_compra'=>$pedido->id,
+                            'id_item'=>$id_item,
+                            'cantidad'=>$new_cantidad,
+                            'precio_unitario'=>$producto->precio_unitario,
+                            'total'=> $new_total
+                            ];               
+            if($detalle_compra->update($detalle['id'],$new_detalle)){
+                 $this->mostrar_linea($pedido->id);
+            }else{
+                return redirect()->to('/administracion/ver_items/'.$id_pedido)->with('message', 'No se pudo agregar el producto.');
+            }
+        }
+        
+    }
+    public function mostrar_linea($id_pedido){
+        $pedido_compra = new m_pedido_compra();
+        $detalle_compra = new m_detalle_compra();
+
+        if($pedido = $pedido_compra->getById($id_pedido)){
+
+            $restricciones = ['detalle_compra.estado_sql'=> '1','id_pedido_compra' => $pedido->id];
+
+            $detalles = $detalle_compra->getFullDetalle($pedido->id);
+            $total = 0;
+            foreach($detalles as $key => $m){
+                $total += $m->total;
+            }
+            
+            $data = [
+                'detalle_compra' => $detalle_compra->asObject()
+                ->select('detalle_compra.*, item.nombre as item_nombre, item.codigo as item_codigo,pedido_compra.moneda')
+                ->join('item','item.id = detalle_compra.id_item')
+                ->join('pedido_compra','pedido_compra.id = detalle_compra.id_pedido_compra')
+                ->where($restricciones)
+                ->paginate(10,'detalle_compra'),
+                'pager' => $detalle_compra->pager,
+
+                'total' => $total,
+
+                'id_pedido' => $pedido->id
+            ];
+
+            $this->_loadDefaultView( 'Detalle de Pedido',$data,'detalle_compras');
+        }else{
+
+             return redirect()->to('/administracion/ver_items/'.$id_pedido)->with('message', 'SU CARRITO ESTA VACIO');
+        }
+
+    }
+
+    public function borrar_linea($id){
+       
+        $detalle_compra = new detalle_compra();
+        $pedido_compra = new m_pedido_compra();
+        $pedido = $pedido_compra->getByDetalle($id);
+
+        if ($detalle_compra->find($id) == null)
+        {
+            throw PageNotFoundException::forPageNotFound();
+        }  
+        $detalle_compra->update($id, [
+            'estado_sql' =>'0'              
+        ]);       
+        return redirect()->to('/administracion/ver_carrito/'.$pedido->id)->with('message', 'Producto eliminado del detalle.');
+    }
+
+    public function confirmar_entrega($id_pedido){
+        $pedido_venta = new m_pedido_venta();
+
+        if($pedido_venta->update($id_pedido,['estado'=>'3'])){
+            return redirect()->to('/administracion/ver_pagados')->with('message', 'Pedido Entregado!');
+        }
+        else{
+            return redirect()->to('/administracion/detalle_pagados/'.$id_pedido)->with('message', 'No se pudo confirmar entrega!');
+        }
+        
+    }
+
+    public function mostrar_detalle($id_pedido){
+
+        $pedido_venta = new m_pedido_venta();
+        $detalle_venta = new m_detalle_venta();
+        $empleado = new m_empleado();
+        $plan_cuenta = new m_plan_cuenta();
+
+        $id_pedido = $pedido_venta->getPedidoPagado($id_pedido);
+
+        $condiciones = ['pedido_venta.estado' => '2', 'pedido_venta.estado_sql' => 1];
+        $restricciones = ['detalle_venta.estado_sql'=> '1','id_pedido_venta' => $id_pedido['id']];
+
+       
+        $data = [
+            'pedido' => $pedido_venta->asObject()
+            ->select('pedido_venta.*, persona.nombre as cliente_nombre, cliente.id as id_cliente')
+            ->join('cliente','cliente.id = pedido_venta.id_cliente')
+            ->join('persona','persona.id = cliente.id_persona')
+            ->where($condiciones)
+            ->paginate(10,'pedido_venta'),
+            'pagers' => $pedido_venta->pager,
+
+            'detalle_venta' => $detalle_venta->asObject()
+            ->select('detalle_venta.*, item.nombre as item_nombre, item.codigo as item_codigo')
+            ->join('item','item.id = detalle_venta.id_item')
+            ->where($restricciones)
+            ->paginate(10,'detalle_venta'),
+            'pager' => $detalle_venta->pager,
+
+            'id' => $id_pedido['id']
+        ];
+        $this->_loadDefaultView( 'Listado de Pagados',$data,'pagados');
+    }
+
+    public function listar(){
+        $pedido_venta = new m_pedido_venta();
+        $detalle_venta = new m_detalle_venta();
+        $plan_cuenta = new m_plan_cuenta();
+        $empleado = new m_empleado();
+
+        $id_primer_pedido = $pedido_venta->getPrimer();
+        $condiciones = ['pedido_venta.estado' => '2', 'pedido_venta.estado_sql' => 1];
+        $restricciones = ['detalle_venta.estado_sql'=> '1','id_pedido_venta' => $id_primer_pedido['id']];
+
+    
+        $data = [
+            'pedido' => $pedido_venta->asObject()
+            ->select('pedido_venta.*, persona.nombre as cliente_nombre, cliente.id as id_cliente')
+            ->join('cliente','cliente.id = pedido_venta.id_cliente')
+            ->join('persona','persona.id = cliente.id_persona')
+            ->where($condiciones)
+            ->paginate(10,'pedido_venta'),
+            'pagers' => $pedido_venta->pager,
+
+            'detalle_venta' => $detalle_venta->asObject()
+            ->select('detalle_venta.*, item.nombre as item_nombre, item.codigo as item_codigo')
+            ->join('item','item.id = detalle_venta.id_item')
+            ->where($restricciones)
+            ->paginate(10,'detalle_venta'),
+            'pager' => $detalle_venta->pager,
+
+            'id' => $id_primer_pedido['id']
+            
+        ];
+        $this->_loadDefaultView( 'Pedidos para Entregar',$data,'pagados');
+    }
+
+    public function guardar_comprobante($id){
+        $comprobante = new m_comprobante();
+        $detalle_comprobante = new m_detalle_comprobante();
+
+        $comprobante_creado = $comprobante->getById($id);
+        $debe = 0;$haber = 0; 
+        $detalles = $detalle_comprobante->asObject()->getDetalles($comprobante_creado->id);
+        foreach($detalles as $key => $m){
+            $debe += $m->debe;
+            $haber += $m->haber;
+        }
+        $body = ['glosa' =>$this->request->getPost('glosa'),
+                'tipo_respaldo' => $this->request->getPost('tipo_respaldo')
+                ];
+        if($debe == $haber){
+            $comprobante->update($comprobante_creado->id);
+            return redirect()->to('/administracion')->with('message', 'Comprobante Guardado');
+        }
+        else{
+            return redirect()->to('/administracion/ver_comprobante/'.$comprobante_creado->id)->with('message', 'Los valores en DEBE y HABER no coinciden');
+        }
+    }
+
+    public function new_detalle($id_comprobante){
+       $detalle_comprobante = new m_detalle_comprobante();
+        
+        $checkBox = $this->request->getPost('myCheckbox');
+        $monto = $this->request->getPost('monto');
+        if($checkBox == 'debe'){
+            $detalle = ['id_comprobante' => $id_comprobante,
+                    'id_cuenta' => $this->request->getPost('cuentas'),
+                    'debe' => $monto,
+                    'haber'=> '0'
+                    ];
+            if($detalle_comprobante->insert($detalle)){
+                return redirect()->to('/administracion/ver_comprobante/'.$id_comprobante)->with('message', 'Partida DEBE agregada');
+            }
+        }else if($checkBox == 'haber'){
+            $detalle = ['id_comprobante' => $id_comprobante,
+                    'id_cuenta' => $this->request->getPost('cuentas'),
+                    'debe' => '0',
+                    'haber'=> $monto
+                    ];
+            if($detalle_comprobante->insert($detalle)){
+                return redirect()->to('/administracion/ver_comprobante/'.$id_comprobante)->with('message', 'Partida HABER agregada');
+            }
+        }else{
+            return redirect()->to('/administracion/ver_comprobante/'.$id_comprobante)->with('message', 'No se pude agregar la partida');
+        }   
     }
     public function edit_detalle($id){
-        echo "ID: ".$id;
+        $detalle_comprobante = new m_detalle_comprobante();
+
+        $checkBox = $this->request->getPost('myCheckbox');
+        $detalle_comprob = $detalle_comprobante->getByID($id);
+        $monto = $this->request->getPost('monto');
+        if($checkBox == 'debe'){
+            $detalle = [
+                    'id_cuenta' => $this->request->getPost('cuentas'),
+                    'debe' => $monto,
+                    'haber'=> '0'
+                    ];
+            if($detalle_comprobante->update($id,$detalle)){
+                return redirect()->to('/administracion/ver_comprobante/'.$detalle_comprob->id_comprobante)->with('message', 'Partida DEBE editada');
+            }
+        }else if($checkBox == 'haber'){
+            $detalle = [
+                    'id_cuenta' => $this->request->getPost('cuentas'),
+                    'debe' => '0',
+                    'haber'=> $monto
+                    ];
+            if($detalle_comprobante->update($id,$detalle)){
+                return redirect()->to('/administracion/ver_comprobante/'.$detalle_comprob->id_comprobante)->with('message', 'Partida HABER editada');
+            }
+        }else{
+            return redirect()->to('/administracion/ver_comprobante/'.$detalle_comprob->id_comprobante)->with('message', 'No se pudo editar la partida');
+        }  
+
     }
     public function delete_detalle($id){
-        echo "Borrar";
+        $detalle_comprobante = new m_detalle_comprobante();
+
+        $detalle_comprob = $detalle_comprobante->getByID($id);
+        
+        if($detalle_comprobante->update($id,['estado_sql'=>0])){
+            return redirect()->to('/administracion/ver_comprobante/'.$detalle_comprob->id_comprobante)->with('message', 'Partida Eliminada');
+        }else{
+            return redirect()->to('/administracion/ver_comprobante/'.$detalle_comprob->id_comprobante)->with('message', 'No se pudo eliminar la partida');
+        }
     }
     public function ver_comprobante($id){
 
@@ -49,14 +383,30 @@ class Administracion_2 extends BaseController{
         $detalle_comprobante = new m_detalle_comprobante();
 
         $comprobante_creado = $comprobante->getById($id);
+        $debe = 0;$haber = 0; 
+        $detalles = $detalle_comprobante->asObject()->getDetalles($comprobante_creado->id);
+
+        foreach($detalles as $key => $m){
+            $debe += $m->debe;
+            $haber += $m->haber;
+        }
+        $total = (object)['debe'=>$debe,'haber'=>$haber];
+
+        $cuentas = $plan_cuenta->getCuentas();
+        $restricciones = ['detalle_comprobante.id_comprobante'=>$comprobante_creado->id,'detalle_comprobante.estado_sql'=>1];
+
         $data = ['comprobante' => $comprobante_creado,
                 
                 'detalle_comprobante'=> $detalle_comprobante->asObject()
                 ->select('detalle_comprobante.*,detalle_comprobante.id as id_detalle,plan_cuenta.nombre_cuenta,plan_cuenta.codigo_cuenta')
                 ->join('plan_cuenta','detalle_comprobante.id_cuenta = plan_cuenta.id')
-                ->where('detalle_comprobante.id_comprobante',$comprobante_creado->id)
+                ->where( $restricciones)
                 ->paginate(10,'detalle_comprobante'),
                 'pager' => $detalle_comprobante->pager,
+
+                'cuentas' => $cuentas,
+
+                'total' => $total
 
                 ];
         $this->_loadDefaultView( 'Comprobante #'.$id,$data,'comprobantes');

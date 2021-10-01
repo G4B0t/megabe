@@ -54,5 +54,13 @@ class m_plan_cuenta extends Model
             ->first();
      }
 
+     public function getCuentas(){
+        $restricciones = ['grupo' => 'D'];
+        return $this->asObject()
+            ->select('plan_cuenta.*')
+            ->where($restricciones)
+            ->findAll();
+     }
+
 
 }

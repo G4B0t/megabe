@@ -8,10 +8,10 @@ class m_almacen extends Model
     protected $primaryKey = 'id';
     protected $allowedFields = ['foto','longitud','latitud','telefono','direccion','estado_sql'];
 
-    function getOne(){
-        return $this->asArray()
-        ->select('almacen.*,empleado.nombre as empleado')
-        ->join('empleado','empleado.id = almacen.id_empleado')
+    function getOne($id){
+        return $this->asObject()
+        ->select('almacen.*')
+        ->where('id',$id)
         ->first();
     }
 

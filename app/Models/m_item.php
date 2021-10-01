@@ -31,5 +31,10 @@ class m_item extends Model
             ->where(['id' => $id])
             ->first();
     }
+    public function getItem($id){
+        return $this->asObject()
+            ->where(['id' => $id])
+            ->first();
+    }
 
 }

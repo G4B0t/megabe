@@ -65,5 +65,21 @@ class m_pedido_venta extends Model
         ->where($condiciones)
         ->first();
     }
+    public function getPrimer()
+    {
+        $condiciones = ['estado' => '2', 'estado_sql' => '1'];
+        return $this->asArray()
+        ->select('pedido_venta.*')
+        ->where($condiciones)
+        ->first();
+    }
+    public function getPagado()
+    {
+        $condiciones = ['estado' => '2', 'estado_sql' => '1'];
+        return $this->asArray()
+        ->select('pedido_venta.*')
+        ->where($condiciones)
+        ->first();
+    }
 
 }

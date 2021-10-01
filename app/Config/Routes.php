@@ -45,16 +45,30 @@ $routes->get('/administracion', 'Administracion_1::index');
 $routes->get('/administracion/confirmar_pago/(:any)', 'Administracion_1::confirmar_pago/$1');
 $routes->get('/administracion/mostrar_detalle/(:any)', 'Administracion_1::mostrar_detalle/$1');
 $routes->get('/administracion/ver_pedidos', 'Administracion_1::listar');
-$routes->post('administracion/confirmar_pedido/(:any)', 'Administracion_1::confirmar_pedido/$1');
-$routes->get('/administracion/armar_pedido', 'Administracion_1::armar_pedido');
-$routes->post('/administracion/agregar_carrito/(:any)', 'Administracion_1::agregar_carrito/$1');
+$routes->post('/administracion/confirmar_pedido/(:any)', 'Administracion_1::confirmar_pedido/$1');
 $routes->post('/administracion/movimiento_caja/(:any)', 'Administracion_1::movimiento_caja/$1');
+$routes->get('/administracion/armar_pedido', 'Administracion_1::armar_pedido');
+$routes->get('/administracion/mostrar_carrito/(:any)', 'Administracion_1::mostrar_carrito/$1');
+$routes->post('/administracion/agregar_carrito/(:any)', 'Administracion_1::agregar_carrito/$1');
+$routes->post('/administracion/borrar_producto/(:any)', 'Administracion_1::borrar_producto/$1');
+
+$routes->post('/administracion/confirmar_compra/(:any)', 'Administracion_2::confirmar_compra/$1');
+$routes->post('/administracion/agregar_item/(:any)', 'Administracion_2::agregar_linea/$1');
+$routes->get('/administracion/armar_compra', 'Administracion_2::new_compra');
+$routes->get('/administracion/ver_carrito/(:any)', 'Administracion_2::mostrar_linea/$1');
+$routes->get('/administracion/ver_items/(:any)', 'Administracion_2::ver_items/$1');
+$routes->post('/administracion/borrar_item/(:any)', 'Administracion_2::borrar_linea/$1');
+
 $routes->get('/administracion/nuevo_comprobante', 'Administracion_2::comprobante');
 $routes->get('/administracion/ver_comprobante/(:any)', 'Administracion_2::ver_comprobante/$1');
 $routes->post('/administracion/save_comprobante/(:any)', 'Administracion_2::guardar_comprobante/$1');
-$routes->post('/administracion/nuevo_detalle', 'Administracion_2::new_detalle');
+$routes->post('/administracion/nuevo_detalle/(:any)', 'Administracion_2::new_detalle/$1');
 $routes->post('/administracion/editar_detalle/(:any)', 'Administracion_2::edit_detalle/$1');
 $routes->post('/administracion/borrar_detalle/(:any)', 'Administracion_2::delete_detalle/$1');
+$routes->get('/administracion/ver_pagados', 'Administracion_2::listar');
+$routes->get('/administracion/detalle_pagados/(:any)', 'Administracion_2::mostrar_detalle/$1');
+$routes->post('/administracion/entrega_confirmada/(:any)', 'Administracion_2::confirmar_entrega/$1');
+
 
 
 $routes->get('/imagen/(:any)/(:any)', 'Home::imagen/$1/$2',['as' =>'get_image']);

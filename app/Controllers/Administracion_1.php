@@ -491,8 +491,7 @@ class Administracion_1 extends BaseController{
 
             $this->_loadDefaultView( 'Detalle de Pedido',$data,'detalle_pedido');
         }else{
-
-             return redirect()->to('/pedido_venta')->with('message', 'SU CARRITO ESTA VACIO');
+             return redirect()->to('/administracion')->with('message', 'SU CARRITO ESTA VACIO');
         }
 
     }
@@ -592,6 +591,7 @@ class Administracion_1 extends BaseController{
         $persona = new m_persona();
 		$role = new m_rol();
 		$empleado_rol = new m_empleado_rol();
+        $empleado = new m_empleado();
 
 
         $session = session();
@@ -605,24 +605,31 @@ class Administracion_1 extends BaseController{
 
 		$es_cliente = $persona->getCliente($id_persona);
 		$es_empleado = $persona->getEmpleado($id_persona);
+
+        $almacen = $empleado->getAlmacenCental($es_empleado['id']);
+        if($almacen != null){
+            $almacen = true;
+        }else{
+            $almacen = false;
+        }
 		
 		if($es_empleado != null){ 
 			$rh = $empleado_rol->getByEmpleado($es_empleado['id']);
 			if (count($rh) > 1){
 				$rol = "Vendedor-Cajero";
-                return $sesion=['rol'=>$rol,'log'=>$log];
+                return $sesion=['rol'=>$rol,'log'=>$log,'almacen'=> false];
 			}else{
 				$rs = $empleado_rol->getOneRol($es_empleado['id']);
 				$r = $role->getRol($rs['id_rol']);
 				$rol = $r['nombre'];
-                return $sesion=['rol'=>$rol,'log'=>$log];
+                return $sesion=['rol'=>$rol,'log'=>$log,'almacen'=> $almacen];
 			}
 		}else if($es_cliente != null){
 			$rol = "Cliente";
-            return $sesion=['rol'=>$rol,'log'=>$log];
+            return $sesion=['rol'=>$rol,'log'=>$log,'almacen'=> false];
 		}else{
 			$rol = "Normal";
-            return $sesion=['rol'=>$rol,'log'=>$log];
+            return $sesion=['rol'=>$rol,'log'=>$log,'almacen'=> false];
 		}
     }
     
@@ -655,7 +662,9 @@ class Administracion_1 extends BaseController{
 
             'rol' => $sesion['rol'],
 
-			'log' => $sesion['log']
+			'log' => $sesion['log'],
+
+            'central'=>$sesion['almacen']
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

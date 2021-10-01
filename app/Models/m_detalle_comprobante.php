@@ -11,13 +11,15 @@ class m_detalle_comprobante extends Model
 
     public function getByID($id){
         return $this->asObject()
+            ->select('detalle_comprobante.*')
             ->where(['id' => $id])
             ->first();
     }
 
     public function getDetalles($id_comprobante){
+        $restricciones = ['id_comprobante' => $id_comprobante,'estado_sql'=>1];
         return $this->asObject()
-            ->where(['id_comprobante' => $id_comprobante])
+            ->where($restricciones)
             ->findAll();
     }
 
