@@ -32,7 +32,7 @@ class Administracion_2 extends BaseController{
 
     public function index(){
 
-        $this->_loadDefaultView( '',$data,'index');
+        $this->_loadDefaultView( '','','index');
     }
     public function confirmar_compra($id_pedido){
         $pedido_compra = new m_pedido_compra();
@@ -446,7 +446,9 @@ class Administracion_2 extends BaseController{
             
             'rol' => $sesion['rol'],
 
-			'log' => $sesion['log']
+			'log' => $sesion['log'],
+
+            'central'=>$sesion['almacen']
         ];
 
         echo view("dashboard/templates/header",$dataHeader);
