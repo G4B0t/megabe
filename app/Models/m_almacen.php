@@ -14,5 +14,17 @@ class m_almacen extends Model
         ->where('id',$id)
         ->first();
     }
+    function getCentral(){
+        return $this->asObject()
+        ->select('almacen.*')
+        ->first();
+    }
 
+    function getAlmacen($id_empleado){
+        return $this->asObject()
+        ->select('almacen.*')
+        ->join('empleado','empleado.id_almacen = almacen.id')
+        ->where('empleado.id',$id_empleado)
+        ->first();
+    }
 }

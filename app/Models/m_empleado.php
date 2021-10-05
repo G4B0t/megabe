@@ -43,7 +43,16 @@ class m_empleado extends Model
     }
 
     public function getAlmacenCental($id_empleado){
-        $restriccion = ['empleado.caja'=>'Almacen Central', 'empleado.id'=>$id_empleado];
+        $restriccion = ['empleado.caja'=>'Central', 'empleado.id'=>$id_empleado];
+        return $this->asObject()
+        ->select('empleado.*,CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullname')
+        ->join('persona','empleado.id_persona=persona.id')
+        ->where($restriccion)
+        ->first();
+    }
+
+    public function getAlmacen($id_empleado){
+        $restriccion = ['empleado.id_persona'=>$id_empleado];
         return $this->asObject()
         ->select('empleado.*,CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullname')
         ->join('persona','empleado.id_persona=persona.id')

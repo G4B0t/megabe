@@ -606,8 +606,8 @@ class Administracion_1 extends BaseController{
 		$es_cliente = $persona->getCliente($id_persona);
 		$es_empleado = $persona->getEmpleado($id_persona);
 
-        $almacen = $empleado->getAlmacenCental($es_empleado['id']);
-        if($almacen != null){
+        $almacenero = $empleado->getAlmacenCental($es_empleado['id']);
+        if($almacenero != null){
             $almacen = true;
         }else{
             $almacen = false;

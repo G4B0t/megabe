@@ -45,6 +45,7 @@ $routes->get('/administracion', 'Administracion_1::index');
 $routes->get('/administracion/confirmar_pago/(:any)', 'Administracion_1::confirmar_pago/$1');
 $routes->get('/administracion/mostrar_detalle/(:any)', 'Administracion_1::mostrar_detalle/$1');
 $routes->get('/administracion/ver_pedidos', 'Administracion_1::listar');
+$routes->get('/administracion/ver_productos/(:any)', 'Administracion_1::ver_productos/$1');
 $routes->post('/administracion/confirmar_pedido/(:any)', 'Administracion_1::confirmar_pedido/$1');
 $routes->post('/administracion/movimiento_caja/(:any)', 'Administracion_1::movimiento_caja/$1');
 $routes->get('/administracion/armar_pedido', 'Administracion_1::armar_pedido');
@@ -59,6 +60,12 @@ $routes->get('/administracion/ver_carrito/(:any)', 'Administracion_2::mostrar_li
 $routes->get('/administracion/ver_items/(:any)', 'Administracion_2::ver_items/$1');
 $routes->post('/administracion/borrar_item/(:any)', 'Administracion_2::borrar_linea/$1');
 
+$routes->get('/administracion/armar_transferencia', 'Administracion_3::nueva_transferencia_envio');
+$routes->post('/administracion/sumar_item/(:any)', 'Administracion_3::agregar_item_envio/$1');
+$routes->get('/administracion/ver_pedido_trasferencia/(:any)', 'Administracion_2::ver_carrito_envio/$1');
+$routes->get('/administracion/show_items/(:any)', 'Administracion_2::show_items/$1');
+$routes->post('/administracion/delete_item/(:any)', 'Administracion_2::delete_linea/$1');
+
 $routes->get('/administracion/nuevo_comprobante', 'Administracion_2::comprobante');
 $routes->get('/administracion/ver_comprobante/(:any)', 'Administracion_2::ver_comprobante/$1');
 $routes->post('/administracion/save_comprobante/(:any)', 'Administracion_2::guardar_comprobante/$1');
@@ -70,7 +77,6 @@ $routes->get('/administracion/detalle_pagados/(:any)', 'Administracion_2::mostra
 $routes->post('/administracion/entrega_confirmada/(:any)', 'Administracion_2::confirmar_entrega/$1');
 
 
-
 $routes->get('/imagen/(:any)/(:any)', 'Home::imagen/$1/$2',['as' =>'get_image']);
 $routes->get('/contacto/(:any)', 'Home::contacto/$1',['as' => 'contacto']);
 
@@ -80,13 +86,9 @@ $routes->get('/logout', 'User::logout',['as' =>'logout_post']);
 $routes->get('/registrar_nuevo', 'Cliente::nuevo');
 $routes->get('/cliente/(:any)/editar', 'Cliente::editar/$1');
 
-
-
-
 $routes->get('/mostrando/(:any)', 'Pedido_Venta::mostrando/$1');
 $routes->get('/mis_pedidos', 'Pedido_Venta::index');
 $routes->get('/actualizar/(:any)', 'Pedido_Venta::actualizarVigente/$1');
-
 
 $routes->resource('item');
 $routes->resource('subcategoria');
@@ -94,8 +96,6 @@ $routes->resource('categoria');
 $routes->resource('almacen');
 $routes->resource('cliente');
 $routes->resource('empleado');
-
-
 
 $routes->get('/detalle_venta/(:any)/(:any)', 'Detalle_Venta::carrito/$1/$2');
 $routes->post('/detalle_venta/confirmar_pedido_cliente/(:any)', 'Detalle_Venta::confirmarPedido/$1');
