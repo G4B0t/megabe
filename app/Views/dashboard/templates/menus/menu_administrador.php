@@ -5,3 +5,4 @@
           <li><a class="nav-link scrollto " href="/categoria">Categorias</a></li>
           <li><a class="nav-link scrollto" href="/subcategoria">Sub Categorias</a></li>
           <li><a class="nav-link scrollto" href="/marca">Marcas</a></li>
+          <li><a class="nav-link scrollto" href="/plan_cuenta">Plan Cuentas</a></li>

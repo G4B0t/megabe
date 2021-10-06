@@ -51,8 +51,8 @@ class m_empleado extends Model
         ->first();
     }
 
-    public function getAlmacen($id_empleado){
-        $restriccion = ['empleado.id_persona'=>$id_empleado];
+    public function getAlmacen($id_persona){
+        $restriccion = ['empleado.id_persona'=>$id_persona];
         return $this->asObject()
         ->select('empleado.*,CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullname')
         ->join('persona','empleado.id_persona=persona.id')

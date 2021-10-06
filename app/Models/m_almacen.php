@@ -27,4 +27,13 @@ class m_almacen extends Model
         ->where('empleado.id',$id_empleado)
         ->first();
     }
+
+    public function getOtros($id_almacen_origen){
+        
+        return $this->asObject()
+        ->select('almacen.*')
+        ->whereNotIn('id', [$id_almacen_origen])
+        ->findAll();
+        
+    }
 }

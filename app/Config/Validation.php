@@ -42,6 +42,10 @@ class Validation
 		'direccion' => 'required|min_length[6]|max_length[255]',
 		'telefono' => 'required|min_length[7]|max_length[18]'
 	];
+	public $plan_cuentas =[
+		'nombre_cuenta' => 'required|min_length[1]|max_length[70]',
+		'codigo_cuenta' => 'required|min_length[1]|max_length[18]'
+	];
 
 	public $personas =[
 		'nombre' => 'required|min_length[3]|max_length[20]',

@@ -139,7 +139,9 @@ class User extends BaseController {
 
             'rol' => 'Normal',
 
-            'log' => ''
+            'log' => 'login',
+
+            'vista'=> 'home'
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

@@ -50,7 +50,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="confirmForm" action="/administracion/sumar_item/<?= $id_transferencia ?>" method="POST" enctype="multipart/form-data">
+        <form id="confirmForm" action="/administracion/sumar_producto/<?= $id_transferencia ?>" method="POST" enctype="multipart/form-data">
             <div class="mb-3 row">
                 <strong>Cantidad: </strong><input type="number" id="cantidad" name="cantidad" step="1" class="form-control" placeholder="1" min="1" max="">     
             </div>                    

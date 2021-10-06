@@ -664,7 +664,9 @@ class Administracion_1 extends BaseController{
 
 			'log' => $sesion['log'],
 
-            'central'=>$sesion['almacen']
+            'central'=>$sesion['almacen'],
+
+			'vista' => 'administracion'
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

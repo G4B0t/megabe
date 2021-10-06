@@ -61,10 +61,18 @@ $routes->get('/administracion/ver_items/(:any)', 'Administracion_2::ver_items/$1
 $routes->post('/administracion/borrar_item/(:any)', 'Administracion_2::borrar_linea/$1');
 
 $routes->get('/administracion/armar_transferencia', 'Administracion_3::nueva_transferencia_envio');
-$routes->post('/administracion/sumar_item/(:any)', 'Administracion_3::agregar_item_envio/$1');
-$routes->get('/administracion/ver_pedido_trasferencia/(:any)', 'Administracion_2::ver_carrito_envio/$1');
-$routes->get('/administracion/show_items/(:any)', 'Administracion_2::show_items/$1');
-$routes->post('/administracion/delete_item/(:any)', 'Administracion_2::delete_linea/$1');
+$routes->post('/administracion/sumar_producto/(:any)', 'Administracion_3::agregar_item_envio/$1');
+$routes->get('/administracion/ver_pedido_trasferencia/(:any)', 'Administracion_3::ver_carrito_envio/$1');
+$routes->get('/administracion/show_items/(:any)', 'Administracion_3::show_items/$1');
+$routes->post('/administracion/delete_item/(:any)', 'Administracion_3::delete_linea/$1');
+$routes->post('/administracion/confirmar_transferencia/(:any)', 'Administracion_3::confirm_transferencia/$1');
+$routes->get('/administracion/ver_enviados', 'Administracion_3::ver_enviados');
+$routes->get('/administracion/detalle_transferencias/(:any)', 'Administracion_3::detalles_transferencias/$1');
+
+$routes->get('/administracion/ver_recibidos', 'Administracion_3::ver_recepcion_transferencia');
+$routes->get('/administracion/detalles_recepcion/(:any)', 'Administracion_3::ver_detalle_recepcion/$1');
+$routes->post('/administracion/recepcion_confirmada/(:any)', 'Administracion_3::confirmar_recepcion/$1');
+
 
 $routes->get('/administracion/nuevo_comprobante', 'Administracion_2::comprobante');
 $routes->get('/administracion/ver_comprobante/(:any)', 'Administracion_2::ver_comprobante/$1');
@@ -96,6 +104,7 @@ $routes->resource('categoria');
 $routes->resource('almacen');
 $routes->resource('cliente');
 $routes->resource('empleado');
+$routes->resource('plan_cuenta');
 
 $routes->get('/detalle_venta/(:any)/(:any)', 'Detalle_Venta::carrito/$1/$2');
 $routes->post('/detalle_venta/confirmar_pedido_cliente/(:any)', 'Detalle_Venta::confirmarPedido/$1');

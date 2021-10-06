@@ -1,6 +1,7 @@
 <?php namespace App\Controllers;
 use App\Models\m_item;
 use App\Controllers\BaseController;
+use App\Controllers\Administracion_1;
 use \CodeIgniter\Exceptions\PageNotFoundException;
 
 use App\Models\m_subcategoria;
@@ -155,7 +156,7 @@ class Item extends BaseController {
             throw PageNotFoundException::forPageNotFound();
         }  
         
-        $item->delete($id);
+        $item->update($id, ['estado_sql'=>0]);
 
         return redirect()->to('/item')->with('message', 'Item eliminada con éxito.');
     }

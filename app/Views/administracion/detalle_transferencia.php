@@ -20,22 +20,18 @@
             <th>Codigo</th>
             <th>Producto</th>
             <th>Cantidad</th>
-            <th>Total</th>
-            <th>Moneda</th>
             <th>Opciones</th>
         </tr>
     </thead>
     <tbody>
 
-        <?php foreach ($detalle_venta as $key => $m): ?>
+        <?php foreach ($detalle_transferencia as $key => $m): ?>
             <tr>
                 <td><?= $m->item_codigo ?></td>
                 <td><?= $m->item_nombre ?></td>
                 <td><?= $m->cantidad ?></td>
-                <td><?= $m->total ?></td>
-                <td><?= $m->moneda ?> </td>
                 <td>
-                    <form action="/administracion/borrar_producto/<?= $m->id ?>" method="POST">
+                    <form action="/administracion/delete_producto/<?= $m->id ?>" method="POST">
                         <input type="submit" name="submit" value="Borrar" class="btn btn-outline-danger"/>
                     </form>
                 </td>
@@ -43,57 +39,38 @@
         <?php endforeach?>
 
         <tr>
-            <td>Total: <span><?= $total ?></span></td>
             <td>
                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detalle_modal" data-bs-id="<?=$id_pedido?>" >Confirmar Pedido</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detalle_modal" data-bs-id="<?=$id_transferencia?>" >Confirmar Envio</button>
             </td>
         </tr>
 
     </tbody>
 </table>
 
-<?= $pager->links('detalle_venta','paginacion') ?>
-
+<?= $pager->links('detalle_transferencia','paginacion') ?>
 
 
 <div class="modal fade" id="detalle_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Datos de Cliente</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Almacen</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="confirmForm" action="/administracion/confirmar_pedido/<?= $id_pedido ?>" method="POST" enctype="multipart/form-data">
+        <form id="confirmForm" action="/administracion/confirmar_transferencia/<?= $id_transferencia ?>" method="POST" enctype="multipart/form-data">
            
-        <div class="mb-3 row">
-            <label for="nombre" class="col-sm-2 col-form-label" >Nombre:</label>
-            <div class="col-sm-10">
-                <input class="form-control" type="input" id="nombre" name="nombre" value=""/><br />
+            <div class="mb-3 row">
+                <label class="col-sm-2 col-form-label" for="id_almacen_destino">Almacen:</label>
+                <div class="col-sm-10">
+                    <select class="form-select" name="id_almacen_destino" id="id_almacen_destino">
+                        <?php foreach ($almacen as $c): ?>
+                            <option <?= $transferencia->id_almacen_destino !== $c->id ?: "selected"?> value="<?= $c->id ?>"><?= $c->direccion ?> </option>
+                        <?php endforeach?>
+                    </select>
+                </div>
             </div>
-        </div>
-
-        <div class="mb-3 row">
-            <label for="apellido_paterno" class="col-sm-2 col-form-label">Apellido Paterno:</label>
-            <div class="col-sm-10">
-                <input class="form-control" type="input" id="apellido_paterno" name="apellido_paterno" value=""/><br />
-            </div>
-        </div>
-        
-        <div class="mb-3 row">
-            <label for="razon_social"  class="col-sm-2 col-form-label">Razon Social:</label>
-            <div class="col-sm-10">
-                <input class="form-control" type="input" id="razon_social" name="razon_social" value=""/><br />
-            </div>
-        </div>
-
-        <div class="mb-3 row">
-            <label for="nro_ci"  class="col-sm-2 col-form-label">Nro CI:</label>
-            <div class="col-sm-10">
-                <input class="form-control" type="input" id="nro_ci" name="nro_ci" value=""/><br />
-            </div>
-        </div>
             <div class="modal-footer">  
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
             
@@ -115,6 +92,6 @@
 
     var modalTitle = detalle_modal.querySelector('.modal-title')
 
-    modalTitle.textContent = 'Datos de Cliente'
+    modalTitle.textContent = 'Elegir Almacen de Destino'
     })
 </script>

@@ -39,41 +39,319 @@ class Administracion_3 extends BaseController{
 
         $session = session();
 		$id_persona = $session->persona;
-        $almacenero_central = $empleado->getAlmacen($id_persona);
+        $almacenero = $empleado->getAlmacen($id_persona);
+
         $cDate = date('Y-m-d H:i:s');
-        $body = ['id_empleado1' => $almacenero_central->id,
-                'id_almacen_origen' =>$almacenero_central->id_almacen,
+        $body = ['id_empleado1' => $almacenero->id,
+                'id_almacen_origen' =>$almacenero->id_almacen,
                 'fecha_envio' =>$cDate 
                 ];
 
         if($transferencia->insert($body)){
-            
+            $id_transferencia = $transferencia->getInsertID();
+            $this->show_items($id_transferencia);
         }
     }
-    public function agregar_item_envio(){
+    public function agregar_item_envio($id_transferencia){
+        $transferencia = new m_transferencia();
+        $detalle_transferencia = new m_detalle_transferencia();
 
-    }
-    public function ver_carrito_envio(){
+        $id_item = $this->request->getPost('item_id');
+        $cantidad= $this->request->getPost('cantidad');
 
-    }
-    public function show_items(){
-
-    }
-    public function delete_linea(){
+        $pedido = $transferencia->getByID($id_transferencia); 
+        $detalle = $detalle_transferencia->getDetalle($pedido->id,$id_item);
+        if($pedido == null){
+            return redirect()->to('/administracion')->with('message', 'No hay transferencia aun.');
+        }
+        $body = ['id_item' => $id_item,
+                'id_transferencia' =>$id_transferencia,
+                'cantidad'=>$cantidad
+                ];
+        if($detalle == null){
+            if($detalle_transferencia->insert($body)){
+                return redirect()->to('/administracion/ver_pedido_trasferencia/'.$id_transferencia)->with('message', 'Item agregado con exito a la Transferencia.');
+            }
+            return redirect()->to('/administracion/ver_pedido_trasferencia/'.$id_transferencia)->with('message', 'No se pudo crear la nueva Transferencia.');
+        }
+        else{
+            $old_cantidad = $detalle->cantidad;
+            $new_cantidad = $old_cantidad+$cantidad;
+            $update_body = ['cantidad'=>$new_cantidad];
+            if($detalle_transferencia->update($detalle->id, $update_body)){
+                return redirect()->to('/administracion/ver_pedido_trasferencia/'.$id_transferencia)->with('message', 'Se aumento con exito el producto.');
+            }
+            return redirect()->to('/administracion/ver_pedido_trasferencia/'.$id_transferencia)->with('message', 'No se pudo actualizar la cantidad de producto.');
+        }
         
     }
-    public function confirmar_trasnfe_envio(){
+    public function ver_carrito_envio($id_transferencia){
+        $transferencia = new m_transferencia();
+        $detalle_transferencia = new m_detalle_transferencia();
+        $almacen = new m_almacen();
+
+        $detalles = $detalle_transferencia->getFullDetalle($id_transferencia);
+        if( $detalles != null){
+            $pedido = $transferencia->getById($id_transferencia);
+            $almacenes_destino = $almacen->getOtros($pedido->id_almacen_origen);
+            $restricciones = ['detalle_transferencia.id_transferencia' => $id_transferencia,'detalle_transferencia.estado_sql'=> 1];
+            $data = [
+                'detalle_transferencia' => $detalle_transferencia->asObject()
+                ->select('detalle_transferencia.*, item.nombre as item_nombre, item.codigo as item_codigo')
+                ->join('item','item.id = detalle_transferencia.id_item')
+                ->join('transferencia','transferencia.id = detalle_transferencia.id_transferencia')
+                ->where($restricciones)
+                ->paginate(10,'detalle_transferencia'),
+                'pager' => $detalle_transferencia->pager,
+
+                'id_transferencia' => $pedido->id,
+
+                'almacen' => $almacenes_destino,
+
+                'transferencia' =>$pedido
+            ];
+
+            $this->_loadDefaultView( 'Detalle de Transferencia',$data,'detalle_transferencia');
+        }else{
+
+             return redirect()->to('/administracion/show_items/'.$id_transferencia)->with('message', 'Su pedido esta vacio');
+        }
 
     }
-    public function ver_transferencia_recibos(){
+    public function show_items($id_transferencia){
+        $item = new m_item();
+        $transferencia = new m_transferencia();
+		
+		$condiciones = ['item.estado_sql' => '1'];
+        $pedido = $transferencia->getById($id_transferencia);
+        if($pedido==null){
+            return redirect()->to('/administracion')->with('message', 'No existe el pedido aun!.');
+        }
+        var_dump($almacenes_destino);
+		$data = [
+			'item' => $item->asObject()
+            ->select('item.*,marca.id AS marcaId, 
+					marca.nombre AS marca, subcategoria.id AS subcategoriaID, 
+					subcategoria.nombre AS subcategoria, categoria.id AS categoriaID, 
+					categoria.nombre AS categoria')
+			->join('marca','item.id_marca = marca.id')
+			->join('subcategoria','marca.id_subcategoria = subcategoria.id')
+			->join('categoria','subcategoria.id_categoria = categoria.id')
+			->where($condiciones)
+            ->paginate(10,'item'),
+
+            'id_transferencia' =>$pedido->id,
+        ];
+
+		$this->_loadDefaultView( 'Listado para Envio',$data,'productos_transferencia');
+
+    }
+    public function delete_linea($id){
+        $detalle_transferencia= new m_detalle_transferencia();
+        $pedido = $pedido_compra->getByDetalle($id);
+
+        if ($detalle_transferencia->find($id) == null)
+        {
+            throw PageNotFoundException::forPageNotFound();
+        }  
+        $detalle_compra->update($id, [
+            'estado_sql' =>'0'              
+        ]);       
+        return redirect()->to('/administracion/ver_pedido_trasferencia/'.$pedido->id)->with('message', 'Producto eliminado del detalle.');
+    }
+    public function confirm_transferencia($id_transferencia){
+        $transferencia = new m_transferencia();
+
+        $id_almacen_destino =  $this->request->getPost('id_almacen_destino');
+
+        if ($transferencia->find($id_transferencia) == null){
+            throw PageNotFoundException::forPageNotFound();
+        }  
+
+        $body_transferencia = ['id_almacen_destino'=> $id_almacen_destino];
+        if($transferencia->update($id_transferencia,$body_transferencia)){
+            $this->ver_enviados();
+        }
+
+    }
+    public function ver_enviados(){
+        $transferencia = new m_transferencia();
+        $detalle_transferencia = new m_detalle_transferencia();
+        $empleado = new m_empleado();
+
+        $session = session();
+		$id_persona = $session->persona;
+        $almacenero = $empleado->getAlmacen($id_persona);
+
+        $pedido_transferencia = $transferencia->getFirst();
+        
+        $condiciones = ['transferencia.id' => $pedido_transferencia->id, 'transferencia.estado_sql' => 1,'transferencia.id_empleado1'=>$almacenero->id];
+        $restricciones = ['detalle_transferencia.estado_sql'=> '1','id_transferencia' => $pedido_transferencia->id];
+        $data = [
+            'transferencia' => $transferencia->asObject()
+            ->select('transferencia.*, persona.nombre as empleado_nombre1')
+            ->join('empleado','empleado.id = transferencia.id_empleado1')
+            ->join('persona','persona.id = empleado.id_persona')
+            ->where($condiciones)
+            ->paginate(10,'transferencia'),
+            'pagers' => $transferencia->pager,
+
+            'detalle_transferencia' => $detalle_transferencia->asObject()
+            ->select('detalle_transferencia.*, item.nombre as item_nombre, item.codigo as item_codigo')
+            ->join('item','item.id = detalle_transferencia.id_item')
+            ->where($restricciones)
+            ->paginate(10,'detalle_transferencia'),
+            'pager' => $detalle_transferencia->pager,
+
+            'id' => $pedido_transferencia->id
+        ];
+
+        $this->_loadDefaultView( 'Listado de Envios',$data,'enviados');
+    }
+    public function detalles_transferencias($id_trasnferencia){
+
+        $transferencia = new m_transferencia();
+        $detalle_transferencia = new m_detalle_transferencia();
+        $empleado = new m_empleado();
+
+        $session = session();
+		$id_persona = $session->persona;
+        $almacenero = $empleado->getAlmacen($id_persona);
+
+        $pedido_transferencia = $transferencia->getById($id_trasnferencia);
+
+        $condiciones = ['transferencia.id' => $pedido_transferencia->id, 'transferencia.estado_sql' => 1,'transferencia.id_empleado1'=>$almacenero->id];
+        $restricciones = ['detalle_transferencia.estado_sql'=> '1','id_transferencia' => $pedido_transferencia->id];
+        $data = [
+            'transferencia' => $transferencia->asObject()
+            ->select('transferencia.*, persona.nombre as empleado_nombre1')
+            ->join('empleado','empleado.id = transferencia.id_empleado1')
+            ->join('persona','persona.id = empleado.id_persona')
+            ->where($condiciones)
+            ->paginate(10,'transferencia'),
+            'pagers' => $transferencia->pager,
+
+            'detalle_transferencia' => $detalle_transferencia->asObject()
+            ->select('detalle_transferencia.*, item.nombre as item_nombre, item.codigo as item_codigo')
+            ->join('item','item.id = detalle_transferencia.id_item')
+            ->where($restricciones)
+            ->paginate(10,'detalle_transferencia'),
+            'pager' => $detalle_transferencia->pager,
+
+            'id' => $pedido_transferencia->id
+
+        ];
+
+        $this->_loadDefaultView( 'Listado de Envios',$data,'enviados');
+    }
+
+    public function ver_recepcion_transferencia(){
+        $transferencia = new m_transferencia();
+        $detalle_transferencia = new m_detalle_transferencia();
+        $empleado = new m_empleado();
+
+        $session = session();
+		$id_persona = $session->persona;
+        $almacenero = $empleado->getAlmacen($id_persona);
+
+        $pedido_transferencia = $transferencia->getByEmpleado($almacenero->id_almacen);
+        if($pedido_transferencia ==null || $pedido_transferencia->id_almacen_destino != null){
+            return redirect()->to('/administracion')->with('message', 'No hay mas Transferencias Enviadas a este Almacen!');
+        }
+
+        $condiciones = ['transferencia.id_almacen_destino' => $almacenero->id_almacen, 'transferencia.estado_sql' => 1];
+        $restricciones = ['detalle_transferencia.estado_sql'=> '1','detalle_transferencia.id_transferencia' => $pedido_transferencia->id];
+        $data = [
+            'transferencia' => $transferencia->asObject()
+            ->select('transferencia.*, persona.nombre as empleado_nombre1')
+            ->join('almacen','almacen.id = transferencia.id_almacen_destino')
+            ->join('empleado','empleado.id_almacen = almacen.id')
+            ->join('persona','persona.id = empleado.id_persona')
+            ->where($condiciones)
+            ->paginate(10,'transferencia'),
+            'pagers' => $transferencia->pager,
+
+            'detalle_transferencia' => $detalle_transferencia->asObject()
+            ->select('detalle_transferencia.*, item.nombre as item_nombre, item.codigo as item_codigo')
+            ->join('item','item.id = detalle_transferencia.id_item')
+            ->where($restricciones)
+            ->paginate(10,'detalle_transferencia'),
+            'pager' => $detalle_transferencia->pager,
+
+            'id' => $pedido_transferencia->id,
+
+            'id_empleado2' =>$almacenero->id
+        ];
+
+        $this->_loadDefaultView( 'Listado para Recepcion',$data,'recibidos');
 
     }
 
+    public function ver_detalle_recepcion($id_transferencia){
+        $transferencia = new m_transferencia();
+        $detalle_transferencia = new m_detalle_transferencia();
+        $empleado = new m_empleado();
+
+        $session = session();
+		$id_persona = $session->persona;
+        $almacenero = $empleado->getAlmacen($id_persona);
+
+        $pedido_transferencia = $transferencia->getById($id_transferencia);
+        if($pedido_transferencia ==null){
+            return redirect()->to('/administracion')->with('message', 'No hay Transferencias Enviadas a este Almacen!');
+        }
+
+        $condiciones = ['transferencia.id_almacen_destino' => $almacenero->id_almacen, 'transferencia.estado_sql' => 1];
+        $restricciones = ['detalle_transferencia.estado_sql'=> '1','detalle_transferencia.id_transferencia' => $pedido_transferencia->id];
+        $data = [
+            'transferencia' => $transferencia->asObject()
+            ->select('transferencia.*, persona.nombre as empleado_nombre1')
+            ->join('almacen','almacen.id = transferencia.id_almacen_destino')
+            ->join('empleado','empleado.id_almacen = almacen.id')
+            ->join('persona','persona.id = empleado.id_persona')
+            ->where($condiciones)
+            ->paginate(10,'transferencia'),
+            'pagers' => $transferencia->pager,
+
+            'detalle_transferencia' => $detalle_transferencia->asObject()
+            ->select('detalle_transferencia.*, item.nombre as item_nombre, item.codigo as item_codigo')
+            ->join('item','item.id = detalle_transferencia.id_item')
+            ->where($restricciones)
+            ->paginate(10,'detalle_transferencia'),
+            'pager' => $detalle_transferencia->pager,
+
+            'id' => $pedido_transferencia->id,
+
+            'id_empleado2' => $almacenero->id
+        ];
+
+        $this->_loadDefaultView( 'Listado para Recepcion',$data,'recibidos');
+    }
+
+    public function confirmar_recepcion($id_transferencia){
+        $transferencia = new m_transferencia();
+        $empleado = new m_empleado();
+
+        $session = session();
+		$id_persona = $session->persona;
+        $almacenero = $empleado->getAlmacen($id_persona);
+
+        $cDate = date('Y-m-d H:i:s');
+        $body = ['id_empleado2' => $almacenero->id,
+                'fecha_recibido' => $cDate
+                ];
+        if ($transferencia->find($id_transferencia) == null){
+            throw PageNotFoundException::forPageNotFound();
+        }  
+        if($transferencia->update($id_transferencia,$body)){
+            return redirect()->to('/administracion/ver_recibidos')->with('message', 'Transferencia RECIBIDA!!');
+        }
+
+    }
     private function _loadDefaultView($title,$data,$view){
 
     $administracion = new administracion_1();
     $sesion = $administracion->sesiones();
-
 
     $dataHeader =[
         'title' => $title,
@@ -83,7 +361,9 @@ class Administracion_3 extends BaseController{
 
         'log' => $sesion['log'],
 
-        'central'=>$sesion['almacen']
+        'central'=>$sesion['almacen'],
+
+        'vista' => 'administracion'
     ];
 
     echo view("dashboard/templates/header",$dataHeader);

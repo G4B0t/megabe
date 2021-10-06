@@ -193,7 +193,7 @@ class Administracion_2 extends BaseController{
 
     public function borrar_linea($id){
        
-        $detalle_compra = new detalle_compra();
+        $detalle_compra = new m_detalle_compra();
         $pedido_compra = new m_pedido_compra();
         $pedido = $pedido_compra->getByDetalle($id);
 
@@ -448,7 +448,9 @@ class Administracion_2 extends BaseController{
 
 			'log' => $sesion['log'],
 
-            'central'=>$sesion['almacen']
+            'central'=>$sesion['almacen'],
+            
+            'vista' => 'administracion'
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

@@ -275,7 +275,9 @@ class Home extends BaseController
 
 			'rol' => $sesion['rol'],
 
-			'log' => $sesion['log']
+			'log' => $sesion['log'],
+
+			'vista' => 'home'
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

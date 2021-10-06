@@ -12,9 +12,41 @@ class m_transferencia extends Model
                                 ,'estado_sql'];
 
 
-    public function getOne($id){
+    public function getById($id){
         return $this->asObject()
-        ->where('id',$id);
+        ->select('transferencia.*')
+        ->where('id',$id)
+        ->first();
+    }
+
+    public function getByDetalle($id_detalle){
+        $restriccion = ['detalle_transferencia.id' => $id_detalle, 'detalle_transferencia.estado_sql'=>1];
+        return $this->asObject()
+        ->select('transferencia.*')
+        ->join('detalle_transferencia','detalle_transferencia.id_transferencia = transferencia.id')
+        ->where($restrccion)
+        ->first();
+    }
+
+    public function getFirst(){
+        return $this->asObject()
+        ->first();
+    }
+
+    public function getByEmpleado($id_almacen_destino){
+        $restriccion = ['transferencia.id_almacen_destino'=>$id_almacen_destino, 'transferencia.estado_sql'=>1];
+        return $this->asObject()
+        ->select('transferencia.*')
+        ->where($restriccion)
+        ->first();
+    }
+
+    public function getByDestino($id_almacen_destino){
+        $restriccion = ['id_almacen_destino'=>$id_almacen_destino, 'estado_sql'=>1];
+        return $this->asObject()
+        ->select('transferencia.*')
+        ->where($restriccion)
+        ->findAll();
     }
 
 }

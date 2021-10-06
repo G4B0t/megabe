@@ -35,7 +35,7 @@
                 <td>
                     
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detalle_modal" data-bs-id="<?= $m->id ?>" data-bs-stock="<?= $m->stock ?>">Agregar Producto</button>                   
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detalle_modal" data-bs-id="<?= $id_empleado ?>">Agregar Producto</button>                   
             </td>
             </tr>
         <?php endforeach?>
