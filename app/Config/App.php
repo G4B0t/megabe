@@ -24,7 +24,7 @@ class App extends BaseConfig
 	 * @var string
 	 */
 	
-	public $baseURL = 'https://megabe.herokuapp.com/public';
+	public $baseURL = 'https://megabe.herokuapp.com/';
 	//public $baseURL = 'http://megabe.test/';
 
 	/**
