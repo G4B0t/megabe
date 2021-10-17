@@ -278,7 +278,7 @@ class Cliente extends BaseController {
 
 			'log' => $sesion['log'],
 
-            'vista'=>'Cliente'
+            'vista'=>'Home'
         ];
 
         echo view("dashboard/templates/header",$dataHeader);
