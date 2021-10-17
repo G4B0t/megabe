@@ -29,7 +29,7 @@
                 <?php foreach ($transferencia as $key => $m): ?>
                     <tr>
                         <td><?= $m->id ?></td>
-                        <td><?= $m->empleado_nombre1 ?></td>
+                        <td><?= $m->id_empleado1 ?></td>
                         <td><?= $m->fecha_envio ?></td>
                         <td>
                             <a href="/administracion/detalles_recepcion/<?= $m->id ?>" class="btn btn-primary">Detalle</a>

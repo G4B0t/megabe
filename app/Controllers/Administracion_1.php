@@ -528,18 +528,32 @@ class Administracion_1 extends BaseController{
         if($pedido ==null){
             return redirect()->to('/administracion/ver_productos/'.$id_pedido)->with('message', 'No se pudo agregar el producto.');
         }
+        $detalle = $detalle_venta->getDetalle($pedido->id,$producto->id);
 
-        $new_detalle = ['id_pedido_venta'=>$pedido->id,
-                        'id_item'=>$id_item,
-                        'cantidad'=>$cantidad,
-                        'precio_unitario'=>$producto->precio_unitario,
-                        'total'=> $total
-                        ];
-
-        if($detalle_venta->insert($new_detalle)){
+        if($detalle == null){
+            $new_detalle = ['id_pedido_venta'=>$pedido->id,
+                            'id_item'=>$producto->id,
+                            'cantidad'=>$cantidad,
+                            'precio_unitario'=>$producto->precio_unitario,
+                            'total'=> $total
+                            ];
+            if($detalle_venta->insert($new_detalle)){
             $this->mostrar_carrito($pedido->id);
-        }
+            }
+        }else{
+            $nuevaCantidad = $detalle['cantidad'] + $cantidad;
+            $total = $detalle['total'] + ($detalle['precio_unitario']* $cantidad);
 
+            $nuevo_detalle = [
+                'cantidad' =>$nuevaCantidad,
+                'total' =>$total 
+            ]; 
+            if($detalle_venta->update($detalle['id'],$nuevo_detalle)){
+                $this->mostrar_carrito($pedido->id);
+            }else{
+                echo "fail";
+            }
+        }
 
     }
 

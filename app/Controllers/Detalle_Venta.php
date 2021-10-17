@@ -91,9 +91,14 @@ class Detalle_Venta extends BaseController {
             return redirect()->to('/detalle_venta')->with('message', 'CARRITO VACIO');
         }
 
+        $total = 0;
+        foreach($detalles as $key => $m){
+            $total += $m->total;
+            }
         if($pedido_venta->update(
             $id_pedido,[
-                'estado' => '1'
+                'estado' => '1',
+                'total'=>$total
             ]
         )){
             $body = [
@@ -151,6 +156,7 @@ class Detalle_Venta extends BaseController {
         $detalle_venta = new m_detalle_venta();
         $pedido_venta = new m_pedido_venta();
         $cliente = new m_cliente();
+        $item = new m_item();
 
         $session = session();
         $id_cliente = $session->cliente;
@@ -166,8 +172,22 @@ class Detalle_Venta extends BaseController {
                 'cantidad' =>$nuevaCantidad,
                 'total' =>$total 
             ];
-
-            if($detalle_venta->update($detalle['id'],$nuevo_detalle)){
+            if($detalle == null){
+                $cantidad = $this->request->getPost('cantidad');
+                $product = $item->getOne($id_item);
+                $pu = $product->precio_unitario;
+                $total = $pu * $cantidad;
+                $nuevo_detalle = ['id_pedido_venta'=>$pedido['id'],
+                    'id_item'=>$product->id,
+                    'cantidad' =>$cantidad,
+                    'precio_unitario'=>$product->precio_unitario,
+                    'total' =>$total 
+                ]; 
+                if($detalle_venta->insert($nuevo_detalle)){
+                    return redirect()->to('/detalle_venta')->with('message', 'Nuevo Producto Agregado con EXITO!');
+                }
+            }else{
+                if($detalle_venta->update($detalle['id'],$nuevo_detalle)){
 
                 $detalles = $detalle_venta->getFullDetalle($pedido['id']);
                 $total = 0;
@@ -191,21 +211,66 @@ class Detalle_Venta extends BaseController {
                                 ->where('cliente.id',$id_cliente)
                                 ->first(),
 
-                    'total' => $total
+                    'total' => $total,
+
+                    'id_pedido'=>$pedido['id']
 
                     ];
 
-            $this->_loadDefaultView( 'Detalle de Pedido #'.$pedido['id'],$data,'index');
-            }
-            else{
-                return redirect()->to('/detalle/$id_item')->with('message', 'No se pudo agregar producto al carrito.');
-            }       
+                $this->_loadDefaultView( 'Detalle de Pedido #'.$pedido['id'],$data,'index');
+                }
+                else{
+                    return redirect()->to('/detalle/$id_item')->with('message', 'No se pudo agregar producto al carrito.');
+                }  
+            }     
         }
         else{
-          
-            $nuevoPedido = $this->create();
-            $nuevoDetalle = new m_detalle_pedido();  
-            $cantidad = $this->request->getPost('cantidad');    
+            $cDate = date('Y-m-d H:i:s');
+            $body=['fecha'=>$cDate,
+                    'estado'=>0,
+                    'id_cliente'=>$id_cliente];
+            if($pedido_venta->insert($body)){
+                $cantidad = $this->request->getPost('cantidad');
+                $product = $item->getOne($id_item);
+                $pu = $product->precio_unitario;
+                $total = $pu * $cantidad;
+                $pedido = $pedido_venta->getInsertID();
+                $nuevo_detalle = ['id_pedido_venta'=>$pedido,
+                    'id_item'=>$product->id,
+                    'cantidad' =>$cantidad,
+                    'precio_unitario'=>$product->precio_unitario,
+                    'total' =>$total 
+                ];  
+                if($detalle_venta->insert($nuevo_detalle)){
+                    $detalles = $detalle_venta->getFullDetalle($pedido);
+                    $total = 0;
+                    foreach($detalles as $key => $m){
+                        $total += $m->total;
+                    }
+                    $condiciones = ['detalle_venta.estado_sql'=>'1','id_pedido_venta'=> $pedido['id']];
+                    $data = [
+                        'detalle_venta' => $detalle_venta->asObject()
+                        ->select('detalle_venta.*, item.nombre as item_nombre, item.codigo as item_codigo, pedido_venta.moneda')
+                        ->join('item','item.id = detalle_venta.id_item')
+                        ->join('pedido_venta','pedido_venta.id = detalle_venta.id_pedido_venta')
+                        ->where($condiciones)
+                        ->paginate(10,'detalle_venta'),
+                        'pager' => $detalle_venta->pager,
+
+                        'cliente' => $cliente->asArray()
+                                    ->select('cliente.*, CONCAT(persona.nombre, " ", persona.apellido_paterno) nombre_cliente')
+                                    ->join('persona','cliente.id_persona = persona.id')
+                                    ->where('cliente.id',$id_cliente)
+                                    ->first(),
+
+                        'total' => $total,
+
+                        'id_pedido'=>$pedido
+                        ];
+                 return redirect()->to('/detalle_venta')->with('message', 'Producto Agregado con Exito!');
+                }
+            }
+           
         }          
     }
 
@@ -245,7 +310,7 @@ class Detalle_Venta extends BaseController {
 		$subcategoria = new m_subcategoria();
 		$marca = new m_marca();
 		
-		$admin = new Administracion();
+		$admin = new Administracion_1();
 		$sesion = $admin->sesiones();
 
         $dataHeader =[
@@ -268,7 +333,9 @@ class Detalle_Venta extends BaseController {
 
             'rol' => $sesion['rol'],
 
-			'log' => $sesion['log']
+			'log' => $sesion['log'],
+
+            'vista'=>'cliente'
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

@@ -120,7 +120,7 @@ class Pedido_Venta extends BaseController {
 		$subcategoria = new m_subcategoria();
 		$marca = new m_marca();
 
-        $admin = new Administracion();
+        $admin = new Administracion_1();
 		$sesion = $admin->sesiones();
 
         $dataHeader =[
@@ -143,7 +143,9 @@ class Pedido_Venta extends BaseController {
 
             'rol' => $sesion['rol'],
 
-			'log' => $sesion['log']
+			'log' => $sesion['log'],
+
+            'vista'=>'cliente'
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

@@ -43,6 +43,7 @@
 
       <nav id="navbar" class="navbar">
         <ul>
+        
           <?php switch ($rol) {
             case "Normal":
                 echo view("dashboard/templates/menus/menu_inicial");
@@ -70,7 +71,7 @@
                   echo view("dashboard/templates/menus/menu_cajero");
                   break;
           }?>
-        <li><a class="getstarted scrollto" href="/<?= $log?>"><?= $log?></a></li>
+          <li><a class="getstarted scrollto" href="/<?= $log?>"><?= $log?></a></li>
         </ul>
       <i class="bi bi-list mobile-nav-toggle"></i>
       </nav><!-- .navbar -->

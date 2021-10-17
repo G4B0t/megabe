@@ -127,7 +127,6 @@ class Administracion_3 extends BaseController{
         if($pedido==null){
             return redirect()->to('/administracion')->with('message', 'No existe el pedido aun!.');
         }
-        var_dump($almacenes_destino);
 		$data = [
 			'item' => $item->asObject()
             ->select('item.*,marca.id AS marcaId, 
@@ -255,15 +254,15 @@ class Administracion_3 extends BaseController{
         $almacenero = $empleado->getAlmacen($id_persona);
 
         $pedido_transferencia = $transferencia->getByEmpleado($almacenero->id_almacen);
-        if($pedido_transferencia ==null || $pedido_transferencia->id_almacen_destino != null){
+        if($pedido_transferencia ==null || $pedido_transferencia->id_almacen_destino == null){
             return redirect()->to('/administracion')->with('message', 'No hay mas Transferencias Enviadas a este Almacen!');
         }
 
-        $condiciones = ['transferencia.id_almacen_destino' => $almacenero->id_almacen, 'transferencia.estado_sql' => 1];
+        $condiciones = ['transferencia.id_almacen_destino' => $almacenero->id_almacen, 'transferencia.estado_sql' => 1,'transferencia.id_empleado2'=>null];
         $restricciones = ['detalle_transferencia.estado_sql'=> '1','detalle_transferencia.id_transferencia' => $pedido_transferencia->id];
         $data = [
             'transferencia' => $transferencia->asObject()
-            ->select('transferencia.*, persona.nombre as empleado_nombre1')
+            ->select('transferencia.*')
             ->join('almacen','almacen.id = transferencia.id_almacen_destino')
             ->join('empleado','empleado.id_almacen = almacen.id')
             ->join('persona','persona.id = empleado.id_persona')

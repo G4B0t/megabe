@@ -68,7 +68,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="confirmForm" action="detalle_venta/confirmar_pedido_cliente/<?= $id_pedido ?>" method="POST" enctype="multipart/form-data">
+        <form id="confirmForm" action="/detalle_venta/confirmar_pedido_cliente/<?= $id_pedido ?>" method="POST" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="cliente" class="col-form-label">Cliente:</label>
                 <input type="text" class="form-control" id="cliente" value="<?=$cliente['nombre_cliente']?>" readonly>

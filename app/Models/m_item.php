@@ -23,10 +23,6 @@ class m_item extends Model
 
     public function getOne($id = null)
     {
-        if ($id === null) {
-            return $this->findAll();
-        }
-
         return $this->asObject()
             ->where(['id' => $id])
             ->first();

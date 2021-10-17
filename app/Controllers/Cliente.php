@@ -50,7 +50,7 @@ class Cliente extends BaseController {
         
         $validation =  \Config\Services::validation();
         $this->_loadDefaultView('Crear Cliente',['validation'=>$validation, 'cliente'=> new m_cliente(),
-                                 'persona' => new m_persona()],'nuevo_usuario');
+                                 'persona' => new m_persona()],'nuevoUser');
      }
      public function crear(){
         helper("user");
@@ -253,7 +253,7 @@ class Cliente extends BaseController {
 		$role = new m_rol();
 		$empleado_rol = new m_empleado_rol();
 
-        $admin = new Administracion();
+        $admin = new Administracion_1();
 		$sesion = $admin->sesiones();
 
         $dataHeader =[
@@ -276,7 +276,9 @@ class Cliente extends BaseController {
 
             'rol' => $sesion['rol'],
 
-			'log' => $sesion['log']
+			'log' => $sesion['log'],
+
+            'vista'=>'Cliente'
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

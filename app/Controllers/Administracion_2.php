@@ -44,21 +44,25 @@ class Administracion_2 extends BaseController{
 
         $session = session();
         $id_empleado = $session->empleado;
-        $almacenero = $empleado->getAlmacenero($id_empleado);
+        $almacenero = $empleado->getAlmacenCental($id_empleado);
 
-        if($almacenero->rol=='Almacenes'){
+        if($almacenero->caja=='Central'){
             $compra = $pedido_compra->getById($id_pedido);
             $detalles = $detalle_compra->getFullDetalle($compra->id);
             $almacen_central = $almacen->getOne($almacenero->id_almacen);
-           
+
+            $total = 0;
             foreach($detalles as $key => $m){
-                $producto = $item->getByID($m->id_item);
-                
-               
+                $total += $m->total;
             }
-        }
+            $body = ['estado'=>1,
+                    'total'=>$total];
+            if($pedido_compra->update($compra->id,$body)){
+                return redirect()->to('/administracion')->with('message', 'Pedido Compra CONFIRMADO!');
+            }
+       }
         else{
-            return redirect()->to('/administracion')->with('message', 'No cumple con la funcion de su ROL.');
+            return redirect()->to('/administracion')->with('message', 'No tiene el Rol de Almacen Central');
         }
         
         
@@ -119,10 +123,12 @@ class Administracion_2 extends BaseController{
         $total = ($producto->precio_unitario)*$cantidad;
         
         $pedido = $pedido_compra->getById($id_pedido);
+        
         if($pedido ==null){
-            return redirect()->to('/administracion/ver_items/'.$id_pedido)->with('message', 'No se pudo agregar el producto.');
+            return redirect()->to('/administracion/ver_items/'.$id_pedido)->with('message', 'El Pedido no existe! :c');
         }
         $detalle = $detalle_compra->getDetalle($id_pedido,$producto->id);
+       
         if($detalle == null){
             $new_detalle = ['id_pedido_compra'=>$pedido->id,
                             'id_item'=>$id_item,
@@ -133,7 +139,7 @@ class Administracion_2 extends BaseController{
             if($detalle_compra->insert($new_detalle)){
                  $this->mostrar_linea($pedido->id);
             }else{
-                return redirect()->to('/administracion/ver_items/'.$id_pedido)->with('message', 'No se pudo agregar el producto.');
+               return redirect()->to('/administracion/ver_items/'.$id_pedido)->with('message', 'No se pudo agregar el producto.');
             }
         }else{
             $old_cantidad = $detalle['cantidad'];
@@ -301,7 +307,7 @@ class Administracion_2 extends BaseController{
                 'tipo_respaldo' => $this->request->getPost('tipo_respaldo')
                 ];
         if($debe == $haber){
-            $comprobante->update($comprobante_creado->id);
+            $comprobante->update($comprobante_creado->id,$body);
             return redirect()->to('/administracion')->with('message', 'Comprobante Guardado');
         }
         else{
@@ -411,7 +417,7 @@ class Administracion_2 extends BaseController{
                 ];
         $this->_loadDefaultView( 'Comprobante #'.$id,$data,'comprobantes');
     }
-    public function comprobante(){
+    public function nuevo_comprobante(){
         $session = session();
 
         $comprobante = new m_comprobante();

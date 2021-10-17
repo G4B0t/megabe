@@ -27,7 +27,7 @@
                     <input class="form-control" type="input" id="tipo_respaldo" name="tipo_respaldo" value=""/><br />
                 </div>
             </div>
-            <input type="submit" name="submit" value="Guardar" class="btn btn-outline-success"/>
+            <input type="submit" name="save" value="Guardar" class="btn btn-outline-success"/>
         </form>
         </div>
     </section>
