@@ -57,7 +57,7 @@ class Cliente extends BaseController {
         $cliente = new m_cliente();
         $persona = new m_persona();
 
-        if($this->validate('clientes') && $this->validate('personas')){
+        //if($this->validate('clientes') && $this->validate('personas')){
             $foto = "";
             if($imagefile = $this->request->getFile('foto')) {
             
@@ -65,38 +65,39 @@ class Cliente extends BaseController {
                     {
                         $foto = $imagefile->getRandomName();
                         $imagefile->move(WRITEPATH.'uploads/clientes', $foto);
-
-                        $id_persona = $persona->insert([
-                            'nombre' =>$this->request->getPost('nombre'),
-                            'apellido_paterno' =>$this->request->getPost('apellido_paterno'),
-                            'apellido_materno' =>$this->request->getPost('apellido_materno'),
-                            'nro_ci' =>$this->request->getPost('nro_ci'),
-                            'direccion_particular' =>$this->request->getPost('direccion_particular'),
-                            'direccion_trabajo' =>$this->request->getPost('direccion_trabajo'),
-                            'telefono_particular' =>$this->request->getPost('telefono_particular'), 
-                            'telefono_trabajo' =>$this->request->getPost('telefono_trabajo'),
-                            'zona_vivienda' =>$this->request->getPost('zona_vivienda'),
-                            'latitud_vivienda' =>$this->request->getPost('latitud_vivienda'),
-                            'longitud_vivienda' =>$this->request->getPost('longitud_vivienda'),
-                            'celular1' =>$this->request->getPost('celular1'),
-                            'celular2' =>$this->request->getPost('celular2'),
-                            'lugar_residencia' =>$this->request->getPost('lugar_residencia'),
-                            'ocupacion' =>$this->request->getPost('ocupacion'),
-                            'foto' => $foto
-                        ]);
-
-                        $id = $cliente->insert([
-                            'nit' =>$this->request->getPost('nit'),
-                            'razon_social' =>$this->request->getPost('razon_social'),
-                            'id_persona' =>$this->request->getPost($persona->getInsertID()),
-                            'usuario' =>$this->request->getPost('usuario'),
-                            'contrasena' =>hashPassword($this->request->getPost('contrasena')),
-                            'email' =>$this->request->getPost('email')
-                        ]);
-                        return redirect()->to("/Home")->with('message', 'Nuevo Usuario Creado Con éxito.');
                 }
-            }      
-        }
+            }   
+            if($id_persona = $persona->insert([
+                'nombre' =>$this->request->getPost('nombre'),
+                'apellido_paterno' =>$this->request->getPost('apellido_paterno'),
+                'apellido_materno' =>$this->request->getPost('apellido_materno'),
+                'nro_ci' =>$this->request->getPost('nro_ci'),
+                'direccion_particular' =>$this->request->getPost('direccion_particular'),
+                'direccion_trabajo' =>$this->request->getPost('direccion_trabajo'),
+                'telefono_particular' =>$this->request->getPost('telefono_particular'), 
+                'telefono_trabajo' =>$this->request->getPost('telefono_trabajo'),
+                'zona_vivienda' =>$this->request->getPost('zona_vivienda'),
+                'latitud_vivienda' =>$this->request->getPost('latitud_vivienda'),
+                'longitud_vivienda' =>$this->request->getPost('longitud_vivienda'),
+                'celular1' =>$this->request->getPost('celular1'),
+                'celular2' =>$this->request->getPost('celular2'),
+                'lugar_residencia' =>$this->request->getPost('lugar_residencia'),
+                'ocupacion' =>$this->request->getPost('ocupacion'),
+                'foto' => $foto
+            ])){
+                $id_persona = $persona->getInsertID();
+                    
+                $id = $cliente->insert([
+                    'nit' =>$this->request->getPost('nit'),
+                    'razon_social' =>$this->request->getPost('razon_social'),
+                    'id_persona' =>$id_persona,
+                    'usuario' =>$this->request->getPost('usuario'),
+                    'contrasena' =>hashPassword($this->request->getPost('contrasena')),
+                    'email' =>$this->request->getPost('email')
+                ]);
+                return redirect()->to("/Home")->with('message', 'Nuevo Usuario Creado Con éxito.');  
+            }
+       // }
         
         return redirect()->back()->withInput();
     }
