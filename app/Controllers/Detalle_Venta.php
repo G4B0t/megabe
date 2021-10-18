@@ -302,7 +302,7 @@ class Detalle_Venta extends BaseController {
         $detalle_venta->update($id, [
             'estado_sql' =>'0'              
         ]);       
-        return redirect()->to('/pedido_venta')->with('message', 'Producto eliminado del detalle.');
+        return redirect()->to('/detalle_venta')->with('message', 'Producto eliminado del detalle.');
     }
 
     private function _loadDefaultView($title,$data,$view){
