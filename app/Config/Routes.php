@@ -106,17 +106,18 @@ $routes->resource('almacen');
 $routes->resource('cliente');
 $routes->resource('empleado');
 $routes->resource('plan_cuenta');
-$routes->resource('pedido_venta');
-$routes->resource('detalle_venta');
 
 $routes->get('/detalle_venta/(:any)/(:any)', 'Detalle_Venta::carrito/$1/$2');
 $routes->post('/detalle_venta/confirmar_pedido_cliente/(:any)', 'Detalle_Venta::confirmarPedido/$1');
+$routes->post('/detalle_venta/delete/(:any)', 'Detalle_Venta::index');
 
 
 $routes->post('/cliente/crear', 'Cliente::crear');
 $routes->post('/cliente/actualizar', 'Cliente::actualizar');
 $routes->post('/user/configuracion', 'User::configuracion');
 
+$routes->get('/detalle_venta', 'Detalle_Venta::index');
+$routes->get('/pedido_venta', 'Pedido_Venta::index');
 
 
 /*
