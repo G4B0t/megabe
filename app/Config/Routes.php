@@ -116,7 +116,7 @@ $routes->post('/cliente/actualizar', 'Cliente::actualizar');
 $routes->post('/user/configuracion', 'User::configuracion');
 
 $routes->get('/detalle_venta', 'Detalle_Venta::index');
-
+$routes->get('/pedido_venta', 'Pedido_Venta::index');
 
 /*
  * --------------------------------------------------------------------
