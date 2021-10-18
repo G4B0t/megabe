@@ -95,9 +95,11 @@ $routes->get('/logout', 'User::logout',['as' =>'logout_post']);
 $routes->get('/registrar_nuevo', 'Cliente::nuevo');
 $routes->get('/cliente/(:any)/editar', 'Cliente::editar/$1');
 
-$routes->get('/mostrando/(:any)', 'Pedido_Venta::mostrando/$1');
+$routes->get('/pedido_venta/mostrando/(:any)', 'Pedido_Venta::mostrando/$1');
 $routes->get('/mis_pedidos', 'Pedido_Venta::index');
 $routes->get('/actualizar/(:any)', 'Pedido_Venta::actualizarVigente/$1');
+
+
 
 $routes->resource('item');
 $routes->resource('subcategoria');
@@ -111,8 +113,6 @@ $routes->get('/detalle_venta/(:any)/(:any)', 'Detalle_Venta::carrito/$1/$2');
 $routes->post('/detalle_venta/confirmar_pedido_cliente/(:any)', 'Detalle_Venta::confirmarPedido/$1');
 $routes->post('/detalle_venta/delete/(:any)', 'Detalle_Venta::delete/$1');
 $routes->post('/detalle_venta/carrito/(:any)', 'Detalle_Venta::carrito/$1');
-
-
 
 $routes->post('/cliente/crear', 'Cliente::crear');
 $routes->post('/cliente/actualizar', 'Cliente::actualizar');
