@@ -23,12 +23,13 @@ class Pedido_Venta extends BaseController {
         $id_cliente = $session->cliente;
 
         $id_pedido_vigente = $pedido_venta->getPedido($id_cliente);
-        $condiciones = ['pedido_venta.estado_sql' => '1', 'id_cliente' => $id_cliente];
+        $condiciones = ['pedido_venta.estado_sql' => '1', 'pedido_venta.id_cliente' => $id_cliente];
 
         $restricciones = ['detalle_venta.estado_sql'=> '1','id_pedido_venta' =>$id_pedido_vigente['id']];
         $data = [
             'pedido_venta' => $pedido_venta->asObject()
-            ->select('pedido_venta.*')
+            ->select('pedido_venta.*, auxiliar.nombre as estado_ref')
+            ->join('auxiliar','auxiliar.valor = pedido_venta.estado')
             ->where($condiciones)
             ->paginate(10,'pedido_venta'),
             
@@ -66,7 +67,8 @@ class Pedido_Venta extends BaseController {
         $condiciones = ['estado >=' => '0', 'estado_sql' => '1', 'id_cliente' => $id_cliente];
         $data = [
             'pedido_venta' => $pedido_venta->asObject()
-            ->select('pedido_venta.*')
+            ->select('pedido_venta.*, auxiliar.nombre as estado_ref')
+            ->join('auxiliar','auxiliar.valor = pedido_venta.estado')
             ->where($condiciones)
             ->paginate(10,'pedido_venta'),
             'pagers' => $pedido_venta->pager,
@@ -122,7 +124,13 @@ class Pedido_Venta extends BaseController {
 
         $admin = new Administracion_1();
 		$sesion = $admin->sesiones();
-
+        $vista='';
+        $central = false;
+        if($sesion['rol']=='Administrador'){
+            $vista='cliente';
+            $central = true;
+        }
+        $rol[] = (object) array('nombre' => $sesion['rol']);
         $dataHeader =[
             'title' => $title,
             'tipo'=>'header-inner-pages',
@@ -141,11 +149,13 @@ class Pedido_Venta extends BaseController {
             ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
             ->paginate(10,'marca'),
 
-            'rol' => $sesion['rol'],
+            'rol' => $rol,
 
 			'log' => $sesion['log'],
 
-            'vista'=>'cliente'
+            'vista'=>$vista,
+            
+            'central' => $central
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

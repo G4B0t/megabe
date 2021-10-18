@@ -57,7 +57,7 @@ class Cliente extends BaseController {
         $cliente = new m_cliente();
         $persona = new m_persona();
 
-        //if($this->validate('clientes') && $this->validate('personas')){
+        if($this->validate('clientes') && $this->validate('personas')){
             $foto = "";
             if($imagefile = $this->request->getFile('foto')) {
             
@@ -95,9 +95,9 @@ class Cliente extends BaseController {
                     'contrasena' =>hashPassword($this->request->getPost('contrasena')),
                     'email' =>$this->request->getPost('email')
                 ]);
-                return redirect()->to("/Home")->with('message', 'Nuevo Usuario Creado Con éxito.');  
+                return redirect()->to("/pedido_venta")->with('message', 'Nuevo Usuario Creado Con éxito.');  
             }
-       // }
+        }
         
         return redirect()->back()->withInput();
     }
@@ -256,7 +256,7 @@ class Cliente extends BaseController {
 
         $admin = new Administracion_1();
 		$sesion = $admin->sesiones();
-
+        $rol[] = (object) array('nombre' => 'Normal');
         $dataHeader =[
             'title' => $title,
             'tipo'=> 'header-inner-pages',
@@ -275,11 +275,11 @@ class Cliente extends BaseController {
             ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
             ->paginate(10,'marca'),
 
-            'rol' => $sesion['rol'],
+            'rol' =>$rol,
 
 			'log' => $sesion['log'],
 
-            'vista'=>'Home'
+            'vista'=>''
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

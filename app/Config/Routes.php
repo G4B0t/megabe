@@ -42,7 +42,7 @@ $routes->get('/subcategorias/(:any)', 'Home::menuSubcategoria/$1');
 $routes->get('/marcas/(:any)', 'Home::menuMarca/$1');
 
 $routes->get('/administracion', 'Administracion_1::index');
-$routes->get('/administracion/confirmar_pago/(:any)', 'Administracion_1::confirmar_pago/$1');
+$routes->post('/administracion/confirmar_pago/(:any)', 'Administracion_1::confirmar_pago/$1');
 $routes->get('/administracion/mostrar_detalle/(:any)', 'Administracion_1::mostrar_detalle/$1');
 $routes->get('/administracion/ver_pedidos', 'Administracion_1::listar');
 $routes->get('/administracion/ver_productos/(:any)', 'Administracion_1::ver_productos/$1');
@@ -84,6 +84,7 @@ $routes->get('/administracion/ver_pagados', 'Administracion_2::listar');
 $routes->get('/administracion/detalle_pagados/(:any)', 'Administracion_2::mostrar_detalle/$1');
 $routes->post('/administracion/entrega_confirmada/(:any)', 'Administracion_2::confirmar_entrega/$1');
 
+$routes->get('/administracion/cuadro_de_mando', 'Administracion_4::index');
 
 $routes->get('/imagen/(:any)/(:any)', 'Home::imagen/$1/$2',['as' =>'get_image']);
 $routes->get('/contacto/(:any)', 'Home::contacto/$1',['as' => 'contacto']);

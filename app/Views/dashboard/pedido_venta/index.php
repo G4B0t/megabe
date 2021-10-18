@@ -18,7 +18,6 @@
             <table class="table table-hover" data-aos="fade-up">
             <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Fecha</th>
                     <th>Estado</th>
                     <th>Opciones</th>
@@ -28,10 +27,9 @@
 
                 <?php foreach ($pedido_venta as $key => $m): ?>
                     <tr>
-                        <td><?= $m->id ?></td>
+
                         <td><?= $m->fecha ?></td>
-                        <td><?= $m->estado ?></td>
-                        
+                        <td><?= $m->estado_ref ?></td>
                         <td>
                             <a href="/pedido_venta/mostrando/<?= $m->id ?>" class="btn btn-primary">Ver</a>
                         </td>
@@ -49,31 +47,25 @@
             <table class="table table-hover" data-aos="fade-up">
                 <thead>
                     <tr>
-                        <th>Id</th>
+
                         <th>Codigo de Producto</th>
                         <th>Nombre de Producto</th>
                         <th>Cantidad</th>
                         <th>Precio Unitario</th>
                         <th>Total</th>
-                        <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
 
                     <?php foreach ($detalle_venta as $key => $m): ?>
                         <tr>
-                            <td><?= $m->id ?></td>
+
                             <td><?= $m->item_codigo ?></td>
                             <td><?= $m->item_nombre ?></td>
                             <td><?= $m->cantidad ?></td>
                             <td><?= $m->precio_unitario ?></td>
                             <td><?= $m->total ?></td>
-                            
-                            <td>
-                                <form action="/detalle_venta/delete/<?= $m->id ?>" method="POST">
-                                    <input type="submit" name="submit" value="Borrar" class="btn btn-outline-danger"/>
-                                </form>
-                            </td>
+
                         </tr>
                         <?php endforeach?>
                 </tbody>

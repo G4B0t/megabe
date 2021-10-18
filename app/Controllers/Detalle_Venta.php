@@ -312,7 +312,11 @@ class Detalle_Venta extends BaseController {
 		
 		$admin = new Administracion_1();
 		$sesion = $admin->sesiones();
-
+        $vista='';
+        if($sesion['rol']=='Administrador'){
+            $vista='cliente';
+        }
+        $rol[] = (object) array('nombre' => $sesion['rol']);
         $dataHeader =[
             'title' => $title,
             'tipo' =>'header-inner-pages',
@@ -331,11 +335,11 @@ class Detalle_Venta extends BaseController {
             ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
             ->paginate(10,'marca'),
 
-            'rol' => $sesion['rol'],
+            'rol' => $rol,
 
 			'log' => $sesion['log'],
 
-            'vista'=>'cliente'
+            'vista'=>$vista
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

@@ -1,30 +1,17 @@
-<main id="main">
-      <!-- ======= Breadcrumbs ======= -->
-      <section id="breadcrumbs" class="breadcrumbs">
-      <div class="container">
-        <div class="d-flex justify-content-between align-items-center">
-          <h2><?= $title ?></h2>
-          <h2><?= view("dashboard/partials/_session"); ?></h2>
-          <ol>
-            <li><a class="btn btn-outline-dark" role="button" href="/productos">Ver Productos</a></li>
-            </ol>
-        </div>
-      </div>
-    </section><!-- End Breadcrumbs -->
+
 
 
 <section class="inner-page">
     <div class="container">
-        
         <div class="mb-3 row">
-            <label for="nombre" class="col-sm-2 col-form-label" >Nombre:</label>
+            <label for="nombre" class="col-sm-2 col-form-label" ><span>*</span>Nombre:</label>
             <div class="col-sm-10">
                 <input class="form-control" type="input" id="nombre" name="nombre" value="<?=old('nombre', $persona->nombre)?>"/><br />
             </div>
         </div>
 
         <div class="mb-3 row">
-            <label for="apellido_paterno" class="col-sm-2 col-form-label">Apellido Paterno:</label>
+            <label for="apellido_paterno" class="col-sm-2 col-form-label"><span>*</span>Apellido Paterno:</label>
             <div class="col-sm-10">
                 <input class="form-control" type="input" id="apellido_paterno" name="apellido_paterno" value="<?=old('apellido_paterno', $persona->apellido_paterno)?>"/><br />
             </div>
@@ -38,7 +25,7 @@
         </div>
 
         <div class="mb-3 row">
-            <label for="nro_ci"  class="col-sm-2 col-form-label">Documento CI:</label>
+            <label for="nro_ci"  class="col-sm-2 col-form-label"><span>*</span>Documento CI:</label>
             <div class="col-sm-10">
                 <input class="form-control" type="input" id="nro_ci" name="nro_ci" value="<?=old('nro_ci', $persona->nro_ci)?>"/><br />
             </div>
@@ -123,35 +110,35 @@
 
 
         <div class="mb-3 row">
-            <label for="email" class="col-sm-2 col-form-label">EMAIL:</label>
+            <label for="email" class="col-sm-2 col-form-label"><span>*</span>EMAIL:</label>
             <div class="col-sm-10">
                 <input class="form-control" type="input" id="email" name="email" value="<?=old('email', $cliente->email)?>"/><br />
             </div>
         </div>
 
         <div class="mb-3 row">
-            <label for="usuario" class="col-sm-2 col-form-label">USUARIO:</label>
+            <label for="usuario" class="col-sm-2 col-form-label"><span>*</span>USUARIO:</label>
             <div class="col-sm-10">
                 <input class="form-control" type="input" id="usuario" name="usuario" value="<?=old('usuario', $cliente->usuario)?>"/><br />
             </div>
         </div>
 
         <div class="mb-3 row">
-            <label for="contrasena" class="col-sm-2 col-form-label">CONTRASEÑA:</label>
+            <label for="contrasena" class="col-sm-2 col-form-label"><span>*</span>CONTRASEÑA:</label>
             <div class="col-sm-10">
                 <input class="form-control" type="password" id="contrasena" name="contrasena" value="<?=old('contrasena', $cliente->contrasena)?>"/><br />
             </div>
         </div>
 
         <div class="mb-3 row">
-            <label for="nit" class="col-sm-2 col-form-label">NIT:</label>
+            <label for="nit" class="col-sm-2 col-form-label"><span>*</span>NIT:</label>
             <div class="col-sm-10">
                 <input class="form-control" type="input" id="nit" name="nit" value="<?=old('nit', $cliente->nit)?>"/><br />
             </div>
         </div>
 
         <div class="mb-3 row">
-            <label for="razon_social" class="col-sm-2 col-form-label">RAZON_SOCIAL:</label>
+            <label for="razon_social" class="col-sm-2 col-form-label"><span>*</span>RAZON_SOCIAL:</label>
             <div class="col-sm-10">
                 <input class="form-control" type="input" id="razon_social" name="razon_social" value="<?=old('razon_social', $cliente->razon_social)?>"/><br />
             </div>

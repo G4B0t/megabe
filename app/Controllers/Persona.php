@@ -2,6 +2,9 @@
 use App\Models\m_persona;
 use App\Controllers\BaseController;
 use \CodeIgniter\Exceptions\PageNotFoundException;
+use App\Models\m_subcategoria;
+use App\Models\m_categoria;
+use App\Models\m_marca;
 
 class Persona extends BaseController {
 
@@ -157,9 +160,44 @@ class Persona extends BaseController {
 
     private function _loadDefaultView($title,$data,$view){
 
+        $categoria = new m_categoria();
+		$subcategoria = new m_subcategoria();
+		$marca = new m_marca();
+
+        $admin = new Administracion_1();
+		$sesion = $admin->sesiones();
+        $vista='';
+        $central = false;
+        if($sesion['rol']=='Administrador'){
+            $vista='cliente';
+            $central = true;
+        }
+        $rol[] = (object) array('nombre' => $sesion['rol']);
         $dataHeader =[
             'title' => $title,
-            'tipo'=>'header-inner-pages'
+            'tipo'=>'header-inner-pages',
+
+            'categoria' => $categoria->asObject()
+            ->select('categoria.*')
+            ->paginate(10,'categoria'),
+
+			'subcategoria' => $subcategoria->asObject()
+            ->select('subcategoria.*')
+            ->join('categoria','categoria.id = subcategoria.id_categoria')
+            ->paginate(10,'subcategoria'),
+
+			'marca' => $marca->asObject()
+			->select('marca.*')
+            ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
+            ->paginate(10,'marca'),
+
+            'rol' => $rol,
+
+			'log' => $sesion['log'],
+
+            'vista'=>$vista,
+            
+            'central' => $central
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

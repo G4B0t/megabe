@@ -18,7 +18,6 @@
 <table class="table table-hover" data-aos="fade-up">
     <thead>
         <tr>
-            <th>Id</th>
             <th>Producto</th>
             <th>Codigo</th>
             <th>Cantidad</th>
@@ -31,7 +30,6 @@
 
         <?php foreach ($detalle_venta as $key => $m): ?>
             <tr>
-                <td><?= $m->id ?></td>
                 <td><?= $m->item_nombre ?></td>
                 <td><?= $m->item_codigo ?></td>
                 <td><?= $m->cantidad ?></td>

@@ -17,7 +17,7 @@ class Categoria extends BaseController {
             'pager' => $categoria->pager
         ];
 
-        $this->_loadDefaultView( 'Listado de Categorias',$data,'index','');
+        $this->_loadDefaultView( 'Listado de Categorias',$data,'index','header-inner-pages');
     }
 
     public function new(){
@@ -72,7 +72,7 @@ class Categoria extends BaseController {
 
         $validation =  \Config\Services::validation();
         $this->_loadDefaultView('Modificar Categoria',['validation'=>$validation,
-                                'categoria'=> $categoria->asObject()->find($id),],'edit','');
+                                'categoria'=> $categoria->asObject()->find($id),],'edit','header-inner-pages');
     }
 
     public function update($id = null){
@@ -164,14 +164,19 @@ class Categoria extends BaseController {
 
         $administracion = new administracion_1();
         $sesion = $administracion->sesiones();
-
+        $rol[] = (object) array('nombre' => 'Administrador');
         $dataHeader =[
             'title' => $title,
+
             'tipo' => $tipo,
 
-            'rol' => $sesion['rol'],
+            'rol' =>  $rol,
 
-			'log' => $sesion['log']
+			'log' => $sesion['log'],
+
+            'vista'=> '',
+
+            'central' => true
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

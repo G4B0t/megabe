@@ -254,7 +254,7 @@ class Home extends BaseController
 		
 		$admin = new Administracion_1();
 		$sesion = $admin->sesiones();
-
+		$rol[] = (object) array('nombre' => $sesion['rol']);
         $dataHeader =[
             'title' => $title,
 			'tipo' => $tipo,
@@ -273,14 +273,23 @@ class Home extends BaseController
             ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
             ->paginate(10,'marca'),
 
-			'rol' => $sesion['rol'],
+			'rol' => $rol,
 
 			'log' => $sesion['log'],
 
-			'vista' => 'home'
-        ];
+			'central'=>'',
 
-        echo view("dashboard/templates/header",$dataHeader);
+			'vista' => ''
+        ];
+		/*foreach($dataHeader['rol'] as $key =>$m){
+			if($m->nombre == 'Cliente'){
+				echo "<br>1</br>";
+			}
+			if($m->nombre == 'Normal' || $m->nombre == 'Cliente'){
+				echo "<br>2</br>";
+			}
+		}*/
+		echo view("dashboard/templates/header",$dataHeader);
         echo view("/$view",$data);
         echo view("dashboard/templates/footer");
     }

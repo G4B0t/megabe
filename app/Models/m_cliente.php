@@ -18,7 +18,7 @@ class m_cliente extends Model
 
     function getCliente($id){
         return $this->asArray()
-        ->select('persona.id ')
+        ->select('cliente.*, CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullName')
         ->join('persona','persona.id = cliente.id_persona')
         ->where('cliente.id',$id)
         ->first();

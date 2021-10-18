@@ -27,8 +27,8 @@ class Validation
 	];
 
 	public $items =[
-		'nombre' => 'min_length[3]|max_length[255]',
-		'descripcion' => 'min_length[3]|max_length[5000]'
+		'nombre' => 'required|min_length[3]|max_length[255]',
+		'descripcion' => 'required'
 	];
 	public $subcategorias =[
 		'nombre' => 'min_length[3]|max_length[255]',
@@ -48,18 +48,18 @@ class Validation
 	];
 
 	public $personas =[
-		'nombre' => 'min_length[3]|max_length[20]',
-		'apellido_parteno'=>'min_length[3]|max_length[20]'
+		'nombre' => 'required',
+		'apellido_parteno'=>'required|min_length[3]|max_length[20]'
 	];
 	public $empleados =[
-		'usuario' => 'min_length[3]|max_length[20] | is_unique[empleado.usuario]',
-		'email' => 'min_length[8]|max_length[50] | is_unique[empleado.email]',
-		'contrasena' => 'min_length[2]|max_length[20]'
+		'usuario' => 'required| min_length[3]|max_length[20] | [empleado.usuario]',
+		'email' => 'required| min_length[8]|max_length[50] | [empleado.email]',
+		'contrasena' => 'required|min_length[2]|max_length[20]'
 	];
 	public $clientes =[
-		'usuario' => 'min_length[3]|max_length[20] |is_unique[cliente.usuario]',
-		'email' => 'min_length[8]|max_length[50] | is_unique[cliente.email]',
-		'contrasena' => 'min_length[2]|max_length[20]'
+		'usuario' => 'required| min_length[3]|max_length[20] | [cliente.usuario]',
+		'email' => 'required| min_length[8]|max_length[50] | [cliente.email]',
+		'contrasena' => 'required|min_length[2]|max_length[20]'
 	];
 	public $cliente_password =[
 		'contrasena' => 'min_length[2]|max_length[20]'
@@ -80,7 +80,8 @@ class Validation
 	 * @var array<string, string>
 	 */
 	public $templates = [
-		'list'   => 'CodeIgniter\Validation\Views\list',
+		//'list'   => 'CodeIgniter\Validation\Views\list',
+		'list'   => 'App\Views\personalizacion\validacion',
 		'single' => 'CodeIgniter\Validation\Views\single',
 	];
 

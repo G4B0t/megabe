@@ -101,7 +101,7 @@ class User extends BaseController {
         $session = session();
         $session->destroy();
 
-        return redirect()->to('/home')->with('message', 'Sesion Cerrada!');
+        return redirect()->to('/')->with('message', 'Sesion Cerrada!');
     } 
 
     public function configuracion(){
@@ -117,8 +117,7 @@ class User extends BaseController {
         $categoria = new m_categoria();
 		$subcategoria = new m_subcategoria();
 		$marca = new m_marca();
-
-
+        $rol[] = (object) array('nombre' => 'Normal');
         $dataHeader =[
             'title' => $title,
             'tipo' => $tipo,
@@ -137,11 +136,13 @@ class User extends BaseController {
             ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
             ->paginate(10,'marca'),
 
-            'rol' => 'Normal',
+            'rol' =>$rol,
 
             'log' => 'login',
 
-            'vista'=> 'home'
+            'central'=>'',
+
+            'vista'=> ''
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

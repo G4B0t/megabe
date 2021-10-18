@@ -237,7 +237,7 @@ class Administracion_1 extends BaseController{
 
                         $body_comprobante = ['tipo_respaldo'=>'factura_venta',
                                             'fecha'=> $cDate,
-                                            'beneficiario'=>$beneficiario['cliente'],
+                                            'beneficiario'=>$beneficiario['fullName'],
                                             'glosa'=>'Ventas por pedido'
                                             ];
                         $impresion = ['codigo_qr' => '7',
@@ -294,7 +294,8 @@ class Administracion_1 extends BaseController{
                                                     ];
                                     $detalle_comprobante->insert($body_debe);
                                     $detalle_comprobante->insert($body_haber);
-                                    return redirect()->to('/administracion/ver_pedidos')->with('message', 'Pago CONFIRMADO con exito!');
+                                                 
+                                    //return redirect()->to('/administracion/ver_pedidos')->with('message', 'Pago CONFIRMADO con exito!');
                                 }   
                             }
                             
@@ -629,20 +630,15 @@ class Administracion_1 extends BaseController{
 		
 		if($es_empleado != null){ 
 			$rh = $empleado_rol->getByEmpleado($es_empleado['id']);
-			if (count($rh) > 1){
-				$rol = "Vendedor-Cajero";
-                return $sesion=['rol'=>$rol,'log'=>$log,'almacen'=> false];
-			}else{
-				$rs = $empleado_rol->getOneRol($es_empleado['id']);
-				$r = $role->getRol($rs['id_rol']);
-				$rol = $r['nombre'];
-                return $sesion=['rol'=>$rol,'log'=>$log,'almacen'=> $almacen];
-			}
+			$rol = $rh;
+            return $sesion=['rol'=>$rol,'log'=>$log,'almacen'=> false];
 		}else if($es_cliente != null){
-			$rol = "Cliente";
+            
+			$rol = 'Cliente';
             return $sesion=['rol'=>$rol,'log'=>$log,'almacen'=> false];
 		}else{
-			$rol = "Normal";
+           
+            $rol ='Normal';
             return $sesion=['rol'=>$rol,'log'=>$log,'almacen'=> false];
 		}
     }
@@ -682,7 +678,6 @@ class Administracion_1 extends BaseController{
 
 			'vista' => 'administracion'
         ];
-
         echo view("dashboard/templates/header",$dataHeader);
         echo view("administracion/$view",$data);
         echo view("dashboard/templates/footer");

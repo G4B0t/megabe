@@ -12,7 +12,7 @@
       </div>
     </section><!-- End Breadcrumbs -->
 
-<?= view("dashboard/partials/_session"); ?>
+    <h2><?= view("dashboard/partials/_session"); ?></h2>
 
 
 <table class="table table-hover" data-aos="fade-up">
