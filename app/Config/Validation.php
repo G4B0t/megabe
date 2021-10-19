@@ -70,8 +70,8 @@ class Validation
 		'contrasena' => 'min_length[2]|max_length[20]'	
 	];
 	public $logins =[
-		'password' => 'min_length[2] | max_length[20]',
-		'email' => 'min_length[2] | max_length[20]'	
+		'password' => 'min_length[2]|max_length[20]',
+		'email' => 'min_length[2]|max_length[20]'	
 	];
 	
 	/**
