@@ -60,7 +60,6 @@
                     <li><a class="nav-link scrollto" href="/#about">Megabe</a></li> 
                     <li><a class="nav-link scrollto" href="/mis_pedidos">Mis Pedidos</a></li>
                     <li><a class="nav-link scrollto" href="/detalle_venta">Mi Carrito</a></li>
-                    <li><a class="nav-link scrollto" href="/configuracion/2/edit">Configuracion</a></li>
                   <?php } ?>
 
                   <?php if($m->nombre == 'Normal' || $m->nombre == 'Cliente') { ?>
