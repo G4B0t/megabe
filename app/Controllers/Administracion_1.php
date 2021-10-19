@@ -85,11 +85,11 @@ class Administracion_1 extends BaseController{
             $detalle_debe = ['id_comprobante' => $comprobante->getInsertID(),
                         'id_cuenta'=>$caja_general->id,
                         'debe'=>$this->request->getPost('monto'),
-                        'haber'=>''
+                        'haber'=>'0'
                         ];
             $detalle_haber= ['id_comprobante' => $comprobante->getInsertID(),
                         'id_cuenta'=>$caja->id,
-                        'debe'=>'',
+                        'debe'=>'0',
                         'haber'=>$this->request->getPost('monto')
                         ];
             if($detalle_comprobante->insert($detalle_debe) && $detalle_comprobante->insert($detalle_haber)){
@@ -148,11 +148,11 @@ class Administracion_1 extends BaseController{
             $detalle_debe = ['id_comprobante' => $comprobante->getInsertID(),
                         'id_cuenta'=>$caja->id,
                         'debe'=>$this->request->getPost('monto'),
-                        'haber'=>''
+                        'haber'=>'0'
                         ];
             $detalle_haber= ['id_comprobante' => $comprobante->getInsertID(),
                         'id_cuenta'=>$caja_general->id,
-                        'debe'=>'',
+                        'debe'=>'0',
                         'haber'=>$this->request->getPost('monto')
                         ];
             if($detalle_comprobante->insert($detalle_debe) && $detalle_comprobante->insert($detalle_haber)){
@@ -269,12 +269,12 @@ class Administracion_1 extends BaseController{
                                     $body_debe = ['id_comprobante'=>$id_comprobante,
                                                     'id_cuenta'=>$cuenta['id'],
                                                     'debe'=>$factura['total'],
-                                                    'haber' => '',
+                                                    'haber' => '0',
                                                     'estado_sql'=> 1
                                                     ];
                                     $body_haber = ['id_comprobante'=>$id_comprobante,
                                                     'id_cuenta'=>$cuenta_haber['id'],
-                                                    'debe'=>  '',
+                                                    'debe'=>  '0',
                                                     'haber' =>$factura['total'],
                                                     'estado_sql'=> 1
                                                     ];
@@ -303,7 +303,7 @@ class Administracion_1 extends BaseController{
                                     }
                                     
                                                  
-                                    //return redirect()->to('/administracion/ver_pedidos')->with('message', 'Pago CONFIRMADO con exito!');
+                                //return redirect()->to('/administracion/ver_pedidos')->with('message', 'Pago CONFIRMADO con exito!');
                                 }   
                             }
                             

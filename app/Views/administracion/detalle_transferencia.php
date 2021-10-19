@@ -4,7 +4,7 @@
       <div class="container">
         <div class="d-flex justify-content-between align-items-center">
           <h2><?= $title ?></h2>
-          <h5><?= view("dashboard/partials/_session"); ?></h5>
+          <h4><?= view("dashboard/partials/_session"); ?></h4>
           <ol>
             <li><a class="btn btn-outline-dark" role="button" href="<?= route_to('contacto','Gabriel') ?>">Contacto</a></li>
             <li><a class="btn btn-outline-info" role="button" href="/administracion/show_items/<?=$id_transferencia?>" >Agregar más Productos</a></li>

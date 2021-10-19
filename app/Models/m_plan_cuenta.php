@@ -12,7 +12,7 @@ class m_plan_cuenta extends Model
 
     public function getBancos(){
         $restricciones = ['grupo'=>'D'];
-        $name = ['nombre_cuenta' => 'Banco'];
+        $name = ['nombre_cuenta' => 'BANCO'];
 
         return $this->asObject()
             ->select('plan_cuenta.*')
@@ -40,14 +40,14 @@ class m_plan_cuenta extends Model
      }
 
      public function getHaber(){
-        $restricciones = ['grupo' => 'D','nombre_cuenta'=>'Mercaderia en Almacen'];
+        $restricciones = ['grupo' => 'D','nombre_cuenta'=>'VENTAS'];
         return $this->asArray()
             ->select('plan_cuenta.*')
             ->where($restricciones)
             ->first();
      }
      public function getCajaGeneral(){
-        $restricciones = ['grupo' => 'D','nombre_cuenta'=>'Caja General'];
+        $restricciones = ['grupo' => 'D','nombre_cuenta'=>'CAJA 1 CENTRAl'];
         return $this->asObject()
             ->select('plan_cuenta.*')
             ->where($restricciones)

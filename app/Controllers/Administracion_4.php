@@ -72,7 +72,7 @@ class Administracion_4 extends BaseController{
                     ->join('detalle_venta','item.id = detalle_venta.id_item')
                     ->where('marca.id',$id)
                     ->groupBy('item.nombre,item.id,item.venta_esperada')
-                    ->pagina(10,'item'),
+                    ->paginate(10,'item'),
                 'pagers'=>$item->pager
         ];
         $this->_loadDefaultView( 'Cuadro de MANDO: Item', $data,'cuadro_mando/items');

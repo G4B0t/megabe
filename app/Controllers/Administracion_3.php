@@ -184,7 +184,7 @@ class Administracion_3 extends BaseController{
 
         $pedido_transferencia = $transferencia->getFirst();
         
-        $condiciones = ['transferencia.id' => $pedido_transferencia->id, 'transferencia.estado_sql' => 1,'transferencia.id_empleado1'=>$almacenero->id];
+        $condiciones = ['transferencia.id' => $pedido_transferencia->id, 'transferencia.estado_sql' => 1];
         $restricciones = ['detalle_transferencia.estado_sql'=> '1','id_transferencia' => $pedido_transferencia->id];
         $data = [
             'transferencia' => $transferencia->asObject()

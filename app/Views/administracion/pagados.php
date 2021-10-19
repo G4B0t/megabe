@@ -4,6 +4,7 @@
       <div class="container">
         <div class="d-flex justify-content-between align-items-center">
           <h2><?= $title ?></h2>
+          <h4><?= view("dashboard/partials/_session"); ?></h4>
           <ol>
             <li><a class="btn btn-outline-dark" role="button" href="<?= route_to('contacto','Gabriel') ?>">Contacto</a></li>
             </ol>
@@ -11,7 +12,6 @@
       </div>
     </section><!-- End Breadcrumbs -->
 
-    <?= view("dashboard/partials/_session"); ?>
 
     <div class="row">
         <div class="col-lg-4 col-md-6">
