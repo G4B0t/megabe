@@ -48,6 +48,11 @@ class Administracion_4 extends BaseController{
        
         $this->_loadDefaultView( 'Cuadro de MANDO', $data,'cuadro_mando');
     }
+
+    public function iniciar_gestion(){
+        echo "hola";
+    }
+
     public function cerrar_comprobante(){
         $generales = new m_generales();
 
@@ -90,7 +95,9 @@ class Administracion_4 extends BaseController{
                 $query3 = $db->query('INSERT INTO plan_cuenta_'.$general->gestion.' SELECT * FROM plan_cuenta;');
                 $this->cerrar_detalle_comprobante();
                 $this->cerrar_comprobante();
-                $generales->update('nombre_empresa = "MEGABE"']);
+                $db->query('UPDATE generales
+                            SET balAper = 0
+                            WHERE nombre_empresa = "MEGABE"');
                         
                 return redirect()->to('/administracion')->with('message', 'Se ha completado el Cierre de Gestion');
             } else {

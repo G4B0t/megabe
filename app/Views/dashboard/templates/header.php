@@ -116,6 +116,7 @@
                       <li><a class="nav-link scrollto active" href="/administracion/nuevo_comprobante">Comprobante</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/mayorizar">Mayorizacion</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/cierre_gestion">Cierre de Gestion</a></li>
+                      <li><a class="nav-link scrollto" href="/administracion/inicio_gestion">Inicio de Gestion</a></li>
                   <?php } ?>
 
                   

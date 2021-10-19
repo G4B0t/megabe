@@ -87,6 +87,7 @@ $routes->post('/administracion/entrega_confirmada/(:any)', 'Administracion_2::co
 $routes->get('/administracion/cuadro_de_mando', 'Administracion_4::index');
 $routes->get('/administracion/mayorizar', 'Administracion_4::plan_cuenta_mayorizar');
 $routes->get('/administracion/cierre_gestion', 'Administracion_4::cerrar_gestion');
+$routes->get('/administracion/inicio_gestion', 'Administracion_4::iniciar_gestion');
 
 $routes->get('/imagen/(:any)/(:any)', 'Home::imagen/$1/$2',['as' =>'get_image']);
 $routes->get('/contacto/(:any)', 'Home::contacto/$1',['as' => 'contacto']);
@@ -96,6 +97,7 @@ $routes->post('/login_user', 'User::login_post',['as' =>'user_login_post']);
 $routes->get('/logout', 'User::logout',['as' =>'logout_post']);
 $routes->get('/registrar_nuevo', 'Cliente::nuevo');
 $routes->get('/cliente/(:any)/editar', 'Cliente::editar/$1');
+$routes->get('/cliente/crear', 'Cliente::crear');
 $routes->get('/pedido_venta', 'Pedido_Venta::index');
 $routes->get('/pedido_venta/mostrando/(:any)', 'Pedido_Venta::mostrando/$1');
 $routes->get('/mis_pedidos', 'Pedido_Venta::index');
