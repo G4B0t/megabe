@@ -48,17 +48,18 @@ class Validation
 	];
 
 	public $personas =[
-		'nombre' => 'required',
-		'apellido_paterno'=>'required|max_length[20]'
+		'nombre' => 'required|max_length[20]',
+		'apellido_paterno'=>'required|max_length[20]',
+		'nro_ci'=>'required|max_length[20]|is_unique[persona.nro_ci]'
 	];
 	public $empleados =[
 		'usuario' => 'required|min_length[3]|max_length[20]|is_unique[empleado.usuario]',
-		'email' => 'required|min_length[8]|max_length[50]|is_unique[empleado.email]',
+		'email' => 'required|min_length[8]|max_length[50]',
 		'contrasena' => 'required|min_length[2]|max_length[20]'
 	];
 	public $clientes =[
 		'usuario' => 'required|min_length[4]|max_length[20]|is_unique[cliente.usuario]',
-		'email' => 'required|min_length[8]|max_length[50]|is_unique[cliente.email]',
+		'email' => 'required|valid_email',
 		'contrasena' => 'required|min_length[6]|max_length[20]'
 	];
 	public $cliente_password =[

@@ -56,8 +56,12 @@ class Cliente extends BaseController {
         helper("user");
         $cliente = new m_cliente();
         $persona = new m_persona();
+        
+        $db = \Config\Database::connect();
 
+        $email = $this->request->getPost('email');
         if($this->validate('clientes') && $this->validate('personas')){
+            
             $foto = "";
             if($imagefile = $this->request->getFile('foto')) {
             
@@ -66,8 +70,10 @@ class Cliente extends BaseController {
                         $foto = $imagefile->getRandomName();
                         $imagefile->move(WRITEPATH.'uploads/clientes', $foto);
                 }
-            }   
-            if($id_persona = $persona->insert([
+            }
+
+            
+            if($persona->insert([
                 'nombre' =>$this->request->getPost('nombre'),
                 'apellido_paterno' =>$this->request->getPost('apellido_paterno'),
                 'apellido_materno' =>$this->request->getPost('apellido_materno'),
@@ -87,19 +93,21 @@ class Cliente extends BaseController {
             ])){
                 $id_persona = $persona->getInsertID();
                     
-                $id = $cliente->insert([
+                if($cliente->insert([
                     'nit' =>$this->request->getPost('nit'),
                     'razon_social' =>$this->request->getPost('razon_social'),
                     'id_persona' =>$id_persona,
                     'usuario' =>$this->request->getPost('usuario'),
-                    'contrasena' =>hashPassword($this->request->getPost('contrasena')),
-                    'email' =>$this->request->getPost('email')
-                ]);
-                return redirect()->to("/")->with('message', 'Nuevo Usuario Creado Con éxito.');  
+                    'contrasena' =>hashPassword($this->request->getPost('contrasena')) ,
+                    'email'=>$this->request->getPost('email') 
+                ])){
+                    $id_cliente = $cliente->getInsertID();
+                    $query= $db->query('UPDATE cliente SET email="'.$email.'" WHERE id='.$id_cliente.';');
+                    return redirect()->to("/")->with('message', 'Nuevo Usuario Creado Con éxito.');
+                }  
             }
         }
-        
-        return redirect()->back()->withInput();
+        return redirect()->back()->withInput()->with('message', 'No se pudo registrar');
     }
 
      public function create(){
