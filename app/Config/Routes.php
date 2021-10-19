@@ -84,10 +84,16 @@ $routes->get('/administracion/ver_pagados', 'Administracion_2::listar');
 $routes->get('/administracion/detalle_pagados/(:any)', 'Administracion_2::mostrar_detalle/$1');
 $routes->post('/administracion/entrega_confirmada/(:any)', 'Administracion_2::confirmar_entrega/$1');
 
-$routes->get('/administracion/cuadro_de_mando', 'Administracion_4::index');
+$routes->get('/administracion/cuadro_categoria', 'Administracion_4::cuadro_mando_categoria');
+$routes->get('/administracion/cuadro_subcategoria/(:any)', 'Administracion_4::cuadro_mando_subcategoria/$1');
+$routes->get('/administracion/cuadro_marca/(:any)', 'Administracion_4::cuadro_mando_marca/$1');
+$routes->get('/administracion/cuadro_item/(:any)', 'Administracion_4::cuadro_mando_item/$1');
 $routes->get('/administracion/mayorizar', 'Administracion_4::plan_cuenta_mayorizar');
 $routes->get('/administracion/cierre_gestion', 'Administracion_4::cerrar_gestion');
 $routes->get('/administracion/inicio_gestion', 'Administracion_4::iniciar_gestion');
+$routes->post('/administracion/cambiar_gestion', 'Administracion_4::nueva_gestion');
+$routes->get('/administracion/balance_general', 'Administracion_4::generar_balance_general');
+
 
 $routes->get('/imagen/(:any)/(:any)', 'Home::imagen/$1/$2',['as' =>'get_image']);
 $routes->get('/contacto/(:any)', 'Home::contacto/$1',['as' => 'contacto']);

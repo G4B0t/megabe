@@ -254,7 +254,9 @@ class Home extends BaseController
 		
 		$admin = new Administracion_1();
 		$sesion = $admin->sesiones();
+
 		$rol[] = (object) array('nombre' => $sesion['rol']);
+		
         $dataHeader =[
             'title' => $title,
 			'tipo' => $tipo,
@@ -279,7 +281,7 @@ class Home extends BaseController
 
 			'central'=>'',
 
-			'vista' => ''
+			'vista' =>''
         ];
 		/*foreach($dataHeader['rol'] as $key =>$m){
 			if($m->nombre == 'Cliente'){

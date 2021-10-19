@@ -25,7 +25,6 @@
           <div class="col-lg-4 col-md-5 footer-links">
             <h4>Enlaces Útiles</h4>
             <ul>
-              <li><i class="bx bx-chevron-right"></i> <a href="/">Inicio</a></li>
               <li><i class="bx bx-chevron-right"></i> <a href="#about">Sobre Megabe</a></li>
             </ul>
           </div>
@@ -73,6 +72,7 @@
   <!-- Template Main JS File -->
   <script src="<?= base_url()?>/js/main.js"></script>
     <script src="<?= base_url()?>/bootstrap/js/popper.min.js"></script>
+    <script src="<?= base_url()?>/bootstrap/js/bootstrap-table.min.js"></script>
     <script src="<?= base_url()?>/bootstrap/js/bootstrap.min.js"></script>
 
     <script src="<?= base_url()?>/js/preimagen.js"></script>

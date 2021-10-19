@@ -184,15 +184,8 @@ class Item extends BaseController {
 		$role = new m_rol();
 		$empleado_rol = new m_empleado_rol();
 
-        $id_persona = 1;
-
-        $es_empleado = $persona->getEmpleado($id_persona);  
-
-        if($es_empleado != null){ 
-            $rs = $empleado_rol->getOneRol($es_empleado['id']);
-            $r = $role->getRol($rs['id_rol']);
-            $rol = $r['nombre'];
-        }
+        $administracion = new administracion_1();
+        $sesion = $administracion->sesiones();
 
         $dataHeader =[
             'title' => $title,
@@ -212,7 +205,15 @@ class Item extends BaseController {
             ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
             ->paginate(10,'marca'),
 
-            'rol' => 'Administrador'
+            'rol' => $sesion['rol'],
+
+			'log' => $sesion['log'],
+
+            'central'=>$sesion['almacen'],
+            
+            'vista' => 'administracion'
+
+
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

@@ -25,7 +25,13 @@
   <link href="<?= base_url()?>/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="<?= base_url()?>/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
+
   <!-- Template Main CSS File -->
+  <link href="<?= base_url()?>/bootstrap/css/bootstrap-grid.min.css" rel="stylesheet">
+  <link href="<?= base_url()?>/bootstrap/css/bootstrap-table.min.css" rel="stylesheet">
+  <link href="<?= base_url()?>/bootstrap/css/bootstrap-reboot.min.css" rel="stylesheet">
+  <link href="<?= base_url()?>/bootstrap/css/bootstrap-utilities.min.css" rel="stylesheet">
+  
   <link href="<?= base_url()?>/css/style.css" rel="stylesheet">
 
   <link href="<?= base_url()?>/css/imagenes.css" rel="stylesheet">
@@ -41,15 +47,15 @@
       <!-- Uncomment below if you prefer to use an image logo -->
       <!-- <a href="index.html" class="logo"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
-      <nav id="navbar" class="navbar">
+      <nav id="navbar" class="navbar ">
         <ul>
           <?php $i = 0; foreach($rol as $key =>$m):  $i++; ?>
 
                    <?php if($m->nombre == 'Administrador') { ?>
-                      <li><a class="nav-link scrollto active" href="/administracion/cuadro_de_mando">CUADRO DE MANDO</a></li>
+                      <li><a class="nav-link scrollto active" href="/administracion/cuadro_categoria">CUADRO DE MANDO</a></li>
                   <?php } ?>
 
-                  <?php if($m->nombre == "Cliente" || $m->nombre == "Administrador"){ ?>
+                  <?php if($m->nombre == "Cliente"){ ?>
                     <!-- MENU CLIENTE-->
                     <li><a class="nav-link scrollto" href="/#about">Megabe</a></li> 
                     <li><a class="nav-link scrollto" href="/mis_pedidos">Mis Pedidos</a></li>
@@ -111,10 +117,12 @@
                       <?php } ?>
                   <?php } ?>
                     
-                  <?php if ($m->nombre == "Contador" || $m->nombre == "Administrador"){?>
+                  <?php if ($m->nombre == "Contador"){?>
                       <!-- MENU CONTADOR -->
+                      
                       <li><a class="nav-link scrollto active" href="/administracion/nuevo_comprobante">Comprobante</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/mayorizar">Mayorizacion</a></li>
+                      <li><a class="nav-link scrollto" href="/administracion/balance_general">Balance General</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/cierre_gestion">Cierre de Gestion</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/inicio_gestion">Inicio de Gestion</a></li>
                   <?php } ?>

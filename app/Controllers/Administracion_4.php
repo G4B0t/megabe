@@ -46,11 +46,136 @@ class Administracion_4 extends BaseController{
             ];
         
        
-        $this->_loadDefaultView( 'Cuadro de MANDO', $data,'cuadro_mando');
+        $this->_loadDefaultView( 'Grafica de Torta', $data,'pie_chart');
     }
+    public function generar_balance_general(){
+        $plan_cuenta = new m_plan_cuenta();
+        $data =['cuentas' => $plan_cuenta->asObject()
+                        ->select('plan_cuenta.*')
+                        ->whereNotIn('plan_cuenta.nombre_cuenta',['INGRESOS'])
+                        ->paginate(10,'cuentas'),
 
+                'pagers'=>$plan_cuenta->pager
+
+        ];
+
+        $this->_loadDefaultView( 'Balance General', $data,'balance_general');
+    }
+    public function cuadro_mando_item($id){
+        $item = new m_item();
+
+        $data = ['item'=>$item->asObject()
+                    ->select('item.id,item.nombre,item.venta_esperada, sum(detalle_venta.cantidad) AS cantidad,((sum(detalle_venta.cantidad)/item.venta_esperada)*100) AS promedio')
+                    ->join('marca','marca.id = item.id_marca')
+                    ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
+                    ->join('categoria','categoria.id = subcategoria.id_categoria') 
+                    ->join('detalle_venta','item.id = detalle_venta.id_item')
+                    ->where('marca.id',$id)
+                    ->groupBy('item.nombre,item.id,item.venta_esperada')
+                    ->pagina(10,'item'),
+                'pagers'=>$item->pager
+        ];
+        $this->_loadDefaultView( 'Cuadro de MANDO: Item', $data,'cuadro_mando/items');
+
+    }
+    public function cuadro_mando_marca($id){
+        $marca = new m_marca();
+
+        $data = ['marca'=>$marca->asObject()
+                    ->select('marca.id,marca.nombre,marca.venta_esperada, sum(detalle_venta.cantidad) AS cantidad,((sum(detalle_venta.cantidad)/marca.venta_esperada)*100) AS promedio')
+                    ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
+                    ->join('categoria','categoria.id = subcategoria.id_categoria') 
+                    ->join('item','marca.id = item.id_marca')
+                    ->join('detalle_venta','item.id = detalle_venta.id_item')
+                    ->where('subcategoria.id',$id)
+                    ->groupBy('marca.nombre,marca.id,marca.venta_esperada')
+                    ->paginate(10,'marca'),
+                'pagers'=>$marca->pager
+        ];
+        $this->_loadDefaultView( 'Cuadro de MANDO: Marca', $data,'cuadro_mando/marcas');
+    }
+    public function cuadro_mando_subcategoria($id){
+        $subcategoria = new m_subcategoria();
+
+        $data = ['subcategoria'=>$subcategoria->asObject()
+                    ->select('subcategoria.id,subcategoria.nombre,subcategoria.venta_esperada, sum(detalle_venta.cantidad) AS cantidad,((sum(detalle_venta.cantidad)/subcategoria.venta_esperada)*100) AS promedio')
+                    ->join('categoria','categoria.id = subcategoria.id_categoria')
+                    ->join('marca','subcategoria.id = marca.id_subcategoria')
+                    ->join('item','marca.id = item.id_marca')
+                    ->join('detalle_venta','item.id = detalle_venta.id_item')
+                    ->where('categoria.id',$id)
+                    ->groupBy('subcategoria.nombre,subcategoria.id,subcategoria.venta_esperada')
+                    ->paginate(10,'subcategoria'),
+                'pagers'=>$subcategoria->pager
+        ];
+        $this->_loadDefaultView( 'Cuadro de MANDO: Subcategoria', $data,'cuadro_mando/subcategorias');
+    }
+    public function cuadro_mando_categoria(){
+        $categoria = new m_categoria();
+
+        $data = ['categoria'=>$categoria->asObject()
+                    ->select('categoria.id,categoria.nombre,categoria.venta_esperada, sum(detalle_venta.cantidad) AS cantidad,((sum(detalle_venta.cantidad)/categoria.venta_esperada)*100) AS promedio')
+                    ->join('subcategoria','categoria.id = subcategoria.id_categoria')
+                    ->join('marca','subcategoria.id = marca.id_subcategoria')
+                    ->join('item','marca.id = item.id_marca')
+                    ->join('detalle_venta','item.id = detalle_venta.id_item')
+                    ->groupBy('categoria.nombre,categoria.id,categoria.venta_esperada')
+                    ->paginate(10,'categoria'),
+                'pagers'=>$categoria->pager
+        ];
+        $this->_loadDefaultView( 'Cuadro de MANDO: Categoria', $data,'cuadro_mando/categorias');
+    }
+    public function nueva_gestion(){
+        $generales = new m_generales();
+        $comprobante = new m_comprobante();
+        $detalle_comprobante = new m_detalle_comprobante();
+        $plan_cuenta = new m_plan_cuenta();
+        $empleado = new m_empleado();
+
+        $db = \Config\Database::connect();
+
+        $session = session();
+        $id_empleado = $session->empleado;
+        $contador = $empleado->getContador($id_empleado);
+
+        $cuentas = $plan_cuenta->getCuentas();
+
+        $gestion = $this->request->getPost('gestion');
+        $cDate = date('Y-m-d H:i:s');
+        echo $gestion;
+        
+        if($db->query('UPDATE generales SET balAper = 1, gestion = "'.$gestion.'" WHERE nombre_empresa = "MEGABE"')){
+            
+            if($db->query('TRUNCATE TABLE detalle_comprobante;
+                            DELETE FROM comprobante WHERE 1; ALTER TABLE comprobante AUTO_INCREMENT = 1;')){
+                $body_comprobante = [
+                    'tipo_respaldo'=>'Comprobante',
+                    'fecha'=>$cDate,
+                    'beneficiario'=>$contador->fullname,
+                    'glosa'=>'Inicio de Gestion'
+                ];
+                    if($comprobante->insert($body_comprobante)){
+                        $id_comprobante = $comprobante->getInsertID();
+                        foreach($cuentas as $key => $m){
+                            $body_detalle = [
+                                'id_comprobante'=>$id_comprobante,
+                                'id_cuenta' => $m->id,
+                                'debe' => $m->debe,
+                                'haber'=>$m->haber
+                            ];
+                            $detalle_comprobante->insert($body_detalle);
+                        }
+                        return redirect()->to('/administracion')->with('message', 'Inicio de Gestion Completado');
+                    }
+            }
+        }
+        return redirect()->to('/administracion')->with('message', 'No se pudo realizar el Inicio de Gestion');
+    }
     public function iniciar_gestion(){
-        echo "hola";
+        $generales = new m_generales();
+
+        $data = ['general' =>$generales->asObject()->first()];
+        $this->_loadDefaultView( 'Inicio de Gestion', $data,'inicio_gestion');
     }
 
     public function cerrar_comprobante(){
@@ -104,11 +229,6 @@ class Administracion_4 extends BaseController{
                 return redirect()->to('/administracion')->with('message', 'No se pudo realizar el Cierre de Gestion');
             }
         }
-
-      
-
-        
-
         
     }
     public function sumar_recursivo($id_cuenta, $debe, $haber,$d,$h){
