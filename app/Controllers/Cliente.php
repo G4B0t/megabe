@@ -52,7 +52,7 @@ class Cliente extends BaseController {
         $this->_loadDefaultView('Crear Cliente',['validation'=>$validation, 'cliente'=> new m_cliente(),
                                  'persona' => new m_persona()],'nuevoUser');
      }
-     public function crear(){
+    public function crear(){
         helper("user");
         $cliente = new m_cliente();
         $persona = new m_persona();

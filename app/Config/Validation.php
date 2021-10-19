@@ -49,7 +49,7 @@ class Validation
 
 	public $personas =[
 		'nombre' => 'required',
-		'apellido_paterno'=>'required|min_length[3]|max_length[20]'
+		'apellido_paterno'=>'required|max_length[20]'
 	];
 	public $empleados =[
 		'usuario' => 'required| min_length[3]|max_length[20] | [empleado.usuario]',
@@ -57,20 +57,20 @@ class Validation
 		'contrasena' => 'required|min_length[2]|max_length[20]'
 	];
 	public $clientes =[
-		'usuario' => 'required| min_length[3]|max_length[20] | [cliente.usuario]',
-		'email' => 'required| min_length[8]|max_length[50] | [cliente.email]',
-		'contrasena' => 'required|min_length[2]|max_length[20]'
+		'usuario' => 'required| min_length[4]|max_length[20] ',
+		'email' => 'required| min_length[8]|max_length[50] ',
+		'contrasena' => 'required| min_length[6]|max_length[20]'
 	];
 	public $cliente_password =[
 		'contrasena' => 'min_length[2]|max_length[20]'
 	
 	];
 	public $empleado_password =[
-		'contrasena' => 'in_length[2]|max_length[20]'	
+		'contrasena' => 'min_length[2]|max_length[20]'	
 	];
 	public $logins =[
-		'password' => 'min_length[2]|max_length[20]',
-		'email' => 'min_length[2]|max_length[20]'	
+		'password' => 'min_length[2] | max_length[20]',
+		'email' => 'min_length[2] | max_length[20]'	
 	];
 	
 	/**

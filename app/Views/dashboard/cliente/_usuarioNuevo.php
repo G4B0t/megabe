@@ -32,28 +32,28 @@
         </div>
 
         <div class="mb-3 row">
-            <label for="direccion_particular"  class="col-sm-2 col-form-label">Direccion Particular:</label>
+            <label for="direccion_particular"  class="col-sm-2 col-form-label">Dirección Particular:</label>
             <div class="col-sm-10">
                 <textarea class="form-control" name="direccion_particular" id="direccion_particular"><?=old('direccion_particular', $persona->direccion_particular)?></textarea><br />
             </div>
         </div>
 
         <div class="mb-3 row">
-            <label for="direccion_trabajo"  class="col-sm-2 col-form-label">Direccion de Trabajo:</label>
+            <label for="direccion_trabajo"  class="col-sm-2 col-form-label">Dirección de Trabajo:</label>
             <div class="col-sm-10">
                 <textarea class="form-control" name="direccion_trabajo" id="direccion_trabajo"><?=old('direccion_trabajo', $persona->direccion_trabajo)?></textarea><br />
             </div>
         </div>
 
         <div class="mb-3 row">
-            <label for="telefono_particular"  class="col-sm-2 col-form-label">Telefono personal:</label>
+            <label for="telefono_particular"  class="col-sm-2 col-form-label">Teléfono personal:</label>
             <div class="col-sm-10">
                 <input class="form-control" type="input" id="telefono_particular" name="telefono_particular" value="<?=old('telefono_particular', $persona->telefono_particular)?>"/><br />
             </div>
         </div>
 
         <div class="mb-3 row">
-            <label for="telefono_trabajo"  class="col-sm-2 col-form-label">Telefono de Trabajo:</label>
+            <label for="telefono_trabajo"  class="col-sm-2 col-form-label">Teléfono de Trabajo:</label>
             <div class="col-sm-10">
                 <input class="form-control" type="input" id="telefono_trabajo" name="telefono_trabajo" value="<?=old('telefono_trabajo', $persona->telefono_trabajo)?>"/><br />
             </div>
@@ -63,20 +63,6 @@
             <label for="zona_vivienda"  class="col-sm-2 col-form-label">Barrio:</label>
             <div class="col-sm-10">
                 <textarea class="form-control" name="zona_vivienda" id="zona_vivienda"><?=old('zona_vivienda', $persona->zona_vivienda)?></textarea><br />
-            </div>
-        </div>
-
-        <div class="mb-3 row">
-            <label for="latitud_vivienda"  class="col-sm-2 col-form-label">Latitud:</label>
-            <div class="col-sm-10">
-                <input class="form-control" type="input" id="latitud_vivienda" name="latitud_vivienda" value="<?=old('latitud_vivienda', $persona->latitud_vivienda)?>"/><br />
-            </div>
-        </div>
-
-        <div class="mb-3 row">
-            <label for="longitud_vivienda"  class="col-sm-2 col-form-label">Longitud:</label>
-            <div class="col-sm-10">
-                <input class="form-control" type="input" id="longitud_vivienda" name="longitud_vivienda" value="<?=old('longitud_vivienda', $persona->longitud_vivienda)?>"/><br />
             </div>
         </div>
 
@@ -102,7 +88,7 @@
         </div>
 
         <div class="mb-3 row">
-            <label for="ocupacion" class="col-sm-2 col-form-label">Ocupacion:</label>
+            <label for="ocupacion" class="col-sm-2 col-form-label">Ocupación:</label>
             <div class="col-sm-10">
                 <input class="form-control" type="input" id="ocupacion" name="ocupacion" value="<?=old('ocupacion', $persona->ocupacion)?>"/><br />
             </div>
