@@ -97,7 +97,6 @@ $routes->post('/login_user', 'User::login_post',['as' =>'user_login_post']);
 $routes->get('/logout', 'User::logout',['as' =>'logout_post']);
 $routes->get('/registrar_nuevo', 'Cliente::nuevo');
 $routes->get('/cliente/(:any)/editar', 'Cliente::editar/$1');
-$routes->get('/cliente/crear', 'Cliente::crear');
 $routes->get('/pedido_venta', 'Pedido_Venta::index');
 $routes->get('/pedido_venta/mostrando/(:any)', 'Pedido_Venta::mostrando/$1');
 $routes->get('/mis_pedidos', 'Pedido_Venta::index');
