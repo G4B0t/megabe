@@ -23,4 +23,10 @@ class m_detalle_comprobante extends Model
             ->findAll();
     }
 
+    public function getAll(){
+        return $this->asObject()
+            ->select('detalle_comprobante.*, plan_cuenta.id_cuenta_padre')
+            ->join('plan_cuenta','detalle_comprobante.id_cuenta = plan_cuenta.id')
+            ->findAll();
+    }
 }

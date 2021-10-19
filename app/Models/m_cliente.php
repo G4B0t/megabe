@@ -11,9 +11,24 @@ class m_cliente extends Model
 
     function getAll(){
         return $this->asArray()
-        ->select('cliente.*, persona.nombre as cliente')
+        ->select('cliente.*,CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullName')
         ->join('persona','persona.id = cliente.id_persona')
         ->findAll();
+    }
+
+    function getTodos(){
+        return $this->asObject()
+        ->select('cliente.id, cliente.id_persona,CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullName')
+        ->join('persona','persona.id = cliente.id_persona')
+        ->findAll();
+    }
+
+    function getOne($id){
+        return $this->asObject()
+        ->select('cliente.*, CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullName')
+        ->join('persona','persona.id = cliente.id_persona')
+        ->where('cliente.id',$id)
+        ->first();
     }
 
     function getCliente($id){
@@ -23,4 +38,5 @@ class m_cliente extends Model
         ->where('cliente.id',$id)
         ->first();
     }
+
 }

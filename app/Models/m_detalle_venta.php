@@ -31,12 +31,12 @@ class m_detalle_venta extends Model
 
     public function getFullDetalle($id_pedido)
     {
-        $condiciones = ['id_pedido_venta' => $id_pedido,'estado_sql'=>'1'];
+        $condiciones = ['detalle_venta.id_pedido_venta' => $id_pedido,'detalle_venta.estado_sql'=>'1'];
         return $this->asObject()
-            ->select('detalle_venta.*')
+            ->select('detalle_venta.*,item.nombre')
+            ->join('item','detalle_venta.id_item = item.id')
             ->where($condiciones)
             ->findAll();
     }
-
 
 }

@@ -62,5 +62,18 @@ class m_plan_cuenta extends Model
             ->findAll();
      }
 
+     public function getByID( $id_cuenta){
+        $restricciones = ['id' => $id_cuenta];
+        return $this->asObject()
+            ->select('plan_cuenta.*')
+            ->where($restricciones)
+            ->first();
+     }
+
+     public function getAll(){
+        return $this->asObject()
+        ->findAll();
+     }
+
 
 }

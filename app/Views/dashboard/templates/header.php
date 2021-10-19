@@ -43,7 +43,6 @@
 
       <nav id="navbar" class="navbar">
         <ul>
-        <li><a class="nav-link scrollto" href="/#about">Megabe</a></li> 
           <?php $i = 0; foreach($rol as $key =>$m):  $i++; ?>
 
                    <?php if($m->nombre == 'Administrador') { ?>
@@ -52,6 +51,7 @@
 
                   <?php if($m->nombre == "Cliente" || $m->nombre == "Administrador"){ ?>
                     <!-- MENU CLIENTE-->
+                    <li><a class="nav-link scrollto" href="/#about">Megabe</a></li> 
                     <li><a class="nav-link scrollto" href="/mis_pedidos">Mis Pedidos</a></li>
                     <li><a class="nav-link scrollto" href="/detalle_venta">Mi Carrito</a></li>
                     <li><a class="nav-link scrollto" href="/configuracion/2/edit">Configuracion</a></li>
@@ -114,7 +114,7 @@
                   <?php if ($m->nombre == "Contador" || $m->nombre == "Administrador"){?>
                       <!-- MENU CONTADOR -->
                       <li><a class="nav-link scrollto active" href="/administracion/nuevo_comprobante">Comprobante</a></li>
-                      <li><a class="nav-link scrollto" href="/administracion/inicio_gestion">Inicio de Gestion</a></li>
+                      <li><a class="nav-link scrollto" href="/administracion/mayorizar">Mayorizacion</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/cierre_gestion">Cierre de Gestion</a></li>
                   <?php } ?>
 

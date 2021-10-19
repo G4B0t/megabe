@@ -13,7 +13,7 @@
 
       </div>
     </section><!-- End Breadcrumbs -->
-
+    <?= view("dashboard/partials/_form-error"); ?>
 <table class="table table-hover" data-aos="fade-up">
     <thead>
         <tr>
@@ -66,7 +66,16 @@
       </div>
       <div class="modal-body">
         <form id="confirmForm" action="/administracion/confirmar_pedido/<?= $id_pedido ?>" method="POST" enctype="multipart/form-data">
-           
+        
+        <div class="mb-3">
+                <input type="checkbox" name="myCheckbox" id="clienteCB" value="1"/><span>Cliente</span>
+                <select class="form-select" name="cliente" id="cliente">
+                    <?php foreach ($cliente as $c): ?>
+                        <option <?= $c->id !== $c->id_persona ?: "selected"?> value="<?= $c->id ?>"><?= $c->fullName ?> </option>
+                    <?php endforeach?>
+                </select>
+                
+        </div>
         <div class="mb-3 row">
             <label for="nombre" class="col-sm-2 col-form-label" >Nombre:</label>
             <div class="col-sm-10">

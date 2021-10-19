@@ -49,7 +49,7 @@ class Validation
 
 	public $personas =[
 		'nombre' => 'required',
-		'apellido_parteno'=>'required|min_length[3]|max_length[20]'
+		'apellido_paterno'=>'required|min_length[3]|max_length[20]'
 	];
 	public $empleados =[
 		'usuario' => 'required| min_length[3]|max_length[20] | [empleado.usuario]',

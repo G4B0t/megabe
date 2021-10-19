@@ -189,6 +189,7 @@ class Administracion_1 extends BaseController{
         $detalle_venta = new m_detalle_venta();
         $detalle_comprobante = new m_detalle_comprobante();
         $item_almacen = new m_item_almacen();
+        $item = new m_item();
         $comprobante = new m_comprobante();
         $plan_cuenta = new m_plan_cuenta();
         $cliente = new m_cliente();
@@ -207,7 +208,8 @@ class Administracion_1 extends BaseController{
         $caja = $this->request->getPost('cajas');
 
         $id_cuenta = $this->checkCuenta($banco,$caja);
-
+        $tipo_respaldo = 'factura_venta';
+        $glosa ='Ventas por pedido';
         if($id_cuenta != null){
             $cuenta = $plan_cuenta->getOne($id_cuenta);
             
@@ -235,31 +237,11 @@ class Administracion_1 extends BaseController{
                                         'observaciones'=> $pdf
                                         ];
 
-                        $body_comprobante = ['tipo_respaldo'=>'factura_venta',
+                        $body_comprobante = ['tipo_respaldo'=>$tipo_respaldo,
                                             'fecha'=> $cDate,
                                             'beneficiario'=>$beneficiario['fullName'],
-                                            'glosa'=>'Ventas por pedido'
+                                            'glosa'=>$glosa
                                             ];
-                        $impresion = ['codigo_qr' => '7',
-                                    'razon_social' =>$empresa['nombre_empresa'],
-                                    'direccion'=>$empresa['direccion'],
-                                    'contacto' =>$empresa['contacto'],
-                                    'nit'=>$empresa['nit_empresa'],
-                                    'nro'=>'2',
-                                    'autorizacion' =>'3',
-                                    'fecha'=>$cDate,
-                                    'cliente' => $beneficiario['razon_social'],
-                                    'nit_cliente' => $beneficiario['nit'],
-                                    'detalle'=>$productos,
-                                    'literal'=>'9',
-                                    'total'=>$pedido['total'],
-                                    'codigo_control' => '5',
-                                    'fecha_limite_emision'=>'10',
-                                    'actividad_principal'=> '11',
-                                    'actividad_secundaria'=>'',
-                                    'leyenda' => '12',
-                                    'logo' => '13'         
-                                ];
 
                         if($pedido_venta->update($id_pedido, [
                             'estado' =>'2'              
@@ -268,10 +250,14 @@ class Administracion_1 extends BaseController{
                                 $nuevo_stock = 0;
                                     foreach($productos as $key => $m){   
                                         $items = $item_almacen->getOne($m->id_item,$trabajador['id_almacen']);
+                                        $product = $item->getOne($m->id_item);
                                         $stock_almacen = $items['stock'];
+                                        $stock_items =  $product->stock;
                                         $cantidad = $m->cantidad;
                                         $nuevo_stock = $stock_almacen - $cantidad; 
+                                        $nuevo_item_stock = $stock_items - $cantidad;
                                         $item_almacen->update($items['id'],['stock'=> $nuevo_stock]);
+                                        $item->update($product->id,['stock'=> $nuevo_item_stock]);
                                    }
 
                                 $id_factura = $factura_venta->getInsertID();
@@ -292,8 +278,30 @@ class Administracion_1 extends BaseController{
                                                     'haber' =>$factura['total'],
                                                     'estado_sql'=> 1
                                                     ];
-                                    $detalle_comprobante->insert($body_debe);
-                                    $detalle_comprobante->insert($body_haber);
+                                    if($detalle_comprobante->insert($body_debe) && $detalle_comprobante->insert($body_haber)){
+
+                                       
+                                        $dirComp= base_url()."/dashboard/assets/factura.html";
+                                        $file = file_get_contents($dirComp,0);
+                                        $file = str_ireplace('[NIT_CLIENTE]',$beneficiario['nit'], $file);
+                                        $file = str_ireplace('[CLIENTE]',$beneficiario['razon_social'], $file);
+                                        $file = str_ireplace('[NIT]',$empresa['nit_empresa'], $file);
+                                        $file = str_ireplace('[NRO]',$id_factura, $file);
+                                        $file = str_ireplace('[RAZON_SOCIAL]',$empresa['nombre_empresa'], $file);
+                                        $file = str_ireplace('[DIRECCION]',$empresa['direccion'], $file);  
+                                        $file = str_ireplace('[CONTACTO]',$empresa['contacto'], $file); 
+                                        $file = str_ireplace('[TIPO_RESPALDO]',$tipo_respaldo, $file);
+                                        $file = str_ireplace('[BENEFICIARIO]',$beneficiario['fullName'], $file);
+                                        $file = str_ireplace('[FECHA]',$cDate, $file);  
+                                        $file = str_ireplace('[GLOSA]',$glosa, $file);
+                                        $sefini="";
+                                        foreach($productos as $key => $m){
+                                            $sefini .= '<tr><td>'.$m->nombre.'</td><td>'.$m->cantidad.'</td><td>'.$m->precio_unitario.'</td><td>'.$m->total.'</td><td> </td></tr>';
+                                        } 
+                                        $file = str_ireplace('[DETALLE]', $sefini, $file);
+                                        echo $file;
+                                    }
+                                    
                                                  
                                     //return redirect()->to('/administracion/ver_pedidos')->with('message', 'Pago CONFIRMADO con exito!');
                                 }   
@@ -426,6 +434,7 @@ class Administracion_1 extends BaseController{
     }
 
     public function confirmar_pedido($id_pedido){
+        
         helper("user");
         $pedido_venta = new m_pedido_venta();
         $detalle_venta = new m_detalle_venta();
@@ -438,33 +447,56 @@ class Administracion_1 extends BaseController{
 
         $pedido = $pedido_venta->getById($id_pedido);
 
-        if($persona->insert($new_persona)){
-            $new_password = $this->request->getPost('nombre').'.'.$this->request->getPost('apellido_paterno');
-            $new_cliente = ['usuario'=>$this->request->getPost('nro_ci'),
-                            'contrasena'=>hashPassword($new_password),
-                            'razon_social'=>$this->request->getPost('razon_social'),
-                            'nit'=>$this->request->getPost('nro_ci'),
-                            'id_persona'=>$persona->getInsertID()];
-            if($cliente->insert($new_cliente)){
+        $checkBox = $this->request->getPost('myCheckbox');
+        if($checkBox == '1'){
+            $id_cliente = $this->request->getPost('cliente');
+            $client = $cliente->getOne($id_cliente);
+            if($client != null){
                 $detalles = $detalle_venta->getFullDetalle($pedido->id);
                 $total = 0;
                 foreach($detalles as $key => $m){
                     $total += $m->total;
                 }     
-                $condiciones = ['estado'=>'1','total'=>$total,'id_cliente'=>$cliente->getInsertID()];
+                $condiciones = ['estado'=>'1','total'=>$total,'id_cliente'=>$id_cliente];
                 if($pedido_venta->update($pedido->id,$condiciones)){
-                $this->listar();
+                    $this->listar();
                 }
             }
         }else{
-            return redirect()->to('/administracion/ver_productos/'.$id_pedido)->with('message', 'No se pudo confirmar el pedido');
+            /*if($this->validate('personas')){
+                if($persona->insert($new_persona)){
+                    $new_password = $this->request->getPost('nombre').'.'.$this->request->getPost('apellido_paterno');
+                    $new_cliente = ['usuario'=>$this->request->getPost('nro_ci'),
+                                    'contrasena'=>hashPassword($new_password),
+                                    'razon_social'=>$this->request->getPost('razon_social'),
+                                    'nit'=>$this->request->getPost('nro_ci'),
+                                    'id_persona'=>$persona->getInsertID()];
+                    if($cliente->insert($new_cliente)){
+                        $detalles = $detalle_venta->getFullDetalle($pedido->id);
+                        $total = 0;
+                        foreach($detalles as $key => $m){
+                            $total += $m->total;
+                        }     
+                        $condiciones = ['estado'=>'1','total'=>$total,'id_cliente'=>$cliente->getInsertID()];
+                        if($pedido_venta->update($pedido->id,$condiciones)){
+                            $this->listar();
+                        }
+                   }
+                
+                }
+            }else{
+                return redirect()->back()->withInput();
+            }*/
         }
-        
+
     }
 
     public function mostrar_carrito($id_pedido){
+        $validation =  \Config\Services::validation();
         $pedido_venta = new m_pedido_venta();
         $detalle_venta = new m_detalle_venta();
+        $cliente = new m_cliente();
+        $persona = new m_persona();
 
         if($pedido = $pedido_venta->getById($id_pedido)){
 
@@ -476,6 +508,7 @@ class Administracion_1 extends BaseController{
                 $total += $m->total;
             }
             
+            $clientes = $cliente->getTodos();
             $data = [
                 'detalle_venta' => $detalle_venta->asObject()
                 ->select('detalle_venta.*, item.nombre as item_nombre, item.codigo as item_codigo,pedido_venta.moneda')
@@ -487,7 +520,11 @@ class Administracion_1 extends BaseController{
 
                 'total' => $total,
 
-                'id_pedido' => $pedido->id
+                'id_pedido' => $pedido->id,
+
+                'cliente' => $clientes,
+
+                'validation'=>$validation
             ];
 
             $this->_loadDefaultView( 'Detalle de Pedido',$data,'detalle_pedido');
