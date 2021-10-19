@@ -95,7 +95,7 @@ class Cliente extends BaseController {
                     'contrasena' =>hashPassword($this->request->getPost('contrasena')),
                     'email' =>$this->request->getPost('email')
                 ]);
-                return redirect()->to("/pedido_venta")->with('message', 'Nuevo Usuario Creado Con éxito.');  
+                return redirect()->to("/")->with('message', 'Nuevo Usuario Creado Con éxito.');  
             }
         }
         

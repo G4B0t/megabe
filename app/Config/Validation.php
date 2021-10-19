@@ -52,14 +52,14 @@ class Validation
 		'apellido_paterno'=>'required|max_length[20]'
 	];
 	public $empleados =[
-		'usuario' => 'required| min_length[3]|max_length[20] | [empleado.usuario]',
-		'email' => 'required| min_length[8]|max_length[50] | [empleado.email]',
+		'usuario' => 'required|min_length[3]|max_length[20]|is_unique[empleado.usuario]',
+		'email' => 'required|min_length[8]|max_length[50]|is_unique[empleado.email]',
 		'contrasena' => 'required|min_length[2]|max_length[20]'
 	];
 	public $clientes =[
-		'usuario' => 'required| min_length[4]|max_length[20] ',
-		'email' => 'required| min_length[8]|max_length[50] ',
-		'contrasena' => 'required| min_length[6]|max_length[20]'
+		'usuario' => 'required|min_length[4]|max_length[20]|is_unique[cliente.usuario]',
+		'email' => 'required|min_length[8]|max_length[50]|is_unique[cliente.email]',
+		'contrasena' => 'required|min_length[6]|max_length[20]'
 	];
 	public $cliente_password =[
 		'contrasena' => 'min_length[2]|max_length[20]'
