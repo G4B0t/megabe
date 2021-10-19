@@ -11,7 +11,7 @@
               <h3>MEGABE</h3>
               <p>
                 Barrio Salamanca <br>
-                Tarija, Bolivia<br><br>
+                Tarija - Bolivia<br><br>
                 <strong>Phone:</strong> +591 65810249<br>
                 <strong>Email:</strong> gabrielefrain23@gmail.com<br>
               </p>
@@ -23,9 +23,9 @@
           </div>
 
           <div class="col-lg-4 col-md-5 footer-links">
-            <h4>Enlaces Utiles</h4>
+            <h4>Enlaces Útiles</h4>
             <ul>
-              <li><i class="bx bx-chevron-right"></i> <a href="/">Incio</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="/">Inicio</a></li>
               <li><i class="bx bx-chevron-right"></i> <a href="#about">Sobre Megabe</a></li>
             </ul>
           </div>
@@ -35,7 +35,7 @@
             <ul>
               <li><i class="bx bx-chevron-right"></i> <a href="#">Diseño WEB</a></li>
               <li><i class="bx bx-chevron-right"></i> <a href="#">Desarrollo WEB</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Informatica Juridica</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Informática Jurídica</a></li>
               <li><i class="bx bx-chevron-right"></i> <a href="#">Marketing</a></li>
             </ul>
           </div>
@@ -53,7 +53,7 @@
         <!-- You can delete the links only if you purchased the pro version. -->
         <!-- Licensing information: https://bootstrapmade.com/license/ -->
         <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/dewi-free-multi-purpose-html-template/ -->
-        Diseñado por Gabriel Torrejon
+        Diseñado por Gabriel Torrejón
       </div>
     </div>
 

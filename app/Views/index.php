@@ -3,7 +3,7 @@
  <section id="hero">
     <div class="hero-container" data-aos="fade-up" data-aos-delay="150">
       <h2><?= view("dashboard/partials/_session"); ?></h2>
-      <h1>Buen Precio, Calidad y Atencion.</h1>
+      <h1>Buen Precio, Calidad y Atención.</h1>
       <h2>Somos un equipo lleno de ingenieros talentosos</h2>
       <div class="d-flex">
         <a href="#about" class="btn-get-started scrollto">Empecemos</a>
@@ -65,17 +65,17 @@
           </div>
 
           <div class="col-lg-6 pt-3 pt-lg-0 content">
-            <h3>Somos los mejores en venta de articulos.</h3>
+            <h3>Somos los mejores en venta de artículos.</h3>
             <p class="fst-italic">
              Ubicado en Tarija, Santa Cruz y Cochabamba.
             </p>
             <ul>
               <li><i class="bx bx-check-double"></i> Compromiso.</li>
-              <li><i class="bx bx-check-double"></i> Calidad de Atencion.</li>
+              <li><i class="bx bx-check-double"></i> Calidad de Atención.</li>
               <li><i class="bx bx-check-double"></i> Productos de Calidad.</li>
             </ul>
             <p>
-              Empresa Comercial dedicada a la venta de articulos no percederos
+              Empresa Comercial dedicada a la venta de artículos no percederos
             </p>
           </div>
 
