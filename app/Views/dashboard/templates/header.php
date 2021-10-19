@@ -27,10 +27,6 @@
 
 
   <!-- Template Main CSS File -->
-  <link href="<?= base_url()?>/bootstrap/css/bootstrap-grid.min.css" rel="stylesheet">
-  <link href="<?= base_url()?>/bootstrap/css/bootstrap-table.min.css" rel="stylesheet">
-  <link href="<?= base_url()?>/bootstrap/css/bootstrap-reboot.min.css" rel="stylesheet">
-  <link href="<?= base_url()?>/bootstrap/css/bootstrap-utilities.min.css" rel="stylesheet">
   
   <link href="<?= base_url()?>/css/style.css" rel="stylesheet">
 
