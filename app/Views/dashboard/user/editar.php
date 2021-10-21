@@ -12,6 +12,6 @@
       </div>
     </section><!-- End Breadcrumbs -->
 <?= view("dashboard/partials/_form-error"); ?>
-<form action="/cliente/actualizar/<?= $cliente->id ?>" method="POST" enctype="multipart/form-data">
-<?= view("dashboard/cliente/_formEditar",['textButton' => 'Actualizar']); ?>
+<form action="/user/actualizar/<?= $cliente->id ?>" method="POST" enctype="multipart/form-data">
+<?= view("dashboard/user/_formEditar",['textButton' => 'Actualizar']); ?>
 </form>

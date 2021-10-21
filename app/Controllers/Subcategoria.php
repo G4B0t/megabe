@@ -165,9 +165,21 @@ class Subcategoria extends BaseController {
 
     private function _loadDefaultView($title,$data,$view){
 
+        $administracion = new administracion_1();
+        $sesion = $administracion->sesiones();
+
         $dataHeader =[
             'title' => $title,
-            'tipo'=>'header-inner-pages'
+            'tipo'=> 'header-inner-pages',
+
+            'rol' => $sesion['rol'],
+
+			'log' => $sesion['log'],
+
+            'central'=>$sesion['almacen'],
+            
+            'vista' => 'administracion'
+
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

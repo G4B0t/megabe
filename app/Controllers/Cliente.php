@@ -43,73 +43,6 @@ class Cliente extends BaseController {
 
     }
 
-    public function nuevo(){
-
-        $cliente = new m_cliente();
-        $persona = new m_persona();
-        
-        $validation =  \Config\Services::validation();
-        $this->_loadDefaultView('Crear Cliente',['validation'=>$validation, 'cliente'=> new m_cliente(),
-                                 'persona' => new m_persona()],'nuevoUser');
-     }
-    public function crear(){
-        helper("user");
-        $cliente = new m_cliente();
-        $persona = new m_persona();
-        
-        $db = \Config\Database::connect();
-
-        $email = $this->request->getPost('email');
-        if($this->validate('clientes') && $this->validate('personas')){
-            
-            $foto = "";
-            if($imagefile = $this->request->getFile('foto')) {
-            
-                if ($imagefile->isValid() && ! $imagefile->hasMoved())
-                    {
-                        $foto = $imagefile->getRandomName();
-                        $imagefile->move(WRITEPATH.'uploads/clientes', $foto);
-                }
-            }
-
-            
-            if($persona->insert([
-                'nombre' =>$this->request->getPost('nombre'),
-                'apellido_paterno' =>$this->request->getPost('apellido_paterno'),
-                'apellido_materno' =>$this->request->getPost('apellido_materno'),
-                'nro_ci' =>$this->request->getPost('nro_ci'),
-                'direccion_particular' =>$this->request->getPost('direccion_particular'),
-                'direccion_trabajo' =>$this->request->getPost('direccion_trabajo'),
-                'telefono_particular' =>$this->request->getPost('telefono_particular'), 
-                'telefono_trabajo' =>$this->request->getPost('telefono_trabajo'),
-                'zona_vivienda' =>$this->request->getPost('zona_vivienda'),
-                'latitud_vivienda' =>$this->request->getPost('latitud_vivienda'),
-                'longitud_vivienda' =>$this->request->getPost('longitud_vivienda'),
-                'celular1' =>$this->request->getPost('celular1'),
-                'celular2' =>$this->request->getPost('celular2'),
-                'lugar_residencia' =>$this->request->getPost('lugar_residencia'),
-                'ocupacion' =>$this->request->getPost('ocupacion'),
-                'foto' => $foto
-            ])){
-                $id_persona = $persona->getInsertID();
-                    
-                if($cliente->insert([
-                    'nit' =>$this->request->getPost('nit'),
-                    'razon_social' =>$this->request->getPost('razon_social'),
-                    'id_persona' =>$id_persona,
-                    'usuario' =>$this->request->getPost('usuario'),
-                    'contrasena' =>hashPassword($this->request->getPost('contrasena')) ,
-                    'email'=>$this->request->getPost('email') 
-                ])){
-                    $id_cliente = $cliente->getInsertID();
-                    $query= $db->query('UPDATE cliente SET email="'.$email.'" WHERE id='.$id_cliente.';');
-                    return redirect()->to("/")->with('message', 'Nuevo Usuario Creado Con éxito.');
-                }  
-            }
-        }
-        return redirect()->back()->withInput()->with('message', 'No se pudo registrar');
-    }
-
      public function create(){
 
         helper("user");
@@ -145,63 +78,6 @@ class Cliente extends BaseController {
         $validation =  \Config\Services::validation();
         $this->_loadDefaultView('Modificar Cliente',['validation'=>$validation,'cliente'=> $cliente->asObject()->find($id),
                                             'persona' => $persona->asObject()->getAll()],'edit');
-    }
-
-    public function editar($id = null){
-
-        $cliente = new m_cliente();
-        $persona = new m_persona();
-
-        
-
-        $es_cliente = $persona->getCliente($id);
-
-        if ($cliente->find($id) == null)
-        {
-            throw PageNotFoundException::forPageNotFound();
-        }  
-
-        $validation =  \Config\Services::validation();
-        $this->_loadDefaultView('Modificar Cliente',['validation'=>$validation,'cliente'=> $cliente->asObject()->find($id),
-                                                    'persona' => $persona->getPersona($es_cliente['id'])],'editar');
-    }
-
-
-
-    public function actualizar($id = null){
-        helper("user");
-
-        $cliente = new m_cliente();
-        $persona = new m_persona();
-
-
-       if ($cliente->find($id) == null)
-        {
-            throw PageNotFoundException::forPageNotFound();
-        }  
-
-        $foto = "";
-
-        if($imagefile = $this->request->getFile('foto')) {
-            
-            if ($imagefile->isValid() && ! $imagefile->hasMoved())
-                {
-                    $foto = $imagefile->getRandomName();
-                    $imagefile->move(WRITEPATH.'uploads/clientes', $foto);
-
-                    if($this->validate('cliente_password')){
-                        $id_persona = $persona->getPersona($id);
-                        $persona->update( $id_persona['id'],['foto' => $foto]);
-                        $cliente->update($id, [
-                            'contrasena' =>hashPassword($this->request->getPost('contrasena')),
-                        ]);
-            
-                        return redirect()->to('/user/configuracion')->with('message', 'Actualizacion de Datos exitosa!');          
-                    }
-                }          
-        }
-        return redirect()->back()->withInput();
-       
     }
 
 
@@ -262,9 +138,8 @@ class Cliente extends BaseController {
 		$role = new m_rol();
 		$empleado_rol = new m_empleado_rol();
 
-        $admin = new Administracion_1();
-		$sesion = $admin->sesiones();
-        $rol[] = (object) array('nombre' => 'Normal');
+        $administracion = new Administracion_1();
+        $sesion = $administracion->sesiones();
         $dataHeader =[
             'title' => $title,
             'tipo'=> 'header-inner-pages',
@@ -283,11 +158,11 @@ class Cliente extends BaseController {
             ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
             ->paginate(10,'marca'),
 
-            'rol' =>$rol,
+            'rol' => $sesion['rol'],
 
 			'log' => $sesion['log'],
 
-            'vista'=>''
+            'vista'=>'administracion'
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

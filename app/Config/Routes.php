@@ -101,7 +101,7 @@ $routes->get('/contacto/(:any)', 'Home::contacto/$1',['as' => 'contacto']);
 $routes->get('/login', 'User::login',['as' =>'user_login_get']);
 $routes->post('/login_user', 'User::login_post',['as' =>'user_login_post']);
 $routes->get('/logout', 'User::logout',['as' =>'logout_post']);
-$routes->get('/registrar_nuevo', 'Cliente::nuevo');
+
 $routes->get('/cliente/(:any)/editar', 'Cliente::editar/$1');
 $routes->get('/pedido_venta', 'Pedido_Venta::index');
 $routes->get('/pedido_venta/mostrando/(:any)', 'Pedido_Venta::mostrando/$1');
@@ -122,9 +122,10 @@ $routes->post('/detalle_venta/delete/(:any)', 'Detalle_Venta::delete/$1');
 $routes->post('/detalle_venta/carrito/(:any)', 'Detalle_Venta::carrito/$1');
 $routes->get('/detalle_venta', 'Detalle_Venta::index');
 
-$routes->post('/cliente/crear', 'Cliente::crear');
-$routes->post('/cliente/actualizar', 'Cliente::actualizar');
+$routes->post('/user/crear', 'User::crear');
+$routes->post('/user/actualizar', 'User::actualizar');
 $routes->post('/user/configuracion', 'User::configuracion');
+$routes->get('/registrar_nuevo', 'User::nuevo');
 
 
 

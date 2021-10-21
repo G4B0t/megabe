@@ -6,7 +6,7 @@
           <h2><?= $title ?></h2>
           <ol>
             <li><a class="btn btn-outline-dark" role="button" href="<?= route_to('contacto','Gabriel') ?>">Contacto</a></li>
-            <li><a class="btn btn-outline-info" role="button" href="/persona/new" >Nuevo Producto</a></li>
+            <li><a class="btn btn-outline-info" role="button" href="/persona/new" >Nuevo Registro</a></li>
             </ol>
         </div>
       </div>
@@ -24,12 +24,8 @@
             <th>Direccion Particular</th>
             <th>Direccion Trabajo</th>
             <th>Telefono Particular</th>
-            <th>Telefono Trabajo</th>
             <th>Barrio</th>
-            <th>Latitud</th>
-            <th>Longitud</th>
             <th>Celular Particular</th>
-            <th>Celular Alternativo</th>
             <th>Residencia Actual</th>
             <th>Ocupacion</th>
             <th>Opciones</th>
@@ -47,12 +43,8 @@
                 <td><?= $m->direccion_particular ?></td>
                 <td><?= $m->direccion_trabajo ?></td>
                 <td><?= $m->telefono_particular ?></td>
-                <td><?= $m->telefono_trabajo ?></td>
-                <td><?= $m->zona_vivienda ?></td>
-                <td><?= $m->latitud_vivienda ?></td>
                 <td><?= $m->longitud_vivienda ?></td>
                 <td><?= $m->celular1 ?></td>
-                <td><?= $m->celular2 ?></td>
                 <td><?= $m->lugar_residencia ?></td>
                 <td><?= $m->ocupacion ?></td>
                 <td>

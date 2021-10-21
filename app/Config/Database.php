@@ -30,7 +30,7 @@ class Database extends Config
 	 *
 	 * @var array
 	 */
-	public $default = [
+	/*public $default = [
 		'DSN'      => '',
 		'hostname' => 'us-cdbr-east-04.cleardb.com',
 		'username' => 'b1f88600a9b4ed',
@@ -48,9 +48,9 @@ class Database extends Config
 		'strictOn' => false,
 		'failover' => [],
 		'port'     => 3306,
-	];
+	];*/
 	
-	/*
+	
 	public $default = [
 		'DSN'      => '',
 		'hostname' => 'localhost',
@@ -69,7 +69,7 @@ class Database extends Config
 		'strictOn' => false,
 		'failover' => [],
 		'port'     => 3306,
-	];*/
+	];
 
 	/**
 	 * This database connection is used when

@@ -166,38 +166,18 @@ class Persona extends BaseController {
 
         $admin = new Administracion_1();
 		$sesion = $admin->sesiones();
-        $vista='';
-        $central = false;
-        if($sesion['rol']=='Administrador'){
-            $vista='cliente';
-            $central = true;
-        }
-        $rol[] = (object) array('nombre' => $sesion['rol']);
+    
         $dataHeader =[
             'title' => $title,
             'tipo'=>'header-inner-pages',
 
-            'categoria' => $categoria->asObject()
-            ->select('categoria.*')
-            ->paginate(10,'categoria'),
-
-			'subcategoria' => $subcategoria->asObject()
-            ->select('subcategoria.*')
-            ->join('categoria','categoria.id = subcategoria.id_categoria')
-            ->paginate(10,'subcategoria'),
-
-			'marca' => $marca->asObject()
-			->select('marca.*')
-            ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
-            ->paginate(10,'marca'),
-
-            'rol' => $rol,
+            'rol' => $sesion['rol'],
 
 			'log' => $sesion['log'],
 
-            'vista'=>$vista,
+            'vista'=>'administracion',
             
-            'central' => $central
+            'central' => true
         ];
 
         echo view("dashboard/templates/header",$dataHeader);
