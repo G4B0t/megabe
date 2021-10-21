@@ -30,7 +30,7 @@ class Database extends Config
 	 *
 	 * @var array
 	 */
-
+	
 	public $default = [
 		'DSN'      => '',
 		'hostname' => 'us-cdbr-east-04.cleardb.com',
