@@ -95,14 +95,16 @@
       </div>
       <div class="modal-body">
         <form id="confirmForm" action="/administracion/confirmar_pago/<?= $id ?>" method="POST" enctype="multipart/form-data">
-                <?php if($rol == 'Cajero' || $rol == 'Vendedor-Cajero' || $rol == 'Administrador'){?>
-                <div class="mb-3">
-                    <input type="checkbox" name="myCheckbox" id="cajaCB" value="Caja" onClick="toggleSelect(this)"/><span>Cuenta Caja</span>
-                    <select class="form-select" name="cajas" id="cajas">
-                        <option <?= $cajas->id_cuenta_padre !== $cajas->id ?: "selected"?> value="<?= $cajas->id ?>"><?= $cajas->nombre_cuenta ?> </option>
-                    </select>
-                </div>
-                <?php } ?>
+                <?php foreach($rol as $key =>$m): ?>
+                        <?php  if($m->nombre == 'Cajero'){ ?>
+                            <div class="mb-3">
+                                <input type="checkbox" name="myCheckbox" id="cajaCB" value="Caja" onClick="toggleSelect(this)"/><span>Cuenta Caja</span>
+                                <select class="form-select" name="cajas" id="cajas">
+                                    <option <?= $cajas->id_cuenta_padre !== $cajas->id ?: "selected"?> value="<?= $cajas->id ?>"><?= $cajas->nombre_cuenta ?> </option>
+                                </select>
+                            </div>
+                        <?php } ?>
+                <?php endforeach ?>
                 <div class="mb-3">
                     <input type="checkbox" name="myCheckbox" id="bancoCB" value="Banco" onClick="toggleSelect(this)"/><span>Cuenta Banco</span>
                     <select class="form-select" name="bancos" id="bancos">

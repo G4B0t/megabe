@@ -32,4 +32,12 @@ class m_item_almacen extends Model
         ->where($restric)
         ->findAll();
     }
+
+    public function getStocks($id_almacen,$id_item){
+        $restric = ['id_item'=>$id_item,'id_almacen'=>$id_almacen];
+        return $this->asObject()
+        ->select('item_almacen.*')
+        ->where($restric)
+        ->first();
+    }
 }

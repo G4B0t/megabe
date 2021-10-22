@@ -160,35 +160,57 @@ class Administracion_3 extends BaseController{
     }
     public function confirm_transferencia($id_transferencia){
         $transferencia = new m_transferencia();
+        $item_almacen = new m_item_almacen();
+        $almacen = new m_almacen();
+        $detalle_transferencia = new m_detalle_transferencia();
 
+        $detalles = $detalle_transferencia->getFullDetalle($id_transferencia);
         $id_almacen_destino =  $this->request->getPost('id_almacen_destino');
+        $transfe = $transferencia->getById($id_transferencia);
+
+        foreach($detalles as $key =>$m){
+            $item_origen = $item_almacen->getStocks($transfe->id_almacen_origen,$m->id_item);
+            $stock_origen = ($item_origen->stock) - ($m->cantidad);
+            $prov = $item_almacen->update($item_origen->id,['stock'=>$stock_origen]);
+            if(!$prov){
+                return redirect()->back()->withInput()->with('message', 'No se pudo confirmar el ENVIO!');
+            }
+        }
 
         if ($transferencia->find($id_transferencia) == null){
             throw PageNotFoundException::forPageNotFound();
         }  
 
         $body_transferencia = ['id_almacen_destino'=> $id_almacen_destino];
-        if($transferencia->update($id_transferencia,$body_transferencia)){
-            $this->ver_enviados();
-        }
+                if($transferencia->update($id_transferencia,$body_transferencia)){
+                    $this->ver_enviados();
+                }
 
     }
     public function ver_enviados(){
         $transferencia = new m_transferencia();
         $detalle_transferencia = new m_detalle_transferencia();
         $empleado = new m_empleado();
+        $empleado_rol = new m_empleado_rol();
 
         $session = session();
 		$id_persona = $session->persona;
         $almacenero = $empleado->getAlmacen($id_persona);
+        $admin = $empleado_rol->getAdmin($almacenero->id);
 
-        $pedido_transferencia = $transferencia->getFirst();
-        
-        $condiciones = ['transferencia.id' => $pedido_transferencia->id, 'transferencia.estado_sql' => 1];
+        $pedido_transferencia = $transferencia->getFirst($almacenero->id);
+
+        if($pedido_transferencia == NULL){
+            return redirect()->to('/administracion')->with('message', 'NO hay transferencias de ENVIO');
+        }
+
+        $condiciones = ['transferencia.estado_sql' => 1];
         $restricciones = ['detalle_transferencia.estado_sql'=> '1','id_transferencia' => $pedido_transferencia->id];
         $data = [
             'transferencia' => $transferencia->asObject()
-            ->select('transferencia.*, persona.nombre as empleado_nombre1')
+            ->select('transferencia.*,A.direccion,B.direccion as destino, CONCAT(persona.nombre, " ", persona.apellido_paterno) AS empleado_nombre1')
+            ->join('almacen A','A.id=transferencia.id_almacen_origen')
+            ->join('almacen B','B.id=transferencia.id_almacen_destino')
             ->join('empleado','empleado.id = transferencia.id_empleado1')
             ->join('persona','persona.id = empleado.id_persona')
             ->where($condiciones)
@@ -205,7 +227,7 @@ class Administracion_3 extends BaseController{
             'id' => $pedido_transferencia->id
         ];
 
-        $this->_loadDefaultView( 'Listado de Envios',$data,'enviados');
+        $this->_loadDefaultView( 'Envios desde: '.$almacenero->direccion,$data,'enviados');
     }
     public function detalles_transferencias($id_trasnferencia){
 
@@ -219,11 +241,13 @@ class Administracion_3 extends BaseController{
 
         $pedido_transferencia = $transferencia->getById($id_trasnferencia);
 
-        $condiciones = ['transferencia.id' => $pedido_transferencia->id, 'transferencia.estado_sql' => 1,'transferencia.id_empleado1'=>$almacenero->id];
+        $condiciones = ['transferencia.estado_sql' => 1];
         $restricciones = ['detalle_transferencia.estado_sql'=> '1','id_transferencia' => $pedido_transferencia->id];
         $data = [
             'transferencia' => $transferencia->asObject()
-            ->select('transferencia.*, persona.nombre as empleado_nombre1')
+            ->select('transferencia.*,A.direccion,B.direccion as destino, CONCAT(persona.nombre, " ", persona.apellido_paterno) AS empleado_nombre1')
+            ->join('almacen A','A.id=transferencia.id_almacen_origen')
+            ->join('almacen B','B.id=transferencia.id_almacen_destino')
             ->join('empleado','empleado.id = transferencia.id_empleado1')
             ->join('persona','persona.id = empleado.id_persona')
             ->where($condiciones)
@@ -241,7 +265,7 @@ class Administracion_3 extends BaseController{
 
         ];
 
-        $this->_loadDefaultView( 'Listado de Envios',$data,'enviados');
+        $this->_loadDefaultView( 'Envios desde: '.$almacenero->direccion,$data,'enviados');
     }
 
     public function ver_recepcion_transferencia(){
@@ -257,14 +281,14 @@ class Administracion_3 extends BaseController{
         if($pedido_transferencia ==null || $pedido_transferencia->id_almacen_destino == null){
             return redirect()->to('/administracion')->with('message', 'No hay mas Transferencias Enviadas a este Almacen!');
         }
-
-        $condiciones = ['transferencia.id_almacen_destino' => $almacenero->id_almacen, 'transferencia.estado_sql' => 1,'transferencia.id_empleado2'=>null];
+        
+        $condiciones = ['transferencia.id_almacen_destino' => $almacenero->id_almacen, 'transferencia.estado_sql' => 1];
         $restricciones = ['detalle_transferencia.estado_sql'=> '1','detalle_transferencia.id_transferencia' => $pedido_transferencia->id];
         $data = [
             'transferencia' => $transferencia->asObject()
-            ->select('transferencia.*')
-            ->join('almacen','almacen.id = transferencia.id_almacen_destino')
-            ->join('empleado','empleado.id_almacen = almacen.id')
+            ->select('transferencia.*,almacen.direccion, CONCAT(persona.nombre, " ", persona.apellido_paterno) AS empleado_nombre2')
+            ->join('almacen','almacen.id = transferencia.id_almacen_origen')
+            ->join('empleado','empleado.id = transferencia.id_empleado1')
             ->join('persona','persona.id = empleado.id_persona')
             ->where($condiciones)
             ->paginate(10,'transferencia'),
@@ -281,8 +305,7 @@ class Administracion_3 extends BaseController{
 
             'id_empleado2' =>$almacenero->id
         ];
-
-        $this->_loadDefaultView( 'Listado para Recepcion',$data,'recibidos');
+       $this->_loadDefaultView( 'Listado para Recepcion',$data,'recibidos');
 
     }
 
@@ -304,9 +327,9 @@ class Administracion_3 extends BaseController{
         $restricciones = ['detalle_transferencia.estado_sql'=> '1','detalle_transferencia.id_transferencia' => $pedido_transferencia->id];
         $data = [
             'transferencia' => $transferencia->asObject()
-            ->select('transferencia.*, persona.nombre as empleado_nombre1')
-            ->join('almacen','almacen.id = transferencia.id_almacen_destino')
-            ->join('empleado','empleado.id_almacen = almacen.id')
+            ->select('transferencia.*, almacen.direccion, CONCAT(persona.nombre, " ", persona.apellido_paterno) AS empleado_nombre2')
+            ->join('almacen','almacen.id = transferencia.id_almacen_origen')
+            ->join('empleado','empleado.id = transferencia.id_empleado1')
             ->join('persona','persona.id = empleado.id_persona')
             ->where($condiciones)
             ->paginate(10,'transferencia'),
@@ -323,27 +346,43 @@ class Administracion_3 extends BaseController{
 
             'id_empleado2' => $almacenero->id
         ];
-
+       
         $this->_loadDefaultView( 'Listado para Recepcion',$data,'recibidos');
     }
 
     public function confirmar_recepcion($id_transferencia){
         $transferencia = new m_transferencia();
         $empleado = new m_empleado();
+        $detalle_transferencia = new m_detalle_transferencia();
+        $item_almacen = new m_item_almacen();
+        $almacen = new m_almacen();
+
+        $detalles = $detalle_transferencia->getFullDetalle($id_transferencia);
+        $transfe = $transferencia->getById($id_transferencia);
 
         $session = session();
 		$id_persona = $session->persona;
         $almacenero = $empleado->getAlmacen($id_persona);
 
+        foreach($detalles as $key =>$m){
+            $item_destino = $item_almacen->getStocks($transfe->id_almacen_destino,$m->id_item);
+            $stock_destino = ($item_destino->stock) + ($m->cantidad);
+            $prov = $item_almacen->update($item_destino->id,['stock'=>$stock_destino]);
+            if(!$prov){
+                return redirect()->back()->withInput()->with('message', 'No se pudo confirmar el ENVIO!');
+            }
+        }
+
         $cDate = date('Y-m-d H:i:s');
         $body = ['id_empleado2' => $almacenero->id,
                 'fecha_recibido' => $cDate
                 ];
+
         if ($transferencia->find($id_transferencia) == null){
             throw PageNotFoundException::forPageNotFound();
         }  
         if($transferencia->update($id_transferencia,$body)){
-            return redirect()->to('/administracion/ver_recibidos')->with('message', 'Transferencia RECIBIDA!!');
+            return redirect()->to('/administracion')->with('message', 'Transferencia RECIBIDA!!');
         }
 
     }

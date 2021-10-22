@@ -7,7 +7,7 @@ class m_cliente extends Model
     protected $table = 'cliente';
     protected $primaryKey = 'id';
     protected $allowedFields = ['nit', 'id_persona','razon_social'
-                                ,'usuario','contrasena','estado_sql'];
+                                ,'usuario','email','contrasena','estado_sql'];
 
     function getAll(){
         return $this->asArray()

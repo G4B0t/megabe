@@ -28,11 +28,16 @@ class m_transferencia extends Model
         ->first();
     }
 
-    public function getFirst(){
+    public function getFirst($id_empleado){
+        return $this->asObject()
+        ->where('id_empleado1',$id_empleado)
+        ->first();
+    }
+    public function  getPrimero(){
         return $this->asObject()
         ->first();
     }
-
+   
     public function getByEmpleado($id_almacen_destino){
         $restriccion = ['transferencia.id_almacen_destino'=>$id_almacen_destino, 'transferencia.estado_sql'=>1];
         return $this->asObject()

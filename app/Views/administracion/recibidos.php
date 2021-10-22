@@ -18,18 +18,19 @@
             <table class="table table-hover" data-aos="fade-up">
             <thead>
                 <tr>
-                    <th>Transferencia#</th>
-                    <th>Enviado por</th>
+                    <th>Nro#</th>
+                    <th>Enviado por:</th>
+                    <th>Enviado desde:</th>
                     <th>Fecha de Envio</th>
                     <th>Opciones</th>
                 </tr>
             </thead>
             <tbody>
-
                 <?php foreach ($transferencia as $key => $m): ?>
                     <tr>
                         <td><?= $m->id ?></td>
-                        <td><?= $m->id_empleado1 ?></td>
+                        <td><?= $m->empleado_nombre2 ?></td>
+                        <td><?= $m->direccion ?></td>
                         <td><?= $m->fecha_envio ?></td>
                         <td>
                             <a href="/administracion/detalles_recepcion/<?= $m->id ?>" class="btn btn-primary">Detalle</a>

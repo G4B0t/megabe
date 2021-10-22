@@ -3,7 +3,8 @@
       <section id="breadcrumbs" class="breadcrumbs">
       <div class="container">
         <div class="d-flex justify-content-between align-items-center">
-          <h2><?= $title ?></h2>
+            <h2><?= $title ?></h2>
+            <h3><?= view("dashboard/partials/_session"); ?></h3>
           <ol>
             <li><a class="btn btn-outline-dark" role="button" href="<?= route_to('contacto','Gabriel') ?>">Contacto</a></li>
             <li><a class="btn btn-outline-info" role="button" href="/subcategoria/new" >Nueva Subcategoria</a></li>
@@ -12,7 +13,6 @@
       </div>
     </section><!-- End Breadcrumbs -->     
 
-<h2><?= view("dashboard/partials/_session"); ?></h2>
                 
 
 <table class="table table-hover" data-aos="fade-up">

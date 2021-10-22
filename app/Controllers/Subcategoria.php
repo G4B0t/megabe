@@ -73,8 +73,6 @@ class Subcategoria extends BaseController {
             throw PageNotFoundException::forPageNotFound();
         }  
 
-        echo "Sesión: ".session('message');
-
         $validation =  \Config\Services::validation();
         $this->_loadDefaultView('Modificar Subcategoria',['validation'=>$validation,'subcategoria'=> $subcategoria->asObject()->find($id),
                                             'categoria' => $categoria->asObject()->findAll()],'edit');

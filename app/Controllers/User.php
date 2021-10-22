@@ -171,8 +171,6 @@ class User extends BaseController {
                     'contrasena' =>hashPassword($this->request->getPost('contrasena')) ,
                     'email'=>$this->request->getPost('email') 
                 ])){
-                    $id_cliente = $cliente->getInsertID();
-                    $query= $db->query('UPDATE cliente SET email="'.$email.'" WHERE id='.$id_cliente.';');
                     return redirect()->to("/")->with('message', 'Nuevo Usuario Creado Con éxito.');
                 }  
             }

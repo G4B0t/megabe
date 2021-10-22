@@ -19,9 +19,10 @@
             <table class="table table-hover" data-aos="fade-up">
             <thead>
                 <tr>
-                    <th>Transferencia#</th>
-                    <th>Enviado por</th>
+                    <th>Nro#</th>
+                    <th>Enviado por:</th>
                     <th>Fecha de Envio</th>
+                    <th>Enviado a:</th>
                     <th>Opciones</th>
                 </tr>
             </thead>
@@ -32,6 +33,7 @@
                         <td><?= $m->id ?></td>
                         <td><?= $m->empleado_nombre1 ?></td>
                         <td><?= $m->fecha_envio ?></td>
+                        <td><?= $m->destino ?></td>
                         <td>
                             <a href="/administracion/detalle_transferencias/<?= $m->id ?>" class="btn btn-primary">Detalle</a>
                         </td>

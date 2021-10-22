@@ -54,8 +54,8 @@ class m_empleado extends Model
     public function getAlmacen($id_persona){
         $restriccion = ['empleado.id_persona'=>$id_persona];
         return $this->asObject()
-        ->select('empleado.*,CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullname')
-        ->join('persona','empleado.id_persona=persona.id')
+        ->select('empleado.id,empleado.id_almacen,almacen.direccion')
+        ->join('almacen','almacen.id=empleado.id_almacen')
         ->where($restriccion)
         ->first();
     }
