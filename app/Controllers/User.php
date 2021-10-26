@@ -14,11 +14,9 @@ class User extends BaseController {
 
     public function login(){
     
-       $data = [
-            'Nuevo' => 'Que haces?'
-                ];
+      
             
-        $this->_loadDefaultView( 'Iniciar Sesion',$data,'index','header-inner-pages');
+        $this->_loadDefaultView( 'Iniciar Sesion',[],'index','header-inner-pages');
 
     }
 
