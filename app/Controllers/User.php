@@ -249,16 +249,19 @@ class User extends BaseController {
         }
         
         if($clave != '' && $clave_confirm != ''){
-            if($this->validate('cliente_password')){
-                        
-                $cliente->update($id, ['contrasena' => hashPassword($clave)]);
-    
-                return redirect()->to('/user/configuracion')->with('message', 'Actualizacion de Datos exitosa!');          
+            if($clave == $clave_confirm){
+                if($this->validate('cliente_password')){
+                            
+                    $cliente->update($id, ['contrasena' => hashPassword($clave)]);
+        
+                    return redirect()->to('/user/configuracion')->with('message', 'Actualizacion de Datos exitosa!');          
+                }
+                else{
+                    return redirect()->back()->withInput();
+                }
+            }else{
+                return redirect()->back()->withInput()->with('message', 'Las contraseñas no coinciden');
             }
-            else{
-                return redirect()->back()->withInput();
-            }
-            //;
         }
 
         $foto = "";
