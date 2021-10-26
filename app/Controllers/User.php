@@ -286,7 +286,7 @@ class User extends BaseController {
 
         $administracion = new administracion_1();
         $sesion = $administracion->sesiones();
-
+        
         $rol[] = (object) array('nombre' => $sesion['rol']);
         
         $dataHeader =[

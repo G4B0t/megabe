@@ -668,15 +668,15 @@ class Administracion_1 extends BaseController{
 		if($es_empleado != null){ 
 			$rh = $empleado_rol->getByEmpleado($es_empleado['id']);
 			$rol = $rh;
-            return $sesion=['rol'=>$rol,'log'=>$log,'almacen'=> false];
+            return $sesion=['rol'=>$rol,'log'=>$log,'almacen'=>  $almacen];
 		}else if($es_cliente != null){
             
 			$rol = 'Cliente';
-            return $sesion=['rol'=>$rol,'log'=>$log,'almacen'=> false];
+            return $sesion=['rol'=>$rol,'log'=>$log,'almacen'=>  $almacen];
 		}else{
            
             $rol ='Normal';
-            return $sesion=['rol'=>$rol,'log'=>$log,'almacen'=> false];
+            return $sesion=['rol'=>$rol,'log'=>$log,'almacen'=>  $almacen];
 		}
     }
     
