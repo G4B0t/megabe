@@ -19,6 +19,12 @@ class Detalle_Venta extends BaseController {
 
     public function index(){
 
+        $admin = new Administracion_1();
+		$sesion = $admin->sesiones();
+        if($sesion['rol'] != 'Cliente'){
+            return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        }
+
         $pedido_venta = new m_pedido_venta();
         $detalle_venta = new m_detalle_venta();
         $cliente = new m_cliente();

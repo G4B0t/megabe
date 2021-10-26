@@ -8,6 +8,16 @@ class Subcategoria extends BaseController {
 
     public function index(){
 
+        $admin = new Administracion_1();
+		$sesion = $admin->sesiones();
+        $admin = '';
+        foreach($sesion['rol'] as $key =>$m){
+            $admin = $m->nombre;
+        }
+        if($admin != 'Administrador'){
+           return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        }
+
         $subcategoria = new m_subcategoria();
 
         $data = [

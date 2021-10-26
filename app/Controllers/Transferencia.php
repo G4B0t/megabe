@@ -3,22 +3,31 @@ use App\Models\m_categoria;
 use App\Models\m_subcategoria;
 use App\Controllers\BaseController;
 use \CodeIgniter\Exceptions\PageNotFoundException;
+use App\Models\m_transferencia;
 
 class Transferencia extends BaseController {
 
     public function index(){
+        $admin = new Administracion_1();
+		$sesion = $admin->sesiones();
+        $admin = '';
+        foreach($sesion['rol'] as $key =>$m){
+            $admin = $m->nombre;
+        }
+        if($admin != 'Administrador'){
+           return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        }
 
         $transferencia = new m_transferencia();
 
         $data = [
-            'subcategoria' => $subcategoria->asObject()
-            ->select('subcategoria.*,categoria.nombre as categoria')
-            ->join('categoria','categoria.id = subcategoria.id_categoria')
-            ->paginate(10, 'subcategoria'),
-            'pager' => $subcategoria->pager
+            'transferencia' => $transferencia->asObject()
+            ->select('transferencia.*')
+            ->paginate(10, 'transferencia'),
+            'pager' => $transferencia->pager
         ];
 
-        $this->_loadDefaultView( 'Listado de Subcategorias',$data,'index');
+        $this->_loadDefaultView( 'Listado de Transferencias',$data,'index');
     }
 
     public function new(){
@@ -181,7 +190,7 @@ class Transferencia extends BaseController {
         ];
 
         echo view("dashboard/templates/header",$dataHeader);
-        echo view("dashboard/subcategoria/$view",$data);
+        echo view("dashboard/transferencia/$view",$data);
         echo view("dashboard/templates/footer");
     }
 

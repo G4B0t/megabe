@@ -10,9 +10,9 @@
 <table class="table table-hover" data-aos="fade-up">
     <thead>
         <tr>
-            <th>Id</th>
-            <th>Nombre</th>
-            <th>Subcategoría</th>
+            <th>Nro Factura</th>
+            <th>Beneficiario</th>
+            <th>Motivo</th>
             <th>Opciones</th>
         </tr>
     </thead>

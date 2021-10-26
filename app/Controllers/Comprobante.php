@@ -8,16 +8,26 @@ class Comprobante extends BaseController {
 
     public function index(){
 
-        $categoria = new m_categoria();
+        $admin = new Administracion_1();
+		$sesion = $admin->sesiones();
+        $admin = '';
+        foreach($sesion['rol'] as $key =>$m){
+            $admin = $m->nombre;
+        }
+        if($admin != 'Administrador'){
+           return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        }
+
+        $comprobante = new m_comprobante();
 
         $data = [
-            'categoria' => $categoria->asObject()
-            ->select('categoria.*')
-            ->paginate(10,'categoria'),
-            'pager' => $categoria->pager
+            'comprobante' => $comprobante->asObject()
+            ->select('comprobante.*')
+            ->paginate(10,'comprobante'),
+            'pager' => $comprobante->pager
         ];
 
-        $this->_loadDefaultView( 'Listado de Categorias',$data,'index','');
+        $this->_loadDefaultView( 'Listado de Comprobantes',$data,'index');
     }
 
     public function new(){
@@ -160,22 +170,27 @@ class Comprobante extends BaseController {
 
     }
 
-    private function _loadDefaultView($title,$data,$view,$tipo){
+    private function _loadDefaultView($title,$data,$view){
 
         $administracion = new administracion_1();
         $sesion = $administracion->sesiones();
 
         $dataHeader =[
             'title' => $title,
-            'tipo' => $tipo,
+            'tipo'=> 'header-inner-pages',
 
             'rol' => $sesion['rol'],
 
-			'log' => $sesion['log']
+			'log' => $sesion['log'],
+
+            'central'=>$sesion['almacen'],
+            
+            'vista' => 'administracion'
+
         ];
 
         echo view("dashboard/templates/header",$dataHeader);
-        echo view("dashboard/categoria/$view",$data);
+        echo view("dashboard/comprobante/$view",$data);
         echo view("dashboard/templates/footer");
     }
 

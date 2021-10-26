@@ -39,4 +39,13 @@ class m_cliente extends Model
         ->first();
     }
 
+    function getFullCliente($id){
+        return $this->asObject()
+        ->select('cliente.*, CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullName,persona.foto')
+        ->join('persona','persona.id = cliente.id_persona')
+        ->where('cliente.id',$id)
+        ->first();
+    }
+
+
 }

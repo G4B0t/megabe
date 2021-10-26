@@ -64,6 +64,12 @@
                             <li><a class="nav-link scrollto" href="/empleado">Empleados</a></li>
                           </ul>
                         </li>
+                        <li class="dropdown"><a href="/almacen"><span>Almacen</span> <i class="bi bi-chevron-down"></i></a>
+                          <ul>  
+                            <li><a class="nav-link scrollto" href="/transferencia">Transferencias</a></li>
+                            <li><a class="nav-link scrollto" href="/item_almacen">Item - Almacen</a></li>
+                          </ul>
+                        </li>
                         </ul>
                       </li>
                       <li class="dropdown"><a href="#"><span>Vendedor</span> <i class="bi bi-chevron-down"></i></a>
@@ -82,8 +88,6 @@
                         <ul>
                           <li><a class="nav-link scrollto active" href="/administracion/ver_pagados">Entregas</a></li>
                           <li><a class="nav-link scrollto" href="/administracion/armar_transferencia">Armar Envio</a></li>
-                          <li><a class="nav-link scrollto" href="/administracion/ver_enviados">Ver Envios</a></li>
-                          <li><a class="nav-link scrollto" href="/administracion/ver_recibidos">Ver Recepciones</a></li>
                         </ul>
                       </li>
                       <li class="dropdown"><a href="#"><span>Contador</span> <i class="bi bi-chevron-down"></i></a>

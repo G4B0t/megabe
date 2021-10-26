@@ -3,6 +3,7 @@ use App\Models\m_cliente;
 use App\Models\m_persona;
 use App\Models\m_empleado;
 use App\Controllers\BaseController;
+use App\Controllers\administracion_1;
 use \CodeIgniter\Exceptions\PageNotFoundException;
 
 use App\Models\m_marca;
@@ -106,11 +107,19 @@ class User extends BaseController {
     } 
 
     public function configuracion(){
+        $cliente = new m_cliente();
+        $validation =  \Config\Services::validation();
+        $sesion = session();
+        $id_persona = $sesion->cliente;
+        
+        $user = $cliente->getFullCliente($id_persona);
+
         $data = [
-            'usuario' => 'gabozki'
+            'validation'=>$validation,
+            'cliente' => $user
         ];
-  
-          $this->_loadDefaultView( 'Perfil',$data,'_configuracion','header-inner-pages');
+        
+        $this->_loadDefaultView( 'Perfil',$data,'editar','header-inner-pages');
     }
 
     public function nuevo(){
@@ -197,7 +206,7 @@ class User extends BaseController {
                                                     'persona' => $persona->getPersona($es_cliente['id'])],'editar','header-inner-pages');
     }
 
-    public function actualizar($id = null){
+    public function actualizar($id){
         helper("user");
 
         $cliente = new m_cliente();
@@ -208,28 +217,61 @@ class User extends BaseController {
         {
             throw PageNotFoundException::forPageNotFound();
         }  
+        $user = $cliente->getOne($id);
+
+        $usuario = $this->request->getPost('usuario');
+        $clave = $this->request->getPost('contrasena');
+        $clave_confirm = $this->request->getPost('confirm_contrasena');
+        $correo = $this->request->getPost('email');
+
+        
+        if($usuario != $user->usuario){
+            if($this->validate('cliente_user')){
+                        
+                $cliente->update($id, ['usuario' => $usuario]);
+    
+                return redirect()->to('/user/configuracion')->with('message', 'Actualizacion de Datos exitosa!');          
+            }
+            else{
+                return redirect()->back()->withInput();
+            }
+        }
+        if($correo != $user->email){
+            if($this->validate('cliente_email')){
+                        
+                $cliente->update($id, ['email' => $correo]);
+    
+                return redirect()->to('/user/configuracion')->with('message', 'Actualizacion de Datos exitosa!');          
+            }
+            else{
+                return redirect()->back()->withInput();
+            }
+        }
+        
+        if($clave != '' && $clave_confirm != ''){
+            if($this->validate('cliente_password')){
+                        
+                $cliente->update($id, ['contrasena' => hashPassword($clave)]);
+    
+                return redirect()->to('/user/configuracion')->with('message', 'Actualizacion de Datos exitosa!');          
+            }
+            else{
+                return redirect()->back()->withInput();
+            }
+            //;
+        }
 
         $foto = "";
-
-        if($imagefile = $this->request->getFile('foto')) {
+        
+        /*if($imagefile = $this->request->getFile('foto')) {
             
             if ($imagefile->isValid() && ! $imagefile->hasMoved())
                 {
                     $foto = $imagefile->getRandomName();
                     $imagefile->move(WRITEPATH.'uploads/clientes', $foto);
-
-                    if($this->validate('cliente_password')){
-                        $id_persona = $persona->getPersona($id);
-                        $persona->update( $id_persona['id'],['foto' => $foto]);
-                        $cliente->update($id, [
-                            'contrasena' =>hashPassword($this->request->getPost('contrasena')),
-                        ]);
-            
-                        return redirect()->to('/user/configuracion')->with('message', 'Actualizacion de Datos exitosa!');          
-                    }
                 }          
-        }
-        return redirect()->back()->withInput();
+        }*/
+        //
        
     }
 
@@ -238,7 +280,12 @@ class User extends BaseController {
         $categoria = new m_categoria();
 		$subcategoria = new m_subcategoria();
 		$marca = new m_marca();
-        $rol[] = (object) array('nombre' => 'Normal');
+
+        $administracion = new administracion_1();
+        $sesion = $administracion->sesiones();
+
+        $rol[] = (object) array('nombre' => $sesion['rol']);
+        
         $dataHeader =[
             'title' => $title,
             'tipo' => $tipo,
@@ -256,12 +303,11 @@ class User extends BaseController {
 			->select('marca.*')
             ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
             ->paginate(10,'marca'),
+            'rol' => $rol,
 
-            'rol' =>$rol,
+			'log' => $sesion['log'],
 
-            'log' => 'login',
-
-            'central'=>'',
+            'central'=>$sesion['almacen'],
 
             'vista'=> ''
         ];

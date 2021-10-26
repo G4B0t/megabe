@@ -19,6 +19,16 @@ class Cliente extends BaseController {
 
     public function index(){
 
+        $admin = new Administracion_1();
+		$sesion = $admin->sesiones();
+        $admin = '';
+        foreach($sesion['rol'] as $key =>$m){
+            $admin = $m->nombre;
+        }
+        if($admin != 'Administrador'){
+           return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        }
+
         $cliente = new m_cliente();
 
         $data = [
@@ -130,33 +140,12 @@ class Cliente extends BaseController {
 
     private function _loadDefaultView($title,$data,$view){
 
-        $categoria = new m_categoria();
-		$subcategoria = new m_subcategoria();
-		$marca = new m_marca();
-
-        $persona = new m_persona();
-		$role = new m_rol();
-		$empleado_rol = new m_empleado_rol();
-
+      
         $administracion = new Administracion_1();
         $sesion = $administracion->sesiones();
         $dataHeader =[
             'title' => $title,
             'tipo'=> 'header-inner-pages',
-
-            'categoria' => $categoria->asObject()
-            ->select('categoria.*')
-            ->paginate(10,'categoria'),
-
-			'subcategoria' => $subcategoria->asObject()
-            ->select('subcategoria.*')
-            ->join('categoria','categoria.id = subcategoria.id_categoria')
-            ->paginate(10,'subcategoria'),
-
-			'marca' => $marca->asObject()
-			->select('marca.*')
-            ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
-            ->paginate(10,'marca'),
 
             'rol' => $sesion['rol'],
 

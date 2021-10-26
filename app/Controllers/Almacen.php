@@ -7,6 +7,12 @@ class Almacen extends BaseController {
 
     public function index(){
 
+        $admin = new Administracion_1();
+		$sesion = $admin->sesiones();
+        if($sesion['rol'] != 'Administrador'){
+            return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        }
+
         $almacen = new m_almacen();
 
         $data = [
@@ -139,12 +145,21 @@ class Almacen extends BaseController {
 
     }
 
-    private function _loadDefaultView($title,$data,$view,$tipo){
+    private function _loadDefaultView($title,$data,$view){
 
+        $administracion = new Administracion_1();
+        $sesion = $administracion->sesiones();
         $dataHeader =[
-            'title' => $title
-            'tipo' => 'header-inner-pages'
+            'title' => $title,
+            'tipo'=> 'header-inner-pages',
+
+            'rol' => $sesion['rol'],
+
+			'log' => $sesion['log'],
+
+            'vista'=>'administracion'
         ];
+
 
         echo view("dashboard/templates/header",$dataHeader);
         echo view("dashboard/almacen/$view",$data);

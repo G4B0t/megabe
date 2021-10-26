@@ -54,7 +54,7 @@
             </div>
             <?php endforeach?>
         </div>
-        </div>
+      </div>
     </section><!-- End Listado Section -->
 
 

@@ -15,6 +15,12 @@ use \CodeIgniter\Exceptions\PageNotFoundException;
 class Pedido_Venta extends BaseController {
 
     public function index(){
+        
+        $admin = new Administracion_1();
+		$sesion = $admin->sesiones();
+        if($sesion['rol'] != 'Cliente'){
+            return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        }
 
         $pedido_venta = new m_pedido_venta();
         $detalle_venta = new m_detalle_venta();
@@ -126,10 +132,7 @@ class Pedido_Venta extends BaseController {
 		$sesion = $admin->sesiones();
         $vista='';
         $central = false;
-        if($sesion['rol']=='Administrador'){
-            $vista='cliente';
-            $central = true;
-        }
+        
         $rol[] = (object) array('nombre' => $sesion['rol']);
         $dataHeader =[
             'title' => $title,

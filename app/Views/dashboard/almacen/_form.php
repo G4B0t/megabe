@@ -1,7 +1,3 @@
-            </ol>
-        </div>
-      </div>
-    </section><!-- End Breadcrumbs -->
 
 <section class="inner-page">
     <div class="container">
