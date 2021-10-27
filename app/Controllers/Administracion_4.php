@@ -48,7 +48,99 @@ class Administracion_4 extends BaseController{
        
         $this->_loadDefaultView( 'Grafica de Torta', $data,'pie_chart');
     }
+
+    public function configuracion(){
+        $empleado = new m_empleado();
+        $validation =  \Config\Services::validation();
+        $sesion = session();
+        $id_persona = $sesion->empleado;
+        
+        $user = $empleado->getFullEmpleado($id_persona);
+
+        $data = [
+            'validation'=>$validation,
+            'empleado' => $user
+        ];
+        
+        $this->_loadDefaultView( 'Perfil',$data,'configuracion/editar','header-inner-pages');
+    }
+
+
+    public function actualizar_empleado($id){
+        helper("user");
+
+        $empleado = new m_empleado();
+        $persona = new m_persona();
+
+
+       if ($empleado->find($id) == null)
+        {
+            throw PageNotFoundException::forPageNotFound();
+        }  
+        $user = $empleado->getFullEmpleado($id);
+
+        $usuario = $this->request->getPost('usuario');
+        $clave = $this->request->getPost('contrasena');
+        $clave_confirm = $this->request->getPost('confirm_contrasena');
+        $correo = $this->request->getPost('email');
+
+        $foto = "";
+        if($imagefile = $this->request->getFile('foto')) {
+            
+            if ($imagefile->isValid() && ! $imagefile->hasMoved())
+                {
+                    $foto = $imagefile->getRandomName();
+                    $imagefile->move(WRITEPATH.'uploads/empleados', $foto);
+                    $persona->update($user->id_persona,['foto'=> $foto]);
+                }          
+        }
+        
+        if($usuario != $user->usuario){
+            if($this->validate('empleado_user')){
+                        
+                $empleado->update($id, ['usuario' => $usuario]);        
+            }
+            else{
+                return redirect()->back()->withInput();
+            }
+        }
+        if($correo != $user->email){
+            if($this->validate('empleado_email')){
+                        
+                $empleado->update($id, ['email' => $correo]);      
+            }
+            else{
+                return redirect()->back()->withInput();
+            }
+        }
+        
+        if($clave != '' && $clave_confirm != ''){
+            if($clave == $clave_confirm){
+                if($this->validate('empleado_password')){
+                            
+                    $empleado->update($id, ['contrasena' => hashPassword($clave)]);
+                }
+                else{
+                    return redirect()->back()->withInput();
+                }
+            }else{
+                return redirect()->back()->withInput()->with('message', 'Las contraseñas no coinciden');
+            }
+        }
+
+        return redirect()->to('/administracion/configuracion')->with('message', 'Actualizacion de Datos exitosa!');
+    }
+
     public function generar_balance_general(){
+        $admin = new Administracion_1();
+		$sesion = $admin->sesiones();
+        $admin = '';
+        foreach($sesion['rol'] as $key =>$m){
+            $admin = $m->nombre;
+        }
+        if($admin != 'Contador'){
+           return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        }
         $plan_cuenta = new m_plan_cuenta();
         $data =['cuentas' => $plan_cuenta->asObject()
                         ->select('plan_cuenta.*')
@@ -62,6 +154,17 @@ class Administracion_4 extends BaseController{
         $this->_loadDefaultView( 'Balance General', $data,'balance_general');
     }
     public function cuadro_mando_item($id){
+
+        $admin = new Administracion_1();
+		$sesion = $admin->sesiones();
+        $admin = '';
+        foreach($sesion['rol'] as $key =>$m){
+            $admin = $m->nombre;
+        }
+        if($admin != 'Administrador'){
+           return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        }
+
         $item = new m_item();
 
         $data = ['item'=>$item->asObject()
@@ -79,6 +182,16 @@ class Administracion_4 extends BaseController{
 
     }
     public function cuadro_mando_marca($id){
+
+        $admin = new Administracion_1();
+		$sesion = $admin->sesiones();
+        $admin = '';
+        foreach($sesion['rol'] as $key =>$m){
+            $admin = $m->nombre;
+        }
+        if($admin != 'Administrador'){
+           return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        }
         $marca = new m_marca();
 
         $data = ['marca'=>$marca->asObject()
@@ -95,6 +208,16 @@ class Administracion_4 extends BaseController{
         $this->_loadDefaultView( 'Cuadro de MANDO: Marca', $data,'cuadro_mando/marcas');
     }
     public function cuadro_mando_subcategoria($id){
+
+        $admin = new Administracion_1();
+		$sesion = $admin->sesiones();
+        $admin = '';
+        foreach($sesion['rol'] as $key =>$m){
+            $admin = $m->nombre;
+        }
+        if($admin != 'Administrador'){
+           return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        }
         $subcategoria = new m_subcategoria();
 
         $data = ['subcategoria'=>$subcategoria->asObject()
@@ -111,6 +234,16 @@ class Administracion_4 extends BaseController{
         $this->_loadDefaultView( 'Cuadro de MANDO: Subcategoria', $data,'cuadro_mando/subcategorias');
     }
     public function cuadro_mando_categoria(){
+        $admin = new Administracion_1();
+		$sesion = $admin->sesiones();
+        $admin = '';
+        foreach($sesion['rol'] as $key =>$m){
+            $admin = $m->nombre;
+        }
+        if($admin != 'Administrador'){
+           return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        }
+
         $categoria = new m_categoria();
 
         $data = ['categoria'=>$categoria->asObject()
@@ -126,6 +259,17 @@ class Administracion_4 extends BaseController{
         $this->_loadDefaultView( 'Cuadro de MANDO: Categoria', $data,'cuadro_mando/categorias');
     }
     public function nueva_gestion(){
+
+        $admin = new Administracion_1();
+		$sesion = $admin->sesiones();
+        $admin = '';
+        foreach($sesion['rol'] as $key =>$m){
+            $admin = $m->nombre;
+        }
+        if($admin != 'Contador'){
+           return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        }
+
         $generales = new m_generales();
         $comprobante = new m_comprobante();
         $detalle_comprobante = new m_detalle_comprobante();
@@ -172,6 +316,16 @@ class Administracion_4 extends BaseController{
         return redirect()->to('/administracion')->with('message', 'No se pudo realizar el Inicio de Gestion');
     }
     public function iniciar_gestion(){
+        $admin = new Administracion_1();
+		$sesion = $admin->sesiones();
+        $admin = '';
+        foreach($sesion['rol'] as $key =>$m){
+            $admin = $m->nombre;
+        }
+        if($admin != 'Contador'){
+           return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        }
+
         $generales = new m_generales();
 
         $data = ['general' =>$generales->asObject()->first()];

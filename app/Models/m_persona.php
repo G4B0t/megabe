@@ -23,6 +23,14 @@ class m_persona extends Model
         ->first();
     }
 
+    function getPersona1($id){
+        return $this->asArray()
+        ->select('persona.*')
+        ->join('empleado','empleado.id = empleado.id_persona')
+        ->where('empleado.id',$id)
+        ->first();
+    }
+
     function getCliente($id_persona){
         $condiciones=['cliente.id_persona' => $id_persona];
         return $this->asArray()
@@ -40,5 +48,4 @@ class m_persona extends Model
         ->where($condiciones)
         ->first();
     }
-
 }

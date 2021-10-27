@@ -17,5 +17,13 @@ class m_rol extends Model
             ->where($condiciones)
             ->first();
     }
+    public function getCasiTodos()
+    {
+        return $this->asObject()
+            ->select('id, nombre')
+            ->whereNotIn('nombre',['Administrador'])
+            ->findAll();
+    }
+    
     
 }

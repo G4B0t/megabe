@@ -190,7 +190,7 @@ class User extends BaseController {
 
         
 
-        $es_cliente = $persona->getCliente($id);
+        $user = $empleado->getFullEmpleado($id);
 
         if ($cliente->find($id) == null)
         {
@@ -220,13 +220,21 @@ class User extends BaseController {
         $clave_confirm = $this->request->getPost('confirm_contrasena');
         $correo = $this->request->getPost('email');
 
+        $foto = "";
+        if($imagefile = $this->request->getFile('foto')) {
+            
+            if ($imagefile->isValid() && ! $imagefile->hasMoved())
+                {
+                    $foto = $imagefile->getRandomName();
+                    $imagefile->move(WRITEPATH.'uploads/clientes', $foto);
+                    $persona->update($user->id_persona,['foto'=> $foto]);
+                }          
+        }
         
         if($usuario != $user->usuario){
             if($this->validate('cliente_user')){
                         
-                $cliente->update($id, ['usuario' => $usuario]);
-    
-                return redirect()->to('/user/configuracion')->with('message', 'Actualizacion de Datos exitosa!');          
+                $cliente->update($id, ['usuario' => $usuario]);        
             }
             else{
                 return redirect()->back()->withInput();
@@ -235,9 +243,7 @@ class User extends BaseController {
         if($correo != $user->email){
             if($this->validate('cliente_email')){
                         
-                $cliente->update($id, ['email' => $correo]);
-    
-                return redirect()->to('/user/configuracion')->with('message', 'Actualizacion de Datos exitosa!');          
+                $cliente->update($id, ['email' => $correo]);      
             }
             else{
                 return redirect()->back()->withInput();
@@ -249,8 +255,6 @@ class User extends BaseController {
                 if($this->validate('cliente_password')){
                             
                     $cliente->update($id, ['contrasena' => hashPassword($clave)]);
-        
-                    return redirect()->to('/user/configuracion')->with('message', 'Actualizacion de Datos exitosa!');          
                 }
                 else{
                     return redirect()->back()->withInput();
@@ -260,18 +264,7 @@ class User extends BaseController {
             }
         }
 
-        $foto = "";
-        
-        /*if($imagefile = $this->request->getFile('foto')) {
-            
-            if ($imagefile->isValid() && ! $imagefile->hasMoved())
-                {
-                    $foto = $imagefile->getRandomName();
-                    $imagefile->move(WRITEPATH.'uploads/clientes', $foto);
-                }          
-        }*/
-        //
-       
+        return redirect()->to('/user/configuracion')->with('message', 'Actualizacion de Datos exitosa!');
     }
 
     private function _loadDefaultView($title,$data,$view,$tipo){

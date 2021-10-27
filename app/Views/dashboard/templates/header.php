@@ -49,6 +49,7 @@
 
                    <?php if($m->nombre == 'Administrador') { ?>
                       <li><a class="nav-link scrollto active" href="/administracion/cuadro_categoria">CUADRO DE MANDO</a></li>
+                      <li><a class="nav-link scrollto active" href="/administracion/configuracion">Perfil</a></li>
                       <li class="dropdown"><a href="#"><span>Menu</span> <i class="bi bi-chevron-down"></i></a>
                         <ul>
                         <li class="dropdown"><a href="/item"><span>Items</span> <i class="bi bi-chevron-down"></i></a>
@@ -139,6 +140,7 @@
                   <?php  if(($m->nombre == "Vendedor" || $m->nombre == "Cajero") && $i<2){ ?>
                         <!-- MENU CAJERO o VENDEDOR --> 
                         <li><a class="nav-link scrollto" href="/administracion/ver_pedidos">Confirmar Pagos</a></li>
+                        <li><a class="nav-link scrollto active" href="/administracion/configuracion">Perfil</a></li>
                   <?php } ?>
                     
                   <?php if($m->nombre == "Cajero"){ ?>
@@ -161,12 +163,13 @@
                       <?php if($central){?>
                         <li><a class="nav-link scrollto" href="/administracion/armar_compra">Ingresar Compra</a></li>
                       <?php } ?>
+                    <li><a class="nav-link scrollto active" href="/administracion/configuracion">Perfil</a></li>
                   <?php } ?>
                     
                   <?php if ($m->nombre == "Contador"){?>
                       <!-- MENU CONTADOR -->
-                      
                       <li><a class="nav-link scrollto active" href="/administracion/nuevo_comprobante">Comprobante</a></li>
+                      <li><a class="nav-link scrollto" href="/administracion/configuracion">Perfil</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/mayorizar">Mayorizacion</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/balance_general">Balance General</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/cierre_gestion">Cierre de Gestion</a></li>

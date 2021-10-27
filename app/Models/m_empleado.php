@@ -7,7 +7,7 @@ class m_empleado extends Model
     protected $table = 'empleado';
     protected $primaryKey = 'id';
     protected $allowedFields = ['id_persona','id_almacen',
-                                'usuario','contrasena','cargo','caja',
+                                'usuario','contrasena','email','cargo','caja',
                                 'fecha_ingreso','estado_sql'];
 
     public function getAll(){
@@ -57,6 +57,14 @@ class m_empleado extends Model
         ->select('empleado.id,empleado.id_almacen,almacen.direccion')
         ->join('almacen','almacen.id=empleado.id_almacen')
         ->where($restriccion)
+        ->first();
+    }
+
+    function getFullEmpleado($id){
+        return $this->asObject()
+        ->select('empleado.*, CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullName,persona.foto')
+        ->join('persona','persona.id = empleado.id_persona')
+        ->where('empleado.id',$id)
         ->first();
     }
 }

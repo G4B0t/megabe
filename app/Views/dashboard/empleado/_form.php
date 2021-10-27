@@ -1,76 +1,57 @@
 
-            </ol>
-        </div>
-      </div>
-    </section><!-- End Breadcrumbs -->
-
-    
 <section class="inner-page">
     <div class="container">
         <div class="mb-3 row">
             <label class="col-sm-2 col-form-label" for="id_subcategoria">Persona: </label>
             <div class="col-sm-10">
                 <select class="form-select" name="id_subcategoria" id="id_subcategoria">
-                    <?php foreach ($subcategoria as $c): ?>
-                        <option <?= $item->id_subcategoria !== $c->id ?: "selected"?> value="<?= $c->id ?>"><?= $c->nombre ?> </option>
+                    <?php foreach ($persona as $c): ?>
+                        <option <?= $empleado->id_persona !== $c->id ?: "selected"?> value="<?= $c->id ?>"><?=  $c->fullName?> </option>
                     <?php endforeach?>
                 </select>
             </div>
         </div>
 
         <div class="mb-3 row">
-            <label for="nombre" class="col-sm-2 col-form-label">Nombre:</label>
+            <label for="email" class="col-sm-2 col-form-label"><span>*</span>EMAIL:</label>
             <div class="col-sm-10">
-                <input class="form-control" type="input" id="nombre" name="nombre" value="<?=old('nombre', $item->nombre)?>"/><br />
+                <input class="form-control" type="input" id="email" name="email" value="<?=old('email', $empleado->email)?>"/><br />
             </div>
         </div>
 
         <div class="mb-3 row">
-            <label for="descripcion" class="col-sm-2 col-form-label">Descripcion:</label>
+            <label for="usuario" class="col-sm-2 col-form-label"><span>*</span>USUARIO:</label>
             <div class="col-sm-10">
-                <textarea class="form-control" name="descripcion" id="descripcion"><?=old('descripcion', $item->descripcion)?></textarea><br />
+                <input class="form-control" type="input" id="usuario" name="usuario" value="<?=old('usuario', $empleado->usuario)?>"/><br />
             </div>
         </div>
 
         <div class="mb-3 row">
-            <label for="codigo" class="col-sm-2 col-form-label">Codigo:</label>
+            <label for="contrasena" class="col-sm-2 col-form-label"><span>*</span>CONTRASEÑA:</label>
             <div class="col-sm-10">
-                <textarea class="form-control" name="codigo" id="codigo"><?=old('codigo', $item->codigo)?></textarea><br />
+                <input class="form-control" type="password" id="contrasena" name="contrasena" value="<?=old('contrasena', $empleado->contrasena)?>"/><br />
             </div>
         </div>
 
         <div class="mb-3 row">
-            <label for="fecha_expiracion" class="col-sm-2 col-form-label">Fecha de Expiracion:</label>
+            <label class="col-sm-2 col-form-label" for="id_almacen">*ALMACEN: </label>
             <div class="col-sm-10">
-                <input class="form-control" type="date" id="fecha_expiracion" name="fecha_expiracion"  min="today()" <?=old('codigo', $item->codigo)?>>
+                <select class="form-select" name="id_almacen" id="id_almacen">
+                    <?php foreach ($almacen as $c): ?>
+                        <option <?= $empleado->id_almacen !== $c->id ?: "selected"?> value="<?= $c->id ?>"><?=  $c->direccion ?> </option>
+                    <?php endforeach?>
+                </select>
             </div>
         </div>
 
         <div class="mb-3 row">
-            <label for="stock" class="col-sm-2 col-form-label">Stock:</label>
+            <label class="col-sm-2 col-form-label" for="rol">*ROL: </label>
             <div class="col-sm-10">
-                <textarea class="form-control" name="stock" id="stock"><?=old('stock', $item->stock)?></textarea><br />
-            </div>
-        </div>
-
-        <div class="mb-3 row">
-            <label for="precio_unitario" class="col-sm-2 col-form-label">Precio Unitario:</label>
-            <div class="col-sm-10">
-                <textarea class="form-control" name="precio_unitario" id="precio_unitario"><?=old('precio_unitario', $item->precio_unitario)?></textarea><br />
-            </div>
-        </div>
-
-        <div class="mb-3 row">
-            <label for="marca" class="col-sm-2 col-form-label">Marca:</label>
-            <div class="col-sm-10">
-                <textarea class="form-control" name="marca" id="marca"><?=old('marca', $item->marca)?></textarea><br />
-            </div>
-        </div>
-
-        <div class="mb-3 row">
-            <label for="foto" class="col-sm-2 col-form-label">Foto:</label>
-            <div class="col-sm-10">
-                <input class="form-control" type="file" name="foto"/>
+                <select class="form-select" name="rol" id="rol">
+                    <?php foreach ($rol as $c): ?>
+                        <option <?= $c->id ?: "selected"?> value="<?= $c->id ?>"><?=  $c->nombre ?> </option>
+                    <?php endforeach?>
+                </select>
             </div>
         </div>
 

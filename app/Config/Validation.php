@@ -54,13 +54,24 @@ class Validation
 	];
 	public $empleados =[
 		'usuario' => 'required|min_length[3]|max_length[20]|is_unique[empleado.usuario]',
-		'email' => 'required|min_length[8]|max_length[50]|is_unique[empleado.email]',
-		'contrasena' => 'required|min_length[2]|max_length[20]'
+		'email' => 'required|valid_email|is_unique[empleado.email]',
+		'contrasena' => 'required|min_length[3]|max_length[20]',
+		'id_almacen' =>'required',
+		'rol' => 'required'
 	];
 	public $clientes =[
-		'usuario' => 'required|min_length[4]|max_length[20]|is_unique[cliente.usuario]',
+		'usuario' => 'required|min_length[3]|max_length[20]|is_unique[cliente.usuario]',
 		'email' => 'required|valid_email|is_unique[cliente.email]',
 		'contrasena' => 'required|min_length[6]|max_length[20]'
+	];
+	public $empleado_password =[
+		'contrasena' => 'min_length[2]|max_length[20]'
+	];
+	public $empleado_user =[
+		'usuario' => 'min_length[4]|max_length[20]|is_unique[empleado.usuario]'
+	];
+	public $empleado_email =[
+		'email' => 'valid_email|is_unique[empleado.email]'
 	];
 	public $cliente_password =[
 		'contrasena' => 'min_length[2]|max_length[20]'
@@ -70,9 +81,6 @@ class Validation
 	];
 	public $cliente_email =[
 		'email' => 'valid_email|is_unique[cliente.email]'
-	];
-	public $empleado_password =[
-		'contrasena' => 'min_length[5]|max_length[20]'	
 	];
 	public $logins =[
 		'password' => 'min_length[2]|max_length[20]',

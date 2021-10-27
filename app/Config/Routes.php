@@ -74,6 +74,10 @@ $routes->get('/administracion/detalles_recepcion/(:any)', 'Administracion_3::ver
 $routes->post('/administracion/recepcion_confirmada/(:any)', 'Administracion_3::confirmar_recepcion/$1');
 
 
+$routes->get('/administracion/configuracion', 'Administracion_4::configuracion');
+$routes->post('/adminitracion/actualizar_usuario/(:any)', 'Administracion_4::actualizar_empleado/$1');
+
+
 $routes->get('/administracion/nuevo_comprobante', 'Administracion_2::nuevo_comprobante');
 $routes->get('/administracion/ver_comprobante/(:any)', 'Administracion_2::ver_comprobante/$1');
 $routes->post('/administracion/save_comprobante/(:any)', 'Administracion_2::guardar_comprobante/$1');

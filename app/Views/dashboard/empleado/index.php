@@ -1,34 +1,44 @@
-                <li><a class="btn btn-outline-info" role="button" href="/item/new" >Nuevo Producto</a></li>
+<main id="main">
+      <!-- ======= Breadcrumbs ======= -->
+      <section id="breadcrumbs" class="breadcrumbs">
+      <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2><?= $title ?></h2>
+            <ol>
+                <li><a class="btn btn-outline-info" role="button" href="/empleado/new" >Nuevo Empleado</a></li>
             </ol>
         </div>
-
       </div>
     </section><!-- End Breadcrumbs -->
 
-<?= view("dashboard/partials/_session"); ?>
+    <h2><?= view("dashboard/partials/_session"); ?></h2>
 
 <table class="table table-hover" data-aos="fade-up">
     <thead>
         <tr>
             <th>Id</th>
             <th>Nombre</th>
-            <th>Subcategoría</th>
+            <th>Usuario</th>
+            <th>Email</th>
+            <th>Rol</th>
             <th>Opciones</th>
         </tr>
     </thead>
     <tbody>
 
-        <?php foreach ($item as $key => $m): ?>
+        <?php foreach ($empleado as $key => $m): ?>
             <tr>
                 <td><?= $m->id ?></td>
-                <td><?= $m->nombre ?></td>
-                <td><?= $m->subcategoria ?></td>
+                <td><?= $m->fullname ?></td>
+                <td><?= $m->usuario ?></td>
+                <td><?= $m->email ?></td>
+                <td><?= $m->rol ?></td>
                 <td>
-                    <form action="/item/delete/<?= $m->id ?>" method="POST">
+                    <form action="/empleado/delete/<?= $m->id ?>" method="POST">
                         <input type="submit" name="submit" value="Borrar" class="btn btn-outline-danger"/>
                     </form>
 
-                    <a href="/item/<?= $m->id ?>/edit" class="btn btn-outline-warning">Editar</a>
+                    <a href="/empleado/<?= $m->id ?>/edit" class="btn btn-outline-warning">Editar</a>
 
 
                 </td>
@@ -40,4 +50,4 @@
     </tbody>
 </table>
 
-<?= $pager->links('item','paginacion') ?>
+<?= $pager->links('empleado','paginacion') ?>
