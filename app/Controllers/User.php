@@ -273,10 +273,12 @@ class User extends BaseController {
 		$subcategoria = new m_subcategoria();
 		$marca = new m_marca();
 
-        /*$administracion = new administracion_1();
+        $administracion = new administracion_1();
         $sesion = $administracion->sesiones();
         
-        $rol[] = (object) array('nombre' => $sesion['rol']);*/
+        echo $title.' - '.$view.' - '.$tipo;
+        echo $sesion['rol'];
+        /*$rol[] = (object) array('nombre' => $sesion['rol']);
         
        $dataHeader =[
             'title' => $title,
@@ -295,18 +297,18 @@ class User extends BaseController {
 			->select('marca.*')
             ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
             ->findAll(),
-            'rol' => 'Normal',
+            'rol' => $rol,
 
-			'log' => 'login',
+			'log' => $sesion['log'],
 
-            'central'=>false,
+            'central'=>$sesion['almacen'],
 
             'vista'=> ''
         ];
 
         echo view("dashboard/templates/header",$dataHeader);
         echo view("dashboard/user/$view",$data);
-        echo view("dashboard/templates/footer");
+        echo view("dashboard/templates/footer");*/
     }
 
 }
