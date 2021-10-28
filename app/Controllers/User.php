@@ -3,7 +3,7 @@ use App\Models\m_cliente;
 use App\Models\m_persona;
 use App\Models\m_empleado;
 use App\Controllers\BaseController;
-use App\Controllers\administracion_1;
+use App\Controllers\Administracion_1;
 use \CodeIgniter\Exceptions\PageNotFoundException;
 
 use App\Models\m_marca;
@@ -273,7 +273,8 @@ class User extends BaseController {
 		$subcategoria = new m_subcategoria();
 		$marca = new m_marca();
 
-        $administracion = new administracion_1();
+        echo 'Probando entrada';
+        /*$administracion = new administracion_1();
         $sesion = $administracion->sesiones();
         
         $rol[] = (object) array('nombre' => $sesion['rol']);
