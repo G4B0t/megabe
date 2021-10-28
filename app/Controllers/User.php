@@ -306,8 +306,8 @@ class User extends BaseController {
         ];
 
         echo view("dashboard/templates/header",$dataHeader);
-        /*echo view("dashboard/user/$view",$data);
-        echo view("dashboard/templates/footer");*/
+        echo view("dashboard/user/$view",$data);
+        //echo view("dashboard/templates/footer");
     }
 
 }
