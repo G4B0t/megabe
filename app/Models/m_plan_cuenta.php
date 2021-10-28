@@ -10,6 +10,19 @@ class m_plan_cuenta extends Model
                                 'grupo','id_cuenta_padre','debe','haber',
                                 'saldo','estado_sql'];
 
+
+    public function getCajas(){
+        $restricciones = ['grupo'=>'D'];
+        $name = ['nombre_cuenta' => 'CAJA'];
+
+        return $this->asObject()
+            ->select('plan_cuenta.*')
+            ->where($restricciones)
+            ->like($name)
+            ->whereNotIn('plan_cuenta.nombre_cuenta',['CAJA 1 CENTRAL'])
+            ->findAll();
+     }
+                            
     public function getBancos(){
         $restricciones = ['grupo'=>'D'];
         $name = ['nombre_cuenta' => 'BANCO'];

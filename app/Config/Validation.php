@@ -46,6 +46,11 @@ class Validation
 		'nombre_cuenta' => 'min_length[1]|max_length[70]',
 		'codigo_cuenta' => 'min_length[1]|max_length[18]'
 	];
+	public $proveedores =[
+		'nombre_empresa' => 'required|min_length[3]|max_length[20]',
+		'direccion' => 'required|min_length[4]|max_length[50]',
+		'contacto' => 'required|min_length[3]|max_length[15]'
+	];
 
 	public $personas =[
 		'nombre' => 'required|max_length[20]',

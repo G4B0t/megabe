@@ -10,12 +10,12 @@ use App\Models\m_categoria;
 use App\Models\m_item;
 
 use App\Controllers\Administracion_1;
-
+use App\Models\m_proveedor;
 use App\Models\m_empleado;
 use App\Models\m_rol;
 use App\Models\m_empleado_rol;
 
-class Cliente extends BaseController {
+class Empleado_Rol extends BaseController {
 
     public function index(){
 
@@ -29,17 +29,19 @@ class Cliente extends BaseController {
            return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
         }
 
-        $cliente = new m_cliente();
+        $empleado_rol = new m_empleado_rol();
 
         $data = [
-            'cliente' => $cliente->asObject()
-            ->select('cliente.*,persona.nombre as cliente')
-            ->join('persona','persona.id = cliente.id_persona')
-            ->paginate(10,'cliente'),
-            'pager' => $cliente->pager
+            'empleado_rol' => $empleado_rol->asObject()
+            ->select('empleado_rol.*,CONCAT(persona.nombre, " ", persona.apellido_paterno) AS proveedor, item.nombre as item')
+            ->join('rol','empleado_rol.id_rol = rol.id')
+            ->join('empleado','empleado_rol.id_empleado = empleado.id')
+            ->join('persona','persona.id = empleado.id_persona')
+            ->paginate(10,'empleado_rol'),
+            'pager' => $empleado_rol->pager
         ];
 
-        $this->_loadDefaultView( 'Listado de Clientes',$data,'index');
+        $this->_loadDefaultView( 'Listado de Roles por Empleado',$data,'index');
     }
 
     public function new(){

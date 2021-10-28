@@ -77,7 +77,6 @@ $routes->post('/administracion/recepcion_confirmada/(:any)', 'Administracion_3::
 $routes->get('/administracion/configuracion', 'Administracion_4::configuracion');
 $routes->post('/adminitracion/actualizar_usuario/(:any)', 'Administracion_4::actualizar_empleado/$1');
 
-
 $routes->get('/administracion/nuevo_comprobante', 'Administracion_2::nuevo_comprobante');
 $routes->get('/administracion/ver_comprobante/(:any)', 'Administracion_2::ver_comprobante/$1');
 $routes->post('/administracion/save_comprobante/(:any)', 'Administracion_2::guardar_comprobante/$1');
@@ -119,6 +118,13 @@ $routes->resource('almacen');
 $routes->resource('cliente');
 $routes->resource('empleado');
 $routes->resource('plan_cuenta');
+$routes->resource('proveedor');
+
+$routes->get('/empleado/asignacion/(:any)', 'Empleado::asginar/$1');
+$routes->get('/cambiar_caja/(:any)', 'Empleado::modificar_caja/$1');
+$routes->post('/empleado/modificar_caja/(:any)', 'Empleado::updateCaja/$1');
+
+
 
 $routes->get('/detalle_venta/(:any)/(:any)', 'Detalle_Venta::carrito/$1/$2');
 $routes->post('/detalle_venta/confirmar_pedido_cliente/(:any)', 'Detalle_Venta::confirmarPedido/$1');
@@ -130,8 +136,6 @@ $routes->post('/user/crear', 'User::crear');
 $routes->post('/user/actualizar', 'User::actualizar');
 $routes->post('/user/configuracion', 'User::configuracion');
 $routes->get('/registrar_nuevo', 'User::nuevo');
-
-
 
 
 

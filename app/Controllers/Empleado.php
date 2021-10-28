@@ -10,6 +10,7 @@ use App\Controllers\Administracion_1;
 
 use App\Models\m_rol;
 use App\Models\m_empleado_rol;
+use App\Models\m_plan_cuenta;
 
 class Empleado extends BaseController {
 
@@ -30,10 +31,12 @@ class Empleado extends BaseController {
 
         $data = [
             'empleado' => $empleado->asObject()
-            ->select('empleado.*,CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullname, rol.nombre as rol')
+            ->select('empleado.*,CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullname, rol.nombre as rol, almacen.direccion as almacen')
             ->join('empleado_rol','empleado_rol.id_empleado = empleado.id')
             ->join('rol','empleado_rol.id_rol = rol.id')
             ->join('persona','persona.id = empleado.id_persona')
+            ->join('almacen','almacen.id = empleado.id_almacen')
+            ->whereNotIn('rol.nombre',['Administrador'])
             ->paginate(10,'empleado'),
             'pager' => $empleado->pager
         ];
@@ -57,6 +60,9 @@ class Empleado extends BaseController {
         ->whereNotIn('id',function ($persona) {
                         return $persona->select('cliente.id_persona')->from('cliente');
                     })
+        ->whereNotIn('id',function ($persona) {
+                        return $persona->select('proveedor.id_persona')->from('proveedor');
+                    })           
         ->findAll();
         
         $almacenes = $almacen->asObject()->findAll();
@@ -71,88 +77,168 @@ class Empleado extends BaseController {
 
         helper("user");
         $empleado = new m_empleado();
-        $rol_empleado = new m_rol_empleado();
+        $empleado_rol = new m_empleado_rol();
+        $rol = new m_rol();
+        
         $cDate = date('Y-m-d H:i:s');
+        $role =  $this->request->getPost('rol');
+        $almacen = $this->request->getPost('id_almacen');
 
+        $caja = 'Almacen '.$almacen;
+        if($role == 3){
+            $caja = 'CAJA 2';
+        }
+        if($almacen == 1 && $role == 4){
+            $caja = 'Central';
+        }
+        if( $role == 5){
+
+            $caja = 'CAJA 1 CENTRAL';
+        }
+        
         if($this->validate('empleados')){
-            /*if($empleado->insert([
-                'usuario' =>$this->request->getPost('usuario'),
-                'contrasena' =>hashPassword($this->request->getPost('contrasena')),
-                'email' =>$this->request->getPost('email'),
-                'fecha_ingreso' =>  $cDate,
-                ])){*/
-                    $body_rol_empleado = ['id_rol'=>$this->request->getPost('rol'),'id_empleado'=>$id];
-                    if($rol_empleado->insert($body_rol_empleado)){
-                        return redirect()->to("/empleados/roles")->with('message', 'Empleado registrado con éxito.');
+            $body_empleado = [
+                            'id_persona'=> $this->request->getPost('id_persona'),
+                            'id_almacen' => $almacen,
+                            'usuario' =>$this->request->getPost('usuario'),
+                            'contrasena' =>hashPassword($this->request->getPost('contrasena')),
+                            'email' =>$this->request->getPost('email'),
+                            'caja' => $caja,
+                            'fecha_ingreso' =>  $cDate
+            ];
+            if($empleado->insert($body_empleado)){
+                    $id_empleado = $empleado->getInsertID();
+                    $body_rol_empleado = ['id_rol'=>$this->request->getPost('rol'),'id_empleado'=>$id_empleado];
+
+                    if($empleado_rol->insert($body_rol_empleado)){
+                        return redirect()->to("/empleado")->with('message', 'Empleado registrado con exito!');  
                     }
-                //} 
+                }
+                else{
+                    return redirect()->back()->withInput()->with('message', 'No se pudo registrar al Empleado!');
+                }
+            
         }
         else{
             return redirect()->back()->withInput();
         }
-    }
+    }  
 
     public function edit($id = null){
 
         $persona = new m_persona();
-        $cliente = new m_cliente();
+        $empleado = new m_empleado();
+        $rol = new m_rol();
+        $almacen = new m_almacen();
 
-        if ($cliente->find($id) == null)
+        if ($empleado->find($id) == null)
+        {
+            throw PageNotFoundException::forPageNotFound();
+        }  
+        $validation =  \Config\Services::validation();
+
+        $data = ['validation'=>$validation,
+                'empleado'=> $empleado->asObject()->find($id),
+                'almacen' => $almacen->asObject()->findAll(),
+                'rol' => $rol->getCasiTodos()];
+
+        
+        $this->_loadDefaultView('Modificar Empleado',$data,'edit');
+    }
+
+
+    public function update($id){
+        $empleado = new m_empleado();
+        $empleado_rol = new m_empleado_rol();
+
+        if ($empleado->find($id) == null)
         {
             throw PageNotFoundException::forPageNotFound();
         }  
 
-        $validation =  \Config\Services::validation();
-        $this->_loadDefaultView('Modificar Cliente',['validation'=>$validation,'cliente'=> $cliente->asObject()->find($id),
-                                            'persona' => $persona->asObject()->getAll()],'edit');
-    }
-
-
-    public function update($id = null){
-
         helper("user");
+        $role = $this->request->getPost('rol');
+        $almacen = $this->request->getPost('id_almacen'); 
+        $empleado_rol = new m_empleado_rol();
 
-        if($this->validate('clientes')){
-            $cliente->update($id, [
-                'nit' =>$this->request->getPost('nit'),
-                'razon_social' =>$this->request->getPost('razon_social'),
-                'id_persona' =>$this->request->getPost('id_persona'),
-                'usuario' =>$this->request->getPost('usuario'),
-                'contrasena' =>hashPassword($this->request->getPost('contrasena')),
-                'email' =>$this->request->getPost('email'),
-            ]);
-
-            return redirect()->to('/cliente')->with('message', 'Cliente editado con éxito.');
-
+        $caja = 'Almacen '.$almacen;
+        if($role == 3){
+            $caja = 'CAJA 2';
         }
+        if($almacen == 1 && $role == 4){
+            $caja = 'Central';
+        }
+        if( $role == 5){
+
+            $caja = 'CAJA 1 CENTRAL';
+        }
+
+        $emple_rol = $empleado_rol->getByEmpleado($id);
+        foreach($emple_rol as $key => $m){
+            $id_emple_rol = $m->id;
+        }
+
+       if($empleado->update($id, [
+                'id_almacen' =>$almacen,
+                'caja' => $caja
+            ])){
+                if($empleado_rol->update($id_emple_rol,['id_rol' => $role])){
+                    return redirect()->to('/empleado')->with('message', 'Rol de Empleado modificado con éxito.');
+                }
+                else{
+                    return redirect()->back()->withInput()->with('message', 'No se pudo modificar el Rol del Empleado.');
+                }
+            }
+        else{
+            return redirect()->back()->withInput()->with('message', 'No se pudo modificar al Empleado.');
+        } 
        
     }
 
     public function delete($id = null){
 
-        $item = new m_item();
+        $empleado = new m_empleado();
 
-        if ($item->find($id) == null)
+        if ($empleado->find($id) == null)
         {
             throw PageNotFoundException::forPageNotFound();
         }  
         
-        $item->delete($id);
+        $empleado->update($id,['estado_sql'=>0]);
 
-        return redirect()->to('/item')->with('message', 'Item eliminada con éxito.');
+        return redirect()->to('/empleado')->with('message', 'Empleado eliminada con éxito.');
     }
 
-    public function show($id = null){
-        
-        $item = new m_item();
+    public function updateCaja($id = null){
 
-        if ($item->find($id) == null)
+        $empleado = new m_empleado();
+
+        if ($empleado->find($id) == null)
         {
             throw PageNotFoundException::forPageNotFound();
-        }   
+        }  
+        
+       if($empleado->update($id,['caja'=>$this->request->getPost('cajas')])){
+            return redirect()->to('/empleado')->with('message', 'Asignacion de CAJA completado.');
+        }
+        else{
+            return redirect()->back()->withInput()->with('message', 'No se pudo asignar CAJA al Empleado.');
+        }       
+    }
 
-        var_dump($item->asObject()->find($id)->id);
+    public function modificar_caja($id_empleado){
+        $plan_cuenta = new m_plan_cuenta();
+        $cajas = $plan_cuenta->getCajas();
+        $empleado = new m_empleado();
 
+
+        $data = [
+            'empleado' =>$empleado->asObject()->find($id_empleado),
+
+            'cajas' =>  $cajas
+        ];
+        $this->_loadDefaultView( 'Asignar CAJA',$data,'_form_Caja');
+        
     }
 
     private function _loadDefaultView($title,$data,$view){

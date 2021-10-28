@@ -51,3 +51,6 @@
         </div>
 
         <input class="btn btn-success" type="submit" name="submit" value="<?=$textButton?>" />
+
+        </div>
+</section>

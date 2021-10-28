@@ -2,9 +2,9 @@
 <section class="inner-page">
     <div class="container">
         <div class="mb-3 row">
-            <label class="col-sm-2 col-form-label" for="id_subcategoria">Persona: </label>
+            <label class="col-sm-2 col-form-label" for="id_persona">Persona: </label>
             <div class="col-sm-10">
-                <select class="form-select" name="id_subcategoria" id="id_subcategoria">
+                <select class="form-select" name="id_persona" id="id_persona">
                     <?php foreach ($persona as $c): ?>
                         <option <?= $empleado->id_persona !== $c->id ?: "selected"?> value="<?= $c->id ?>"><?=  $c->fullName?> </option>
                     <?php endforeach?>
@@ -56,3 +56,6 @@
         </div>
 
         <input class="btn btn-success" type="submit" name="submit" value="<?=$textButton?>" />
+
+    </div>
+</section>

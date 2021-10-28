@@ -9,6 +9,14 @@ class m_empleado_rol extends Model
     protected $allowedFields = ['id_empleado','id_rol','horario','estado_sql'];
 
 
+    public function getOne($id_empleado,$id_rol){
+        $condicion = ['id_empleado' => $id_empleado, 'id_rol' => $id_rol];
+        return $this->asObject()
+                ->select('empleado_rol.*')
+                ->where($condicion)
+                ->first();
+    }
+
     public function getAdmin($id_empleado){
         $condiciones = ['empleado_rol.id_empleado' => $id_empleado,'empleado_rol.estado_sql' => 1];
         return $this->asObject()
@@ -21,7 +29,7 @@ class m_empleado_rol extends Model
     {
         $condiciones = ['empleado_rol.id_empleado' => $id_empleado,'empleado_rol.estado_sql' => 1];
         return $this->asObject()
-            ->select('rol.nombre')
+            ->select('empleado_rol.*,rol.nombre')
             ->join('rol','empleado_rol.id_rol=rol.id')
             ->where($condiciones)
             ->findAll();

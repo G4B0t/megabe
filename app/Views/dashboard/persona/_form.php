@@ -1,27 +1,15 @@
-<main id="main">
-      <!-- ======= Breadcrumbs ======= -->
-      <section id="breadcrumbs" class="breadcrumbs">
-      <div class="container">
-        <div class="d-flex justify-content-between align-items-center">
-          <h2><?= $title ?></h2>
-          <ol>
-            <li><a class="btn btn-outline-dark" role="button" href="<?= route_to('contacto','Gabriel') ?>">Contacto</a></li>
-            </ol>
-        </div>
-      </div>
-    </section><!-- End Breadcrumbs -->     
-    
+
 <section class="inner-page">
     <div class="container">
         <div class="mb-3 row">
-            <label for="nombre" class="col-sm-2 col-form-label" >Nombre:</label>
+            <label for="nombre" class="col-sm-2 col-form-label" ><span>*</span>Nombre:</label>
             <div class="col-sm-10">
                 <input class="form-control" type="input" id="nombre" name="nombre" value="<?=old('nombre', $persona->nombre)?>"/><br />
             </div>
         </div>
 
         <div class="mb-3 row">
-            <label for="apellido_paterno" class="col-sm-2 col-form-label">Apellido Paterno:</label>
+            <label for="apellido_paterno" class="col-sm-2 col-form-label"><span>*</span>Apellido Paterno:</label>
             <div class="col-sm-10">
                 <input class="form-control" type="input" id="apellido_paterno" name="apellido_paterno" value="<?=old('apellido_paterno', $persona->apellido_paterno)?>"/><br />
             </div>
@@ -35,7 +23,7 @@
         </div>
 
         <div class="mb-3 row">
-            <label for="nro_ci"  class="col-sm-2 col-form-label">Documento CI:</label>
+            <label for="nro_ci"  class="col-sm-2 col-form-label"><span>*</span>Documento CI:</label>
             <div class="col-sm-10">
                 <input class="form-control" type="input" id="nro_ci" name="nro_ci" value="<?=old('nro_ci', $persona->nro_ci)?>"/><br />
             </div>
@@ -73,20 +61,6 @@
             <label for="zona_vivienda"  class="col-sm-2 col-form-label">Barrio:</label>
             <div class="col-sm-10">
                 <textarea class="form-control" name="zona_vivienda" id="zona_vivienda"><?=old('zona_vivienda', $persona->zona_vivienda)?></textarea><br />
-            </div>
-        </div>
-
-        <div class="mb-3 row">
-            <label for="latitud_vivienda"  class="col-sm-2 col-form-label">Latitud:</label>
-            <div class="col-sm-10">
-                <input class="form-control" type="input" id="latitud_vivienda" name="latitud_vivienda" value="<?=old('latitud_vivienda', $persona->latitud_vivienda)?>"/><br />
-            </div>
-        </div>
-
-        <div class="mb-3 row">
-            <label for="longitud_vivienda"  class="col-sm-2 col-form-label">Longitud:</label>
-            <div class="col-sm-10">
-                <input class="form-control" type="input" id="longitud_vivienda" name="longitud_vivienda" value="<?=old('longitud_vivienda', $persona->longitud_vivienda)?>"/><br />
             </div>
         </div>
 

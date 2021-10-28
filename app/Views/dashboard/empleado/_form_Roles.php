@@ -5,14 +5,8 @@
         <div class="d-flex justify-content-between align-items-center">
             <h2><?= $title ?></h2>
             <ol>
-                
+               
             </ol>
         </div>
       </div>
     </section><!-- End Breadcrumbs -->
-
-   
-<?= view("dashboard/partials/_form-error"); ?>
-<form action="create" method="POST" enctype="multipart/form-data">
-<?= view("dashboard/empleado/_form",['textButton' => 'Guardar']); ?>
-</form>

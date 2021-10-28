@@ -4,6 +4,7 @@
       <div class="container">
         <div class="d-flex justify-content-between align-items-center">
           <h2><?= $title ?></h2>
+          <h4><?= view("dashboard/partials/_session"); ?></h4>
           <ol>
             <li><a class="btn btn-outline-dark" role="button" href="<?= route_to('contacto','Gabriel') ?>">Contacto</a></li>
                 <li><a class="btn btn-outline-info" role="button" href="/item/new" >Nuevo Producto</a></li>
@@ -12,15 +13,13 @@
       </div>
     </section><!-- End Breadcrumbs -->
 
-    <h2><?= view("dashboard/partials/_session"); ?></h2>
-
-
 <table class="table table-hover" data-aos="fade-up">
     <thead>
         <tr>
             <th>Foto</th>
             <th>Nombre</th>
             <th>Marca</th>
+            <th>Proveedor</th>
             <th>Opciones</th>
         </tr>
     </thead>
@@ -31,6 +30,7 @@
                 <td><img src="<?= base_url()?>/imagen/productos/<?= $m->foto ?>" width="300" height="250" > </img> </td>
                 <td><?= $m->nombre ?></td>
                 <td><?= $m->marca ?></td>
+                <td><?= $m->proveedor ?></td>
                 <td>
                     <form action="/item/delete/<?= $m->id ?>" method="POST">
                         <input type="submit" name="submit" value="Borrar" class="btn btn-outline-danger"/>

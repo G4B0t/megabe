@@ -63,6 +63,8 @@
                           <ul>  
                             <li><a class="nav-link scrollto" href="/cliente">Clientes</a></li>
                             <li><a class="nav-link scrollto" href="/empleado">Empleados</a></li>
+                            <li><a class="nav-link scrollto" href="/roles_empleado">Rol - Empleado</a></li>
+                            <li><a class="nav-link scrollto" href="/proveedor">Proveedores</a></li>
                           </ul>
                         </li>
                         <li class="dropdown"><a href="/almacen"><span>Almacen</span> <i class="bi bi-chevron-down"></i></a>

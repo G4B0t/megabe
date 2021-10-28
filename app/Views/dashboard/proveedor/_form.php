@@ -1,33 +1,40 @@
-<label for="id_subcategoria">Categoría</label>
-<select name="id_subcategoria" id="id_subcategoria">
-<?php foreach ($subcategoria as $c): ?>
-    <option <?= $item->id_subcategoria !== $c->id ?: "selected"?> value="<?= $c->id ?>"><?= $c->nombre ?> </option>
-<?php endforeach?>
-</select>
+<section class="inner-page">
+    <div class="container">
 
-<label for="nombre">Nombre</label>
-<input type="input" id="nombre" name="nombre" value="<?=old('nombre', $item->nombre)?>"/><br />
+        <div class="mb-3 row">
+            <label class="col-sm-2 col-form-label" for="id_persona">Persona:</label>
+                <div class="col-sm-10">
+                <select  class="form-select"  name="id_persona" id="id_persona">
+                    <?php foreach ($persona as $c): ?>
+                        <option <?= $proveedor->id_persona !== $c->id ?: "selected"?> value="<?= $c->id ?>"><?= $c->fullName ?> </option>
+                    <?php endforeach?>
+                </select>
+                </div>
+        </div>
 
-<label for="descripcion">Descripcion</label>
-<textarea name="descripcion" id="descripcion"><?=old('descripcion', $item->descripcion)?></textarea><br />
+        <div class="mb-3 row">
+            <label for="nombre_empresa" class="col-sm-2 col-form-label">Nombre Empresa:</label>
+            <div class="col-sm-10">
+                <input class="form-control" type="input" id="nombre_empresa" name="nombre_empresa" value="<?=old('nombre_empresa', $proveedor->nombre_empresa)?>"/><br />
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="direccion" class="col-sm-2 col-form-label">Direccion:</label>
+            <div class="col-sm-10">
+                <input class="form-control" type="input" id="direccion" name="direccion" value="<?=old('direccion', $proveedor->direccion)?>"/><br />
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="contacto" class="col-sm-2 col-form-label">Contacto:</label>
+            <div class="col-sm-10">
+                <input class="form-control" type="input" id="contacto" name="contacto" value="<?=old('contacto', $proveedor->contacto)?>"/><br />
+            </div>
+        </div>
 
-<label for="codigo">Codigo</label>
-<textarea name="codigo" id="codigo"><?=old('codigo', $item->codigo)?></textarea><br />
+        
+        <div class="col-sm-10">
+            <input class="btn btn-success" type="submit" name="submit" value="<?=$textButton?>" />
+        </div>
 
-<label for="fecha_expiracion">Fecha de Expiracion</label>
-<input type="date" id="fecha_expiracion" name="fecha_expiracion"  min="today()" <?=old('codigo', $item->codigo)?>>
-
-<label for="stock">Stock</label>
-<textarea name="stock" id="stock"><?=old('stock', $item->stock)?></textarea><br />
-
-<label for="precio_unitario">Precio Unitario</label>
-<textarea name="precio_unitario" id="precio_unitario"><?=old('precio_unitario', $item->precio_unitario)?></textarea><br />
-
-<label for="marca">Marca</label>
-<textarea name="marca" id="marca"><?=old('marca', $item->marca)?></textarea><br />
-
-<label for="foto">Foto</label>
-<input type="file" name="foto"/>
-
-
-<input type="submit" name="submit" value="<?=$textButton?>" />
+    </div>
+</section>

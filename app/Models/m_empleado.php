@@ -7,7 +7,7 @@ class m_empleado extends Model
     protected $table = 'empleado';
     protected $primaryKey = 'id';
     protected $allowedFields = ['id_persona','id_almacen',
-                                'usuario','contrasena','email','cargo','caja',
+                                'usuario','contrasena','email','caja',
                                 'fecha_ingreso','estado_sql'];
 
     public function getAll(){

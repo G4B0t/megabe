@@ -4,6 +4,7 @@
       <div class="container">
         <div class="d-flex justify-content-between align-items-center">
             <h2><?= $title ?></h2>
+            <h4><?= view("dashboard/partials/_session"); ?></h4>
             <ol>
                 <li><a class="btn btn-outline-info" role="button" href="/empleado/new" >Nuevo Empleado</a></li>
             </ol>
@@ -11,7 +12,6 @@
       </div>
     </section><!-- End Breadcrumbs -->
 
-    <h2><?= view("dashboard/partials/_session"); ?></h2>
 
 <table class="table table-hover" data-aos="fade-up">
     <thead>
@@ -19,8 +19,9 @@
             <th>Id</th>
             <th>Nombre</th>
             <th>Usuario</th>
-            <th>Email</th>
+            <th>Almacen</th>
             <th>Rol</th>
+            <th>Asignacion</th>
             <th>Opciones</th>
         </tr>
     </thead>
@@ -31,16 +32,17 @@
                 <td><?= $m->id ?></td>
                 <td><?= $m->fullname ?></td>
                 <td><?= $m->usuario ?></td>
-                <td><?= $m->email ?></td>
+                <td><?= $m->almacen ?></td>
                 <td><?= $m->rol ?></td>
+                <td><?= $m->caja ?></td>
                 <td>
                     <form action="/empleado/delete/<?= $m->id ?>" method="POST">
                         <input type="submit" name="submit" value="Borrar" class="btn btn-outline-danger"/>
                     </form>
-
                     <a href="/empleado/<?= $m->id ?>/edit" class="btn btn-outline-warning">Editar</a>
-
-
+                    <?php if($m->rol == 'Cajero') { ?>
+                        <a class="btn btn-outline-info" role="button" href="/cambiar_caja/<?= $m->id ?>" >Cambiar Caja</a>
+                    <?php } ?>
                 </td>
             </tr>
         <?php endforeach?>

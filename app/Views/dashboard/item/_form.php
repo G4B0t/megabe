@@ -14,6 +14,17 @@
         </div>
 
         <div class="mb-3 row">
+            <label class="col-sm-2 col-form-label" for="id_proveedor">Proveedor:</label>
+            <div class="col-sm-10">
+                <select class="form-select" name="id_proveedor" id="id_proveedor">
+                    <?php foreach ($proveedor as $c): ?>
+                        <option <?= $item->id_proveedor !== $c->id ?: "selected"?> value="<?= $c->id ?>"><?= $c->fullName ?> </option>
+                    <?php endforeach?>
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-3 row">
             <label for="nombre" class="col-sm-2 col-form-label">Nombre:</label>
             <div class="col-sm-10">
                 <input class="form-control" type="input" id="nombre" name="nombre" value="<?=old('nombre', $item->nombre)?>"/><br />

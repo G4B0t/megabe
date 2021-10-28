@@ -33,6 +33,7 @@ class Item extends BaseController {
             'item' => $item->asObject()
             ->select('item.*,marca.nombre as marca')
             ->join('marca','marca.id = item.id_marca')
+            ->join('proveedor','item.id_proveedor = proveedor.id')
             ->paginate(10,'item'),
             'pager' => $item->pager
         ];
