@@ -16,7 +16,7 @@ class User extends BaseController {
     
         
         $validation =  \Config\Services::validation();
-        $this->_loadDefaultView( 'Iniciar Sesion',['validation'=>$validation],'index','header-inner-pages');
+        $this->_loadDefaultView( 'Iniciar Sesion',[],'index','header-inner-pages');
 
     }
 
