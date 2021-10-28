@@ -304,9 +304,9 @@ class User extends BaseController {
 
             'vista'=> ''
         ];
-        var_dump($data);
-        /*echo view("dashboard/templates/header",$dataHeader);
-        echo view("dashboard/user/$view",$data);
+
+        echo view("dashboard/templates/header",$dataHeader);
+        /*echo view("dashboard/user/$view",$data);
         echo view("dashboard/templates/footer");*/
     }
 
