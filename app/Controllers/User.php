@@ -278,7 +278,7 @@ class User extends BaseController {
         
         
         $rol[] = (object) array('nombre' => $sesion['rol']);
-        
+
         $dataHeader =[
             'title' => $title,
             'tipo' => $tipo,
@@ -304,7 +304,7 @@ class User extends BaseController {
 
             'vista'=> ''
         ];
-        var_dump($dataHeader);
+        var_dump($data);
         /*echo view("dashboard/templates/header",$dataHeader);
         echo view("dashboard/user/$view",$data);
         echo view("dashboard/templates/footer");*/
