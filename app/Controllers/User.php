@@ -278,23 +278,24 @@ class User extends BaseController {
         
         $rol[] = (object) array('nombre' => $sesion['rol']);
         
-        $dataHeader =[
+        var_dump($rol);
+        /*$dataHeader =[
             'title' => $title,
             'tipo' => $tipo,
 
             'categoria' => $categoria->asObject()
             ->select('categoria.*')
-            ->paginate(10,'categoria'),
+            ->findAll(),
 
 			'subcategoria' => $subcategoria->asObject()
             ->select('subcategoria.*')
             ->join('categoria','categoria.id = subcategoria.id_categoria')
-            ->paginate(10,'subcategoria'),
+            ->findAll(),
 
 			'marca' => $marca->asObject()
 			->select('marca.*')
             ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
-            ->paginate(10,'marca'),
+            ->findAll(),
             'rol' => $rol,
 
 			'log' => $sesion['log'],
@@ -306,7 +307,7 @@ class User extends BaseController {
 
         echo view("dashboard/templates/header",$dataHeader);
         echo view("dashboard/user/$view",$data);
-        echo view("dashboard/templates/footer");
+        echo view("dashboard/templates/footer");*/
     }
 
 }
