@@ -14,9 +14,9 @@ class User extends BaseController {
 
     public function login(){
     
-      
+        echo 'Es la vista de LOGIN';
         $validation =  \Config\Services::validation();
-        $this->_loadDefaultView( 'Iniciar Sesion',['validation'=>$validation],'index','header-inner-pages');
+        //$this->_loadDefaultView( 'Iniciar Sesion',['validation'=>$validation],'index','header-inner-pages');
 
     }
 
