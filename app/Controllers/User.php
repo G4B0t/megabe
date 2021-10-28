@@ -276,11 +276,11 @@ class User extends BaseController {
         $administracion = new administracion_1();
         $sesion = $administracion->sesiones();
         
-        echo $title.' - '.$view.' - '.$tipo;
-        echo $sesion['rol'];
-        /*$rol[] = (object) array('nombre' => $sesion['rol']);
         
-       $dataHeader =[
+        $rol[] = (object) array('nombre' => $sesion['rol']);
+        echo $title.' - '.$view.' - '.$tipo;
+        var_dump($rol);
+        /*$dataHeader =[
             'title' => $title,
             'tipo' => $tipo,
 
