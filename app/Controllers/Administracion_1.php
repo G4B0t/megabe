@@ -75,10 +75,13 @@ class Administracion_1 extends BaseController{
         $tipo_respaldo = 'retiro de caja';
         $empresa = $generales->getEmpresa();
 
-        $body_comprobante = ['beneficiario' => $cajero_general->fullname,
+        $body_comprobante = [
+                            'id_empleado' => $trabajador['id'],
+                            'beneficiario' => $cajero_general->fullname,
                             'glosa' => $glosa,
                             'fecha' => $cDate,
-                            'tipo_respaldo'=> $tipo_respaldo
+                            'tipo_respaldo'=> $tipo_respaldo,
+                            'estado_sql' => 1
                             ];
         if($id=$comprobante->insert($body_comprobante)){
 
@@ -137,10 +140,13 @@ class Administracion_1 extends BaseController{
         $tipo_respaldo = 'deposito a caja';
         $empresa = $generales->getEmpresa();
 
-        $body_comprobante = ['beneficiario' => $cajero_general->fullname,
+        $body_comprobante = [
+                            'id_empleado' => $trabajador['id'],
+                            'beneficiario' => $cajero_general->fullname,
                             'glosa' => $glosa,
                             'fecha' => $cDate,
-                            'tipo_respaldo'=> $tipo_respaldo
+                            'tipo_respaldo'=> $tipo_respaldo,
+                            'estado_sql' => 1
                             ];
 
         if($id=$comprobante->insert($body_comprobante)){
@@ -237,10 +243,13 @@ class Administracion_1 extends BaseController{
                                         'observaciones'=> $pdf
                                         ];
 
-                        $body_comprobante = ['tipo_respaldo'=>$tipo_respaldo,
+                        $body_comprobante = [
+                                            'id_empleado' => $trabajador['id'],
+                                            'tipo_respaldo'=>$tipo_respaldo,
                                             'fecha'=> $cDate,
                                             'beneficiario'=>$beneficiario['fullName'],
-                                            'glosa'=>$glosa
+                                            'glosa'=>$glosa,
+                                            'estado_sql' => 1
                                             ];
 
                         if($pedido_venta->update($id_pedido, [
@@ -463,7 +472,7 @@ class Administracion_1 extends BaseController{
                 }
             }
         }else{
-            /*if($this->validate('personas')){
+            if($this->validate('personas')){
                 if($persona->insert($new_persona)){
                     $new_password = $this->request->getPost('nombre').'.'.$this->request->getPost('apellido_paterno');
                     $new_cliente = ['usuario'=>$this->request->getPost('nro_ci'),
@@ -486,7 +495,7 @@ class Administracion_1 extends BaseController{
                 }
             }else{
                 return redirect()->back()->withInput();
-            }*/
+            }
         }
 
     }

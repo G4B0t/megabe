@@ -19,7 +19,7 @@
             <th>Foto</th>
             <th>Nombre</th>
             <th>Marca</th>
-            <th>Proveedor</th>
+            <th>Empresa Proveedora</th>
             <th>Opciones</th>
         </tr>
     </thead>

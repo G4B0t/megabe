@@ -74,14 +74,22 @@ class Administracion_2 extends BaseController{
 
         $pedido_compra = new m_pedido_compra();
         // getting current date 
-        $cDate = date('Y-m-d H:i:s');
-        $id = $pedido_compra->insert([
-                'id_empleado' => $id_empleado,
-                'estado' =>'0',
-                'fecha' =>$cDate
-            ]);
-        $id_pedido = $pedido_compra->getInsertID();
-        $this->ver_items($id_pedido);
+
+        $pedido_vigente = $pedido_compra->getPedidoVigente($id_empleado);
+
+        if($pedido_vigente != null){
+            $this->ver_items($pedido_vigente->id);
+
+        }else{
+            $cDate = date('Y-m-d H:i:s');
+            $id = $pedido_compra->insert([
+                    'id_empleado' => $id_empleado,
+                    'estado' =>'0',
+                    'fecha' =>$cDate
+                ]);
+            $id_pedido = $pedido_compra->getInsertID();
+            $this->ver_items($id_pedido);
+        }
     }
 
     public function ver_items($id_pedido){
@@ -299,16 +307,25 @@ class Administracion_2 extends BaseController{
         $comprobante_creado = $comprobante->getById($id);
         $debe = 0;$haber = 0; 
         $detalles = $detalle_comprobante->asObject()->getDetalles($comprobante_creado->id);
+
+        if($detalles ==null){
+            return redirect()->back()->withInput()->with('message', 'Necesita agregar cuentas para CONFIRMAR el comprobante');
+        }
         foreach($detalles as $key => $m){
             $debe += $m->debe;
             $haber += $m->haber;
         }
         $body = ['glosa' =>$this->request->getPost('glosa'),
-                'tipo_respaldo' => $this->request->getPost('tipo_respaldo')
+                'tipo_respaldo' => $this->request->getPost('tipo_respaldo'),
+                'estado_sql' => 1
                 ];
         if($debe == $haber){
-            $comprobante->update($comprobante_creado->id,$body);
-            return redirect()->to('/administracion')->with('message', 'Comprobante Guardado');
+            if($this->validate('comprobantes')){
+                $comprobante->update($comprobante_creado->id,$body);
+                return redirect()->to('/administracion')->with('message', 'Comprobante Guardado');
+            }else{
+                return redirect()->back()->withInput();
+            }
         }
         else{
             return redirect()->to('/administracion/ver_comprobante/'.$comprobante_creado->id)->with('message', 'Los valores en DEBE y HABER no coinciden');
@@ -391,16 +408,18 @@ class Administracion_2 extends BaseController{
         $comprobante_creado = $comprobante->getById($id);
         $debe = 0;$haber = 0; 
         $detalles = $detalle_comprobante->asObject()->getDetalles($comprobante_creado->id);
-
+        
         foreach($detalles as $key => $m){
             $debe += $m->debe;
             $haber += $m->haber;
         }
+
         $total = (object)['debe'=>$debe,'haber'=>$haber];
 
         $cuentas = $plan_cuenta->getCuentas();
         $restricciones = ['detalle_comprobante.id_comprobante'=>$comprobante_creado->id,'detalle_comprobante.estado_sql'=>1];
 
+        $validation =  \Config\Services::validation();
         $data = ['comprobante' => $comprobante_creado,
                 
                 'detalle_comprobante'=> $detalle_comprobante->asObject()
@@ -412,7 +431,9 @@ class Administracion_2 extends BaseController{
 
                 'cuentas' => $cuentas,
 
-                'total' => $total
+                'total' => $total,
+
+                'validation'=>$validation
 
                 ];
         $this->_loadDefaultView( 'Comprobante #'.$id,$data,'comprobantes');
@@ -427,16 +448,24 @@ class Administracion_2 extends BaseController{
         $cDate = date('Y-m-d H:i:s');
 
         $contador = $empleado->getContador($id_empleado);
-        
-        $body = ['fecha' =>  $cDate,
-                'beneficiario'=>$contador->fullname,
-                'glosa' => '',
-                'tipo_respaldo' => ''
-                ];
-        $comprobante->insert($body);
-        $id = $comprobante->getInsertID();
+        $comprobante_vigente = $comprobante->getVigente($contador->id);
 
-        return redirect()->to('/administracion/ver_comprobante/'.$id)->with('message', 'Generando Nuevo Comprobante');
+        if($comprobante_vigente != null){
+            return redirect()->to('/administracion/ver_comprobante/'.$comprobante_vigente->id)->with('message', 'Comprobante sin TERMINAR!');
+        }
+        else{
+            $body = [
+                    'id_empleado' => $contador->id,
+                    'fecha' =>  $cDate,
+                    'beneficiario'=>$contador->fullname,
+                    'glosa' => '',
+                    'tipo_respaldo' => ''
+                    ];
+            $comprobante->insert($body);
+            $id = $comprobante->getInsertID();
+
+            return redirect()->to('/administracion/ver_comprobante/'.$id)->with('message', 'Generando Nuevo Comprobante');
+        }
     }
     public function reportes(){
 

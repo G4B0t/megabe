@@ -17,7 +17,7 @@ class m_detalle_comprobante extends Model
     }
 
     public function getDetalles($id_comprobante){
-        $restricciones = ['id_comprobante' => $id_comprobante,'estado_sql'=>1];
+        $restricciones = ['detalle_comprobante.id_comprobante' => $id_comprobante,'detalle_comprobante.estado_sql'=>1];
         return $this->asObject()
             ->where($restricciones)
             ->findAll();

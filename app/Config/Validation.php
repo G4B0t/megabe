@@ -51,6 +51,10 @@ class Validation
 		'direccion' => 'required|min_length[4]|max_length[50]',
 		'contacto' => 'required|min_length[3]|max_length[15]'
 	];
+	public $comprobantes =[
+		'glosa' => 'required|min_length[3]|max_length[50]',
+		'tipo_respaldo' => 'required|min_length[3]|max_length[50]'
+	];
 
 	public $personas =[
 		'nombre' => 'required|max_length[20]',

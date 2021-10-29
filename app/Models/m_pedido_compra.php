@@ -11,11 +11,18 @@ class m_pedido_compra extends Model
     
      function getAll(){
         return $this->asArray()
-        ->select('pedido_compra.*, empleado.usuario as empleado as subcategoria')
+        ->select('pedido_compra.*, empleado.usuario as empleado')
         ->join('empleado','empleado.id = pedido_compra.id_empleado')
         ->first();
     }
 
+    function getPedidoVigente($id_empleado){
+        $condicion = ['estado_sql' => 1, 'id_empleado' => $id_empleado, 'estado' => 0];
+        return $this->asObject()
+        ->select('pedido_compra.*')
+        ->where($condicion)
+        ->first();
+    }
 
     function getPedidoConfir($id_pedido){
         $condiciones = ['estado' => '1', 'estado_sql' => '1', 'id' => $id_pedido];

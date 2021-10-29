@@ -11,7 +11,7 @@
         </div>
       </div>
     </section><!-- End Breadcrumbs -->
-
+    <?= view("dashboard/partials/_form-error"); ?>
     <section class="inner-page">
         <div class="container">
         <form id="formComprobante" action="/administracion/save_comprobante/<?= $comprobante->id ?>" method="POST" enctype="multipart/form-data">  

@@ -33,7 +33,7 @@ class Cliente extends BaseController {
 
         $data = [
             'cliente' => $cliente->asObject()
-            ->select('cliente.*,persona.nombre as cliente')
+            ->select('cliente.*,CONCAT(persona.nombre, " ", persona.apellido_paterno) AS cliente')
             ->join('persona','persona.id = cliente.id_persona')
             ->paginate(10,'cliente'),
             'pager' => $cliente->pager
