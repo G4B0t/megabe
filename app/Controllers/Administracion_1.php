@@ -230,7 +230,7 @@ class Administracion_1 extends BaseController{
                         
                         $pdf = "";
                         $pdf = $file->getRandomName();
-                        $file->move(WRITEPATH.'uploads/respaldos/facturas_venta/banco', $pdf);*/
+                        $file->move(WRITEPATH.'uploads/respaldos/facturas_venta/banco', $pdf);
                         $empresa = $generales->getEmpresa();
                         $cDate = date('Y-m-d H:i:s');
                         $codControl = $this->CodigoControlV7->generar($empresa['nro_autorizacion'],
