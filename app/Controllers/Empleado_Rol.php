@@ -33,7 +33,7 @@ class Empleado_Rol extends BaseController {
 
         $data = [
             'empleado_rol' => $empleado_rol->asObject()
-            ->select('empleado_rol.*,CONCAT(persona.nombre, " ", persona.apellido_paterno) AS proveedor, item.nombre as item')
+            ->select('empleado_rol.*,CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullname,empleado.usuario, rol.nombre as rol')
             ->join('rol','empleado_rol.id_rol = rol.id')
             ->join('empleado','empleado_rol.id_empleado = empleado.id')
             ->join('persona','persona.id = empleado.id_persona')
@@ -170,7 +170,7 @@ class Empleado_Rol extends BaseController {
         ];
 
         echo view("dashboard/templates/header",$dataHeader);
-        echo view("dashboard/cliente/$view",$data);
+        echo view("dashboard/empleado_rol/$view",$data);
         echo view("dashboard/templates/footer");
     }
 

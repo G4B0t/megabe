@@ -21,6 +21,10 @@ use App\Models\m_generales;
 use App\Models\m_persona;
 use App\Models\m_rol;
 use App\Models\m_empleado_rol;
+use App\Models\CodigoControlV7;
+
+use Spipu\Html2Pdf\Html2Pdf;
+
 
 class Administracion_1 extends BaseController{
 
@@ -177,9 +181,7 @@ class Administracion_1 extends BaseController{
                 $haber_comprobante='<tr><td>'.$caja_general->codigo_cuenta.'</td><td>'.$caja_general->nombre_cuenta.'</td><td></td><td>'.$this->request->getPost('monto').'</td></tr>';
                 $sefini = $debe_comprobante.$haber_comprobante;
                 $file = str_ireplace('[DETALLE]', $sefini, $file);
-                echo $file;
-            
-               // return redirect()->to('/administracion')->with('message', 'Deposito a Caja exitoso!');
+                $this->generatePDF($file);
 
             }
             
@@ -201,6 +203,8 @@ class Administracion_1 extends BaseController{
         $cliente = new m_cliente();
         $empleado = new m_empleado();
         $generales = new m_generales();
+        $CodigoControlV7 = new CodigoControlV7();
+        $Ciqrcode = new Ciqrcode();
 
         $session = session();
         $id_empleado = $session->empleado;
@@ -223,22 +227,47 @@ class Administracion_1 extends BaseController{
             {
                 if ($file->isValid() && ! $file->hasMoved())
                     {
+                        
                         $pdf = "";
                         $pdf = $file->getRandomName();
-                        $file->move(WRITEPATH.'uploads/respaldos/facturas_venta/banco', $pdf);
+                        $file->move(WRITEPATH.'uploads/respaldos/facturas_venta/banco', $pdf);*/
                         $empresa = $generales->getEmpresa();
-
                         $cDate = date('Y-m-d H:i:s');
+                        $codControl = $this->CodigoControlV7->generar($empresa['nro_autorizacion'],
+                                                                        $id_pedido,
+                                                                        $empresa['nit_empresa'],
+                                                                        $cDate,
+                                                                        $pedido['total'],
+                                                                        $empresa['llave']);
+                                    
+                        $QR[0]=$beneficiario['nit'];
+                        $QR[1]=$id_factura;
+                        $QR[2]=$empresa['nro_autorizacion'];
+                        $QR[3]=$cDate;
+                        $QR[4]=$factura['total'];
+                        $QR[5]=$codControl;
+                                        
+                        
+                        $codigo_qr = implode('|', $QR);
+                        $params['data'] = $codigo_qr;
+                        $params['level'] = 'M';
+                        $params['size'] = 10;
+                        $params['savename'] = WRITEPATH.'uploads/respaldos/facturas_venta/qr/'. $cDate.'_'.$beneficiario['nit'].'.png';
+
+                        //QRcode::png($codigo_qr, $params['savename'], 'L', 5);
+                         
+                        
+                        
                         $body_factura = ['id_pedido_venta'=>$id_pedido,
                                         'nit_empresa'=> $empresa['nit_empresa'],
-                                        'nro_factura'=> '2',
-                                        'autorizacion'=> '3',
+                                        'nro_factura'=> $id_pedido,
+                                        'autorizacion'=>$empresa['nro_autorizacion'],
                                         'fecha_emision'=> $cDate,
                                         'nit_cliente'=> $beneficiario['nit'],
                                         'beneficiario'=> $beneficiario['razon_social'],
                                         'total'=> $pedido['total'],
-                                        'codigo_control'=> '5',
-                                        'fecha_limite'=> '6',
+                                        'codigo_control'=> $codControl,
+                                        'fecha_limite'=> $empresa['fechaLimite'],
                                         'codigo_qr'=> '7',
                                         'observaciones'=> $pdf
                                         ];
@@ -288,10 +317,12 @@ class Administracion_1 extends BaseController{
                                                     'estado_sql'=> 1
                                                     ];
                                     if($detalle_comprobante->insert($body_debe) && $detalle_comprobante->insert($body_haber)){
-
+                                         
                                        
+                                                                               
                                         $dirComp= base_url()."/dashboard/assets/factura.html";
                                         $file = file_get_contents($dirComp,0);
+                                        $file = str_ireplace('[LOGO]',$foto, $file);
                                         $file = str_ireplace('[NIT_CLIENTE]',$beneficiario['nit'], $file);
                                         $file = str_ireplace('[CLIENTE]',$beneficiario['razon_social'], $file);
                                         $file = str_ireplace('[NIT]',$empresa['nit_empresa'], $file);
@@ -303,16 +334,16 @@ class Administracion_1 extends BaseController{
                                         $file = str_ireplace('[BENEFICIARIO]',$beneficiario['fullName'], $file);
                                         $file = str_ireplace('[FECHA]',$cDate, $file);  
                                         $file = str_ireplace('[GLOSA]',$glosa, $file);
+                                        $file = str_ireplace('[QR]',$dirQR, $file);
                                         $sefini="";
                                         foreach($productos as $key => $m){
                                             $sefini .= '<tr><td>'.$m->nombre.'</td><td>'.$m->cantidad.'</td><td>'.$m->precio_unitario.'</td><td>'.$m->total.'</td><td> </td></tr>';
                                         } 
                                         $file = str_ireplace('[DETALLE]', $sefini, $file);
-                                        echo $file;
+                                        $this->generatePDF($file);
+                                        return redirect()->to('/administracion/ver_pedidos')->with('message', 'Pago CONFIRMADO con exito!');
+                                        
                                     }
-                                    
-                                                 
-                                //return redirect()->to('/administracion/ver_pedidos')->with('message', 'Pago CONFIRMADO con exito!');
                                 }   
                             }
                             
@@ -326,7 +357,7 @@ class Administracion_1 extends BaseController{
         }
         else{
             return redirect()->to('/administracion/ver_pedidos')->with('message', 'Debe Escoger una CUENTA!');
-        }       
+        }     
     } 
 
     public function checkCuenta($banco,$caja){
@@ -688,8 +719,16 @@ class Administracion_1 extends BaseController{
             return $sesion=['rol'=>$rol,'log'=>$log,'almacen'=>  $almacen];
 		}
     }
-    
 
+    public function generatePDF($html){
+        $html2pdf = new Html2Pdf();
+        $html2pdf->writeHTML($html);
+        //$html2pdf->output('factura.pdf'); // Generate and load the PDF in the browser.
+        $name = $html->getRandomName();
+        $html2pdf->output($name.'.pdf', 'D'); // Generate the PDF execution and force download immediately.
+
+    }
+    
     private function _loadDefaultView($title,$data,$view){
 
         $categoria = new m_categoria();
@@ -697,7 +736,7 @@ class Administracion_1 extends BaseController{
 		$marca = new m_marca();
 
         $sesion = $this->sesiones();
-
+      
         $dataHeader =[
             'title' => $title,
             'tipo'=>'header-inner-pages',

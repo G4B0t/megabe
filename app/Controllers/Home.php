@@ -283,14 +283,7 @@ class Home extends BaseController
 
 			'vista' =>''
         ];
-		/*foreach($dataHeader['rol'] as $key =>$m){
-			if($m->nombre == 'Cliente'){
-				echo "<br>1</br>";
-			}
-			if($m->nombre == 'Normal' || $m->nombre == 'Cliente'){
-				echo "<br>2</br>";
-			}
-		}*/
+		
 		echo view("dashboard/templates/header",$dataHeader);
         echo view("/$view",$data);
         echo view("dashboard/templates/footer");

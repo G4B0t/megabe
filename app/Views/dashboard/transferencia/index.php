@@ -5,8 +5,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <h2><?= $title ?></h2>
             <h3><?= view("dashboard/partials/_session"); ?></h3>
-          <ol>
-             <li><a class="btn btn-outline-info" role="button" href="/transferencia/new" >Nueva Transferencia</a></li>
+            <ol>
             </ol>
         </div>
       </div>
@@ -17,29 +16,20 @@
 <table class="table table-hover" data-aos="fade-up">
     <thead>
         <tr>
-            <th>Foto</th>
-            <th>Nombre</th>
-            <th>Descripcion</th>
-            <th>Categoría</th>
-            <th>Opciones</th>
+            <th>Enviado por:</th>
+            <th>Almacen Origen</th>
+            <th>Fecha Envio</th>
+            <th>Almacen Destino</th>
         </tr>
     </thead>
     <tbody>
 
         <?php foreach ($transferencia as $key => $m): ?>
             <tr>
-                <td><?= $m->id_almacen_origen ?></td>
-                <td><?= $m->id_almacen_destino ?></td>
-                <td><?= $m->id_empleado1 ?></td>
-                <td>
-                    <form action="/transferencia/delete/<?= $m->id ?>" method="POST">
-                        <input type="submit" name="submit" value="Borrar" class="btn btn-outline-danger" />
-                    </form>
-
-                    <a href="/transferencia/<?= $m->id ?>/edit" class="btn btn-outline-warning">Editar</a>
-
-
-                </td>
+                <td><?= $m->fullname ?></td>
+                <td><?= $m->origen ?></td>
+                <td><?= $m->fecha_envio ?></td>
+                <td><?= $m->destino ?></td>
             </tr>
         <?php endforeach?>
 
@@ -48,4 +38,4 @@
     </tbody>
 </table>
 
-<?= $pager->links() ?>
+<?= $pager->links('transferencia','paginacion') ?>

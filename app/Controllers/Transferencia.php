@@ -22,7 +22,12 @@ class Transferencia extends BaseController {
 
         $data = [
             'transferencia' => $transferencia->asObject()
-            ->select('transferencia.*')
+            ->select('transferencia.*,CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullname, A.direccion as origen, B.direccion as destino')
+            ->join('empleado','empleado.id = transferencia.id_empleado1')
+            ->join('persona','persona.id = empleado.id_persona')
+            ->join('almacen A','A.id = transferencia.id_almacen_origen')
+            ->join('almacen B','B.id = transferencia.id_almacen_destino')
+            ->orderBy('fecha_envio', 'ASC')
             ->paginate(10, 'transferencia'),
             'pager' => $transferencia->pager
         ];

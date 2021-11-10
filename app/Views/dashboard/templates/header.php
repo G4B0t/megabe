@@ -24,6 +24,7 @@
   <link href="<?= base_url()?>/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link href="<?= base_url()?>/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="<?= base_url()?>/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  
 
 
   <!-- Template Main CSS File -->
@@ -31,6 +32,7 @@
   <link href="<?= base_url()?>/css/style.css" rel="stylesheet">
 
   <link href="<?= base_url()?>/css/imagenes.css" rel="stylesheet">
+  <link href="<?= base_url()?>/bootstrap/css/bootstrap-table.min.css" rel="stylesheet">
 
 </head>
 <body>
@@ -49,7 +51,7 @@
 
                    <?php if($m->nombre == 'Administrador') { ?>
                       <li><a class="nav-link scrollto active" href="/administracion/cuadro_categoria">CUADRO DE MANDO</a></li>
-                      <li><a class="nav-link scrollto active" href="/administracion/configuracion">Perfil</a></li>
+                      <li><a class="nav-link scrollto" href="/administracion/configuracion">Perfil</a></li>
                       <li class="dropdown"><a href="#"><span>Menu</span> <i class="bi bi-chevron-down"></i></a>
                         <ul>
                         <li class="dropdown"><a href="/item"><span>Items</span> <i class="bi bi-chevron-down"></i></a>
@@ -63,7 +65,7 @@
                           <ul>  
                             <li><a class="nav-link scrollto" href="/cliente">Clientes</a></li>
                             <li><a class="nav-link scrollto" href="/empleado">Empleados</a></li>
-                            <li><a class="nav-link scrollto" href="/roles_empleado">Rol - Empleado</a></li>
+                            <li><a class="nav-link scrollto" href="/empleado_rol">Rol - Empleado</a></li>
                             <li><a class="nav-link scrollto" href="/proveedor">Proveedores</a></li>
                           </ul>
                         </li>
@@ -109,7 +111,7 @@
                     <li><a class="nav-link scrollto" href="/#about">Megabe</a></li> 
                     <li><a class="nav-link scrollto" href="/mis_pedidos">Mis Pedidos</a></li>
                     <li><a class="nav-link scrollto" href="/detalle_venta">Mi Carrito</a></li>
-                    <li><a class="nav-link scrollto" href="/user/configuracion">Perfil</a></li>
+                    <li><a class="nav-link scrollto active" href="/user/configuracion">Perfil</a></li>
                   <?php } ?>
 
                   <?php if($m->nombre == 'Normal' || $m->nombre == 'Cliente') { ?>

@@ -97,7 +97,6 @@ $routes->get('/administracion/inicio_gestion', 'Administracion_4::iniciar_gestio
 $routes->post('/administracion/cambiar_gestion', 'Administracion_4::nueva_gestion');
 $routes->get('/administracion/balance_general', 'Administracion_4::generar_balance_general');
 
-
 $routes->get('/imagen/(:any)/(:any)', 'Home::imagen/$1/$2',['as' =>'get_image']);
 $routes->get('/contacto/(:any)', 'Home::contacto/$1',['as' => 'contacto']);
 
@@ -119,12 +118,11 @@ $routes->resource('cliente');
 $routes->resource('empleado');
 $routes->resource('plan_cuenta');
 $routes->resource('proveedor');
+$routes->resource('empleado_rol');
 
 $routes->get('/empleado/asignacion/(:any)', 'Empleado::asginar/$1');
 $routes->get('/cambiar_caja/(:any)', 'Empleado::modificar_caja/$1');
 $routes->post('/empleado/modificar_caja/(:any)', 'Empleado::updateCaja/$1');
-
-
 
 $routes->get('/detalle_venta/(:any)/(:any)', 'Detalle_Venta::carrito/$1/$2');
 $routes->post('/detalle_venta/confirmar_pedido_cliente/(:any)', 'Detalle_Venta::confirmarPedido/$1');
@@ -136,6 +134,8 @@ $routes->post('/user/crear', 'User::crear');
 $routes->post('/user/actualizar', 'User::actualizar');
 $routes->post('/user/configuracion', 'User::configuracion');
 $routes->get('/registrar_nuevo', 'User::nuevo');
+
+$routes->get('/generar_pdf/(:any)','Administracion_1::generatePDF/$1');
 
 
 
