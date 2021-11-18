@@ -49,6 +49,15 @@ class Administracion_4 extends BaseController{
         $this->_loadDefaultView( 'Grafica de Torta', $data,'pie_chart');
     }
 
+    public function modificar_generales(){
+        $generales = new m_generales();
+        $data =[
+            'generales' => $generales->asObject()->fi
+        ];
+
+        $this->_loadDefaultView( 'Datos Generales', $data,'generales');
+    }
+
     public function configuracion(){
         $empleado = new m_empleado();
         $validation =  \Config\Services::validation();
@@ -132,9 +141,16 @@ class Administracion_4 extends BaseController{
     }
 
     public function generar_balance_general(){
+        
         $admin = new Administracion_1();
 		$sesion = $admin->sesiones();
         $admin = '';
+        $generales = new m_generales();
+        $gens = $generales->asObject()->first();
+
+        if($gens->balAper == 0){
+            return redirect()->to('/administracion')->with('message', 'Sistema detenido. Realize el INICIO DE GESTION.');
+        }
         foreach($sesion['rol'] as $key =>$m){
             $admin = $m->nombre;
         }
@@ -286,18 +302,20 @@ class Administracion_4 extends BaseController{
 
         $gestion = $this->request->getPost('gestion');
         $cDate = date('Y-m-d H:i:s');
-        echo $gestion;
-        
-        if($db->query('UPDATE generales SET balAper = 1, gestion = "'.$gestion.'" WHERE nombre_empresa = "MEGABE"')){
-            
-            if($db->query('TRUNCATE TABLE detalle_comprobante;
-                            DELETE FROM comprobante WHERE 1; ALTER TABLE comprobante AUTO_INCREMENT = 1;')){
+        $db = \Config\Database::connect();
+        if($db->query('UPDATE generales
+            SET balAper = 1, gestion = "'.$gestion.'"
+            WHERE nombre_empresa = "MEGABE"')){
+                var_dump($contador);
+            if($detalle_comprobante->truncate() && $comprobante->truncate()){
                 $body_comprobante = [
                     'tipo_respaldo'=>'Comprobante',
                     'fecha'=>$cDate,
                     'beneficiario'=>$contador->fullname,
-                    'glosa'=>'Inicio de Gestion'
+                    'glosa'=>'Inicio de Gestion',
+                    'id_empleado' => $contador->id
                 ];
+                
                     if($comprobante->insert($body_comprobante)){
                         $id_comprobante = $comprobante->getInsertID();
                         foreach($cuentas as $key => $m){
@@ -316,6 +334,7 @@ class Administracion_4 extends BaseController{
         return redirect()->to('/administracion')->with('message', 'No se pudo realizar el Inicio de Gestion');
     }
     public function iniciar_gestion(){
+        
         $admin = new Administracion_1();
 		$sesion = $admin->sesiones();
         $admin = '';
@@ -333,19 +352,24 @@ class Administracion_4 extends BaseController{
     }
 
     public function cerrar_comprobante(){
+        
         $generales = new m_generales();
 
         $general = $generales->asObject()->first();
         $db = \Config\Database::connect();
+
         $query = $db->query('DROP TABLE IF EXISTS comprobante_'.$general->gestion);
         if($query!=null){
             $query2 = $db->query('CREATE TABLE comprobante_'.$general->gestion.' LIKE comprobante;');
             if($query2!=null) {
                 $query3 = $db->query('INSERT INTO comprobante_'.$general->gestion.' SELECT * FROM comprobante;');
+                $db->close();
             } else {
+                $db->close();
                 return redirect()->to('/administracion')->with('message', 'No se pudo realizar el Cierre de Gestion');
             }
         }
+        
     }
     public function cerrar_detalle_comprobante(){
         $generales = new m_generales();
@@ -357,12 +381,20 @@ class Administracion_4 extends BaseController{
             $query2 = $db->query('CREATE TABLE detalle_comprobante_'.$general->gestion.' LIKE detalle_comprobante;');
             if($query2!=null) {
                 $query3 = $db->query('INSERT INTO detalle_comprobante_'.$general->gestion.' SELECT * FROM detalle_comprobante;');
+                $db->close();
             } else {
+                $db->close();
                 return redirect()->to('/administracion')->with('message', 'No se pudo realizar el Cierre de Gestion');
             }
         }
+        
     }
     public function cerrar_gestion(){
+        $gens = $generales->asObject()->first();
+
+        if($gens->balAper == 0){
+            return redirect()->to('/administracion')->with('message', 'Ya se ha realizado el CIERRE DE GESTION.');
+        }
         $generales = new m_generales();
 
         $general = $generales->asObject()->first();
@@ -377,12 +409,14 @@ class Administracion_4 extends BaseController{
                 $db->query('UPDATE generales
                             SET balAper = 0
                             WHERE nombre_empresa = "MEGABE"');
-                        
+                $db->close();
                 return redirect()->to('/administracion')->with('message', 'Se ha completado el Cierre de Gestion');
             } else {
+                $db->close();
                 return redirect()->to('/administracion')->with('message', 'No se pudo realizar el Cierre de Gestion');
             }
         }
+        
         
     }
     public function sumar_recursivo($id_cuenta, $debe, $haber,$d,$h){
@@ -398,7 +432,12 @@ class Administracion_4 extends BaseController{
             }
     }
     public function plan_cuenta_mayorizar(){
-       
+        $generales = new m_generales();
+        $gens = $generales->asObject()->first();
+
+        if($gens->balAper == 0){
+            return redirect()->to('/administracion')->with('message', 'Ya se ha realizado el CIERRE DE GESTION.');
+        }
         $detalle_comprobante = new m_detalle_comprobante();
         $plan_cuenta = new m_plan_cuenta();
 

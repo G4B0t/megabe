@@ -50,4 +50,4 @@
     </tbody>
 </table>
 
-<?= $pager->links() ?>
+<?= $pager->links('subcategoria','paginacion') ?>

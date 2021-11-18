@@ -9,6 +9,8 @@ use \CodeIgniter\Exceptions\PageNotFoundException;
 use App\Models\m_marca;
 use App\Models\m_subcategoria;
 use App\Models\m_categoria;
+use App\Models\m_generales;
+use App\Models\m_empleado_rol;
 
 class User extends BaseController {
 
@@ -25,7 +27,12 @@ class User extends BaseController {
         $cliente = new m_cliente();
         $empleado = new m_empleado();
         $session = session();
-       
+        $empleado_rol = new m_empleado_rol();
+        $generales = new m_generales();
+
+        $admin = new administracion_1();
+
+        $gens = $generales->asObject()->first();
 
         if($this->validate('logins')){
             $emailUser = $this->request->getPost('email');
@@ -39,8 +46,21 @@ class User extends BaseController {
                         'persona'  => $usuario->id_persona,
                         'empleado' => $usuario->id
                     ];
-                    $session->set($newdata);
-                    return redirect()->to('/administracion')->with('message', 'Inicio de Sesion exitoso!');
+                    $empleado = $empleado_rol->getOneRol($usuario->id);
+                    var_dump($empleado);
+                    if($gens->balAper == 0 && $empleado['nombre'] == 'Contador'){
+                        $session->set($newdata);    
+                        return redirect()->to('/administracion')->with('message', 'Debe realizar el INICIO DE GESTION para iniciar el sistema!');
+                    }
+                    else if($gens->balAper == 0 && $empleado['nombre'] != 'Contador'){
+                       return redirect()->to('/home')->with('message', 'El sistema esta detenido, disculpe las molestias :(');
+                    }
+                    else{
+                        $session->set($newdata);    
+                        return redirect()->to('/administracion')->with('message', 'Inicio de Sesion exitoso!');
+                    }
+                   
+                    
                 }else{
                     return redirect()->to('/login')->with('message', 'Usuario o Contrasena incorrecto');
                 }
@@ -52,6 +72,9 @@ class User extends BaseController {
                         'persona'  => $usuario->id_persona,
                         'cliente'  => $usuario->id
                     ];
+                    if($gens->balAper == 0){
+                        return redirect()->to('/home')->with('message', 'El sistema esta detenido, disculpe las molestias :(');
+                    }
                     $session->set($newdata);
                     return redirect()->to('/home')->with('message', 'Inicio de Sesion exitoso!');
                     

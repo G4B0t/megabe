@@ -76,6 +76,7 @@ $routes->post('/administracion/recepcion_confirmada/(:any)', 'Administracion_3::
 
 $routes->get('/administracion/configuracion', 'Administracion_4::configuracion');
 $routes->post('/adminitracion/actualizar_usuario/(:any)', 'Administracion_4::actualizar_empleado/$1');
+$routes->get('/administracion/generales', 'Administracion_4::modificar_generales');
 
 $routes->get('/administracion/nuevo_comprobante', 'Administracion_2::nuevo_comprobante');
 $routes->get('/administracion/ver_comprobante/(:any)', 'Administracion_2::ver_comprobante/$1');
@@ -119,6 +120,7 @@ $routes->resource('empleado');
 $routes->resource('plan_cuenta');
 $routes->resource('proveedor');
 $routes->resource('empleado_rol');
+$routes->resource('marca');
 
 $routes->get('/empleado/asignacion/(:any)', 'Empleado::asginar/$1');
 $routes->get('/cambiar_caja/(:any)', 'Empleado::modificar_caja/$1');

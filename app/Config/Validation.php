@@ -27,16 +27,20 @@ class Validation
 	];
 
 	public $items =[
-		'nombre' => 'required|min_length[3]|max_length[255]',
+		'nombre' => 'required|max_length[50]',
+		'descripcion' => 'required'
+	];
+	public $marcas =[
+		'nombre' => 'required|max_length[50]',
 		'descripcion' => 'required'
 	];
 	public $subcategorias =[
 		'nombre' => 'min_length[3]|max_length[255]',
-		'descripcion' => 'min_length[3]|max_length[5000]'
+		'descripcion' => 'min_length[3]|max_length[500]'
 	];
 	public $categorias =[
 		'nombre' => 'min_length[3]|max_length[255]',
-		'descripcion' => 'min_length[3]|max_length[5000]'
+		'descripcion' => 'min_length[3]|max_length[500]'
 	];
 	public $almacenes =[
 		'direccion' => 'min_length[6]|max_length[255]',

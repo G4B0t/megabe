@@ -734,9 +734,10 @@ class Administracion_1 extends BaseController{
         $categoria = new m_categoria();
 		$subcategoria = new m_subcategoria();
 		$marca = new m_marca();
-
+        $generales = new m_generales();
+        
         $sesion = $this->sesiones();
-      
+        
         $dataHeader =[
             'title' => $title,
             'tipo'=>'header-inner-pages',

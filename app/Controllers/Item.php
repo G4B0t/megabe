@@ -9,6 +9,7 @@ use App\Models\m_categoria;
 use App\Models\m_marca;
 
 use App\Models\m_persona;
+use App\Models\m_proveedor;
 use App\Models\m_empleado;
 use App\Models\m_rol;
 use App\Models\m_empleado_rol;
@@ -45,10 +46,11 @@ class Item extends BaseController {
     public function new(){
 
        $marca = new m_marca();
+       $proveedor = new m_proveedor();
        
        $validation =  \Config\Services::validation();
        $this->_loadDefaultView('Crear item',['validation'=>$validation, 'item'=> new m_item(),
-                                'marca' => $marca->asObject()->findAll()],'new');
+                                'marca' => $marca->asObject()->findAll(),'proveedor'=>$proveedor->getAll()],'new');
 
 
     }
@@ -56,40 +58,66 @@ class Item extends BaseController {
     public function create(){
 
         $item = new m_item();
-        $foto = "";
-        if($imagefile = $this->request->getFile('foto')) {
-            
-            if ($imagefile->isValid() && ! $imagefile->hasMoved())
-                {
-                    $foto = $imagefile->getRandomName();
-                    $imagefile->move(WRITEPATH.'uploads/productos', $foto);
-                }
-            
-        }
 
         if($this->validate('items')){
-            $id = $item->insert([
-                'nombre' =>$this->request->getPost('nombre'),
-                'descripcion' =>$this->request->getPost('descripcion'),
-                'id_marca' =>$this->request->getPost('id_marca'),
-                'codigo' =>$this->request->getPost('codigo'),
-                'stock' =>$this->request->getPost('stock'),
-                'precio_unitario' =>$this->request->getPost('precio_unitario'),
-                'foto' => $foto,
-                'estado_sql' =>'1'
-            ]);
+            $foto = "";
+            if($imagefile = $this->request->getFile('foto')) {
+            
+                if ($imagefile->isValid() && ! $imagefile->hasMoved())
+                    {
+                    $foto = $imagefile->getRandomName();
+                    $imagefile->move(WRITEPATH.'uploads/productos', $foto);
 
-            return redirect()->to("/item")->with('message', 'Item creado con éxito.');
-
+                    if($item->insert([
+                        'nombre' =>$this->request->getPost('nombre'),
+                        'descripcion' =>$this->request->getPost('descripcion'),
+                        'id_marca' =>$this->request->getPost('id_marca'),
+                        'id_proveedor'=>$this->request->getPost('id_proveedor'),
+                        'codigo' =>$this->request->getPost('codigo'),
+                        'stock' =>$this->request->getPost('stock'),
+                        'precio_unitario' =>$this->request->getPost('precio_unitario'),
+                        'precio_compra' =>$this->request->getPost('precio_compra'),
+                        'venta_esperada' =>$this->request->getPost('precio_compra'),
+                        'punto_reorden' =>$this->request->getPost('punto_reorden'),
+                        'foto' => $foto,
+                        'estado_sql' =>'1'
+                    ])){
+                        return redirect()->to("/item")->with('message', 'Item creado con éxito.');
+                    }else{
+                        return redirect()->back()->withInput()->with('message', '#1: Error al crear el Item');
+                    }
+                }           
+            }
+            else{
+                if($item->insert([
+                    'nombre' =>$this->request->getPost('nombre'),
+                    'descripcion' =>$this->request->getPost('descripcion'),
+                    'id_marca' =>$this->request->getPost('id_marca'),
+                    'id_proveedor'=>$this->request->getPost('id_proveedor'),
+                    'codigo' =>$this->request->getPost('codigo'),
+                    'stock' =>$this->request->getPost('stock'),
+                    'precio_unitario' =>$this->request->getPost('precio_unitario'),
+                    'precio_compra' =>$this->request->getPost('precio_compra'),
+                    'venta_esperada' =>$this->request->getPost('venta_esperada'),
+                    'punto_reorden' =>$this->request->getPost('punto_reorden'),
+                    'estado_sql' =>'1'
+                ])){
+                    return redirect()->to("/item")->with('message', 'Item creado con éxito.');
+                }
+                else{
+                    return redirect()->back()->withInput()->with('message', '#2: Error al Crear el item.');
+                }               
+            }      
         }
-        
         return redirect()->back()->withInput();
+       
     }
 
     public function edit($id = null){
 
         $marca = new m_marca();
         $item = new m_item();
+        $proveedor = new m_proveedor();
 
         if ($item->find($id) == null)
         {
@@ -98,7 +126,7 @@ class Item extends BaseController {
 
         $validation =  \Config\Services::validation();
         $this->_loadDefaultView('Modificar Item',['validation'=>$validation,'item'=> $item->asObject()->find($id),
-                                            'marca' => $marca->asObject()->findAll()],'edit');
+                                            'marca' => $marca->asObject()->findAll(),'proveedor' =>$proveedor->getAll()],'edit');
     }
 
     public function update($id = null){
@@ -110,7 +138,7 @@ class Item extends BaseController {
             throw PageNotFoundException::forPageNotFound();
         }  
 
-        $foto = $item->getByID($id);
+        $foto = '';
         
         if($imagefile = $this->request->getFile('foto')) {
            
@@ -129,6 +157,9 @@ class Item extends BaseController {
                         'codigo' =>$this->request->getPost('codigo'),
                         'stock' =>$this->request->getPost('stock'),
                         'precio_unitario' =>$this->request->getPost('precio_unitario'),
+                        'precio_compra' =>$this->request->getPost('precio_compra'),
+                        'venta_esperada' =>$this->request->getPost('venta_esperada'),
+                        'punto_reorden' =>$this->request->getPost('punto_reorden'),
                         'foto' => $foto,
                         'estado_sql' =>'1'              
                     ]);
@@ -141,19 +172,20 @@ class Item extends BaseController {
                 $item->update($id, [
                     'nombre' =>$this->request->getPost('nombre'),
                     'descripcion' =>$this->request->getPost('descripcion'),
-                    'id_subcategoria' =>$this->request->getPost('id_subcategoria'),
+                    'id_marca' =>$this->request->getPost('id_marca'),
                     'codigo' =>$this->request->getPost('codigo'),
-                    'fecha_expiracion' =>$this->request->getPost('fecha_expiracion'),
                     'stock' =>$this->request->getPost('stock'),
                     'precio_unitario' =>$this->request->getPost('precio_unitario'), 
-                    'marca' =>$this->request->getPost('marca'),
+                    'precio_compra' =>$this->request->getPost('precio_compra'),
+                    'venta_esperada' =>$this->request->getPost('venta_esperada'),
+                    'punto_reorden' =>$this->request->getPost('punto_reorden'),
+                    'id_proveedor' =>$this->request->getPost('id_proveedor'),
                     'estado_sql' =>'1'              
                 ]);
 
                 return redirect()->to('/item')->with('message', 'Item editad con éxito.');
                 }
             return redirect()->back()->withInput();
-
   
             }
         }

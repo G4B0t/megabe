@@ -6,8 +6,9 @@ class m_item extends Model
 {
     protected $table = 'item';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['nombre', 'descripcion','id_subcategoria','codigo',
-                                'fecha_expiracion','stock','precio_unitario',
+    protected $allowedFields = ['nombre', 'descripcion','id_marca','codigo',
+                               'stock','precio_unitario','precio_compra',
+                                'id_proveedor','venta_esperada','punto_reorden',
                                 'marca','foto','estado_sql'];
 
    public function getByID($id = null)

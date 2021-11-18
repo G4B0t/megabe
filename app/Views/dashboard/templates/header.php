@@ -52,13 +52,14 @@
                    <?php if($m->nombre == 'Administrador') { ?>
                       <li><a class="nav-link scrollto active" href="/administracion/cuadro_categoria">CUADRO DE MANDO</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/configuracion">Perfil</a></li>
+                      <li><a class="nav-link scrollto" href="/administracion/generales">GENERALES</a></li>
                       <li class="dropdown"><a href="#"><span>Menu</span> <i class="bi bi-chevron-down"></i></a>
                         <ul>
                         <li class="dropdown"><a href="/item"><span>Items</span> <i class="bi bi-chevron-down"></i></a>
                           <ul>  
                             <li><a class="nav-link scrollto" href="/categoria">Categorias</a></li>
                             <li><a class="nav-link scrollto" href="/subcategoria">Subcategorias</a></li>
-                            <li><a class="nav-link scrollto" href="/subcategoria">Marcas</a></li>
+                            <li><a class="nav-link scrollto" href="/marca">Marcas</a></li>
                           </ul>
                         </li>
                         <li class="dropdown"><a href="/persona"><span>Personas</span> <i class="bi bi-chevron-down"></i></a>

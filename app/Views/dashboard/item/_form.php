@@ -3,7 +3,7 @@
 <section class="inner-page">
     <div class="container">
         <div class="mb-3 row">
-            <label class="col-sm-2 col-form-label" for="id_subcategoria">Marca:</label>
+            <label class="col-sm-2 col-form-label" for="id_marca">Marca:</label>
             <div class="col-sm-10">
                 <select class="form-select" name="id_marca" id="id_marca">
                     <?php foreach ($marca as $c): ?>
@@ -18,7 +18,7 @@
             <div class="col-sm-10">
                 <select class="form-select" name="id_proveedor" id="id_proveedor">
                     <?php foreach ($proveedor as $c): ?>
-                        <option <?= $item->id_proveedor !== $c->id ?: "selected"?> value="<?= $c->id ?>"><?= $c->fullName ?> </option>
+                        <option <?= $item->id_proveedor !== $c->id ?: "selected"?> value="<?= $c->id ?>"><?= $c->nombre_empresa ?> </option>
                     <?php endforeach?>
                 </select>
             </div>
@@ -46,13 +46,6 @@
         </div>
 
         <div class="mb-3 row">
-            <label for="fecha_expiracion" class="col-sm-2 col-form-label">Fecha de Expiracion:</label>
-            <div class="col-sm-10">
-                <input class="form-control" type="date" id="fecha_expiracion" name="fecha_expiracion"  min="today()" <?=old('codigo', $item->codigo)?>>
-            </div>
-        </div>
-
-        <div class="mb-3 row">
             <label for="stock" class="col-sm-2 col-form-label">Stock:</label>
             <div class="col-sm-10">
                 <textarea class="form-control" name="stock" id="stock"><?=old('stock', $item->stock)?></textarea><br />
@@ -63,6 +56,27 @@
             <label for="precio_unitario" class="col-sm-2 col-form-label">Precio Unitario:</label>
             <div class="col-sm-10">
                 <textarea class="form-control" name="precio_unitario" id="precio_unitario"><?=old('precio_unitario', $item->precio_unitario)?></textarea><br />
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label for="precio_compra" class="col-sm-2 col-form-label">Precio Compra:</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" name="precio_compra" id="precio_compra"><?=old('precio_compra', $item->precio_compra)?></textarea><br />
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label for="venta_esperada" class="col-sm-2 col-form-label">Venta Esperada:</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" name="venta_esperada" id="venta_esperada"><?=old('venta_esperada', $item->venta_esperada)?></textarea><br />
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label for="punto_reorden" class="col-sm-2 col-form-label">Punto Reorden:</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" name="punto_reorden" id="punto_reorden"><?=old('punto_reorden', $item->punto_reorden)?></textarea><br />
             </div>
         </div>
 

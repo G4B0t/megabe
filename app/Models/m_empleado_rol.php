@@ -39,7 +39,8 @@ class m_empleado_rol extends Model
     {
         $condiciones = ['empleado_rol.id_empleado' => $id_empleado,'empleado_rol.estado_sql' => 1];
         return $this->asArray()
-            ->select('empleado_rol.*')
+            ->select('empleado_rol.*,rol.nombre')
+            ->join('rol','rol.id = empleado_rol.id_rol')
             ->where($condiciones)
             ->first();
     }
@@ -52,4 +53,5 @@ class m_empleado_rol extends Model
             ->where($condiciones)
             ->findAll();
     }
+    
 }
