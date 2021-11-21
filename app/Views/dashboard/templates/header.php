@@ -50,8 +50,7 @@
           <?php $i = 0; foreach($rol as $key =>$m):  $i++; ?>
 
                    <?php if($m->nombre == 'Administrador') { ?>
-                      <li><a class="nav-link scrollto active" href="/administracion/cuadro_categoria">CUADRO DE MANDO</a></li>
-                      <li><a class="nav-link scrollto" href="/administracion/configuracion">Perfil</a></li>
+                      <li><a class="nav-link scrollto" href="/administracion/cuadro_categoria">CUADRO DE MANDO</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/generales">GENERALES</a></li>
                       <li class="dropdown"><a href="#"><span>Menu</span> <i class="bi bi-chevron-down"></i></a>
                         <ul>
@@ -92,19 +91,20 @@
                       </li>
                       <li class="dropdown"><a href="#"><span>Almacenes</span> <i class="bi bi-chevron-down"></i></a>
                         <ul>
-                          <li><a class="nav-link scrollto active" href="/administracion/ver_pagados">Entregas</a></li>
+                          <li><a lass="nav-link scrollto" href="/administracion/ver_pagados">Entregas</a></li>
                           <li><a class="nav-link scrollto" href="/administracion/armar_transferencia">Armar Envio</a></li>
                         </ul>
                       </li>
                       <li class="dropdown"><a href="#"><span>Contador</span> <i class="bi bi-chevron-down"></i></a>
                         <ul>
-                          <li><a class="nav-link scrollto active" href="/administracion/nuevo_comprobante">Comprobante</a></li>
+                          <li><a class="nav-link scrollto" href="/administracion/nuevo_comprobante">Comprobante</a></li>
                           <li><a class="nav-link scrollto" href="/administracion/mayorizar">Mayorizacion</a></li>
                           <li><a class="nav-link scrollto" href="/administracion/balance_general">Balance General</a></li>
                           <li><a class="nav-link scrollto" href="/administracion/cierre_gestion">Cierre de Gestion</a></li>
                           <li><a class="nav-link scrollto" href="/administracion/inicio_gestion">Inicio de Gestion</a></li>
                         </ul>
                       </li>
+                      <li><a class="nav-link scrollto" href="/administracion/configuracion">Perfil</a></li>
                   <?php } ?>
 
                   <?php if($m->nombre == "Cliente"){ ?>
@@ -112,7 +112,7 @@
                     <li><a class="nav-link scrollto" href="/#about">Megabe</a></li> 
                     <li><a class="nav-link scrollto" href="/mis_pedidos">Mis Pedidos</a></li>
                     <li><a class="nav-link scrollto" href="/detalle_venta">Mi Carrito</a></li>
-                    <li><a class="nav-link scrollto active" href="/user/configuracion">Perfil</a></li>
+                    <li><a class="nav-link scrollto" href="/user/configuracion">Perfil</a></li>
                   <?php } ?>
 
                   <?php if($m->nombre == 'Normal' || $m->nombre == 'Cliente') { ?>
@@ -145,7 +145,7 @@
                   <?php  if(($m->nombre == "Vendedor" || $m->nombre == "Cajero") && $i<2){ ?>
                         <!-- MENU CAJERO o VENDEDOR --> 
                         <li><a class="nav-link scrollto" href="/administracion/ver_pedidos">Confirmar Pagos</a></li>
-                        <li><a class="nav-link scrollto active" href="/administracion/configuracion">Perfil</a></li>
+                        <li><a class="nav-link scrollto" href="/administracion/configuracion">Perfil</a></li>
                   <?php } ?>
                     
                   <?php if($m->nombre == "Cajero"){ ?>
@@ -161,24 +161,25 @@
                     
                   <?php if($m->nombre == "Almacenes"){ ?>
                     <!-- MENU ALMACENERO --> 
-                    <li><a class="nav-link scrollto active" href="/administracion/ver_pagados">Entregas</a></li>
+                    <li><a class="nav-link scrollto" href="/administracion/ver_pagados">Entregas</a></li>
                     <li><a class="nav-link scrollto" href="/administracion/armar_transferencia">Armar Envio</a></li>
                     <li><a class="nav-link scrollto" href="/administracion/ver_enviados">Ver Envios</a></li>
                     <li><a class="nav-link scrollto" href="/administracion/ver_recibidos">Ver Recepciones</a></li>
                       <?php if($central){?>
                         <li><a class="nav-link scrollto" href="/administracion/armar_compra">Ingresar Compra</a></li>
                       <?php } ?>
-                    <li><a class="nav-link scrollto active" href="/administracion/configuracion">Perfil</a></li>
+                    <li><a class="nav-link scrollto" href="/administracion/configuracion">Perfil</a></li>
                   <?php } ?>
                     
                   <?php if ($m->nombre == "Contador"){?>
                       <!-- MENU CONTADOR -->
-                      <li><a class="nav-link scrollto active" href="/administracion/nuevo_comprobante">Comprobante</a></li>
+                      <li><a class="nav-link scrollto" href="/administracion/nuevo_comprobante">Comprobante</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/configuracion">Perfil</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/mayorizar">Mayorizacion</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/balance_general">Balance General</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/cierre_gestion">Cierre de Gestion</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/inicio_gestion">Inicio de Gestion</a></li>
+                      <li><a class="nav-link scrollto" href="/administracion/configuracion">Perfil</a></li>
                   <?php } ?>
 
                   

@@ -16,6 +16,13 @@ class m_pedido_venta extends Model
         ->first();
     }
 
+    function getVigenteEmpleado($id_empleado){
+        $condiciones = ['estado' => '0', 'estado_sql' => '1', 'id_empleado' => $id_empleado];
+        return $this->asObject()
+        ->select('pedido_venta.*')
+        ->where($condiciones)
+        ->first();
+    }
     function getPedido($id_cliente){
         $condiciones = ['estado' => '0', 'estado_sql' => '1', 'id_cliente' => $id_cliente];
         return $this->asArray()

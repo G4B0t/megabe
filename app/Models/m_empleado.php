@@ -29,7 +29,7 @@ class m_empleado extends Model
         return $this->asObject()
         ->select('empleado.*,CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullname')
         ->join('persona','empleado.id_persona=persona.id')
-        ->where('caja','Caja General')
+        ->where('caja','Caja 1 Central')
         ->first();
     }
 

@@ -52,6 +52,7 @@ $routes->get('/administracion/armar_pedido', 'Administracion_1::armar_pedido');
 $routes->get('/administracion/mostrar_carrito/(:any)', 'Administracion_1::mostrar_carrito/$1');
 $routes->post('/administracion/agregar_carrito/(:any)', 'Administracion_1::agregar_carrito/$1');
 $routes->post('/administracion/borrar_producto/(:any)', 'Administracion_1::borrar_producto/$1');
+$routes->post('/administracion/filtrado_items_venta', 'Administracion_1::filtrar_producto_venta');
 
 $routes->post('/administracion/confirmar_compra/(:any)', 'Administracion_2::confirmar_compra/$1');
 $routes->post('/administracion/agregar_item/(:any)', 'Administracion_2::agregar_linea/$1');

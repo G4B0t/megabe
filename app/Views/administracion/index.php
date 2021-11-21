@@ -2,8 +2,9 @@
  <section id="hero">
     <div class="hero-container" data-aos="fade-up" data-aos-delay="150">
       <h2><?= view("dashboard/partials/_session"); ?></h2>
+      
       <h1>Gestion ADMINISTRATIVA</h1>
-      <h2>Calidad en trabajo y atecion a clientes</h2>
+      <h2>Bienvenido <?php echo $empleado ?></h2>
       <div class="d-flex">
         <a href="#about" class="btn-get-started scrollto">Empecemos</a>
         <a href="https://www.youtube.com/watch?v=TvuZwGHAEMM" class="glightbox btn-watch-video"><i class="bi bi-play-circle"></i><span>Mirar Video</span></a>
