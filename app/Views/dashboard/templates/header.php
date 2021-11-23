@@ -15,6 +15,7 @@
 
   <!-- Google Fonts -->
   <link href="<?= base_url()?>/css/googleFont.css" rel="stylesheet">
+  <link href="<?= base_url()?>/css/select2.min.css" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="<?= base_url()?>/vendor/aos/aos.css" rel="stylesheet">
@@ -100,7 +101,7 @@
                           <li><a class="nav-link scrollto" href="/administracion/nuevo_comprobante">Comprobante</a></li>
                           <li><a class="nav-link scrollto" href="/administracion/mayorizar">Mayorizacion</a></li>
                           <li><a class="nav-link scrollto" href="/administracion/balance_general">Balance General</a></li>
-                          <li><a class="nav-link scrollto" href="/administracion/cierre_gestion">Cierre de Gestion</a></li>
+                          <li><a type="button" class="nav-link scrollto" data-bs-toggle="modal" data-bs-target="#cierre" data-bs-id="contraseña">Cierre de Gestion</a></li>
                           <li><a class="nav-link scrollto" href="/administracion/inicio_gestion">Inicio de Gestion</a></li>
                         </ul>
                       </li>
@@ -177,7 +178,7 @@
                       <li><a class="nav-link scrollto" href="/administracion/configuracion">Perfil</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/mayorizar">Mayorizacion</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/balance_general">Balance General</a></li>
-                      <li><a class="nav-link scrollto" href="/administracion/cierre_gestion">Cierre de Gestion</a></li>
+                      <li><a type="button" class="nav-link scrollto" data-bs-toggle="modal" data-bs-target="#cierre" data-bs-id="contraseña">Cierre de Gestion</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/inicio_gestion">Inicio de Gestion</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/configuracion">Perfil</a></li>
                   <?php } ?>

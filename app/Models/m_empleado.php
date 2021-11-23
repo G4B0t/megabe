@@ -62,8 +62,10 @@ class m_empleado extends Model
 
     function getFullEmpleado($id){
         return $this->asObject()
-        ->select('empleado.*, CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullName,persona.foto')
+        ->select('empleado.*, CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullName,persona.foto, rol.nombre as rol')
         ->join('persona','persona.id = empleado.id_persona')
+        ->join('empleado_rol','empleado.id = empleado_rol.id_empleado')
+        ->join('rol','empleado_rol.id_rol = rol.id')
         ->where('empleado.id',$id)
         ->first();
     }

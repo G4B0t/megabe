@@ -1,7 +1,10 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Verhoeff extends CI_Model
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class Verhoeff extends Model
 {
 	private static $mul = array(
 		array(0,1,2,3,4,5,6,7,8,9),
@@ -15,6 +18,7 @@ class Verhoeff extends CI_Model
 		array(8,7,6,5,9,3,2,1,0,4),
 		array(9,8,7,6,5,4,3,2,1,0),
 		);
+
 	private static $per = array(
 		array(0,1,2,3,4,5,6,7,8,9),
 		array(1,5,7,6,2,8,3,0,9,4),
@@ -25,7 +29,9 @@ class Verhoeff extends CI_Model
 		array(2,7,9,3,8,0,6,4,1,5),
 		array(7,0,4,6,9,1,3,2,5,8),
 		);
+
 	private static $inv = array(0,4,3,2,1,5,6,7,8,9);
+	
 	public static function get($num)
 	{
 		$ck = 0;

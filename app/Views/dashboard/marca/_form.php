@@ -28,6 +28,7 @@
         </div>
        
         <div class="col-sm-10">
+            <input class="btn btn-secondary"action="action" onclick="window.history.go(-1); return false;" type="submit" value="Cancel" />
             <input class="btn btn-success" type="submit" name="submit" value="<?=$textButton?>" />
         </div>
     </div>

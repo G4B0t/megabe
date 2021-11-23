@@ -51,15 +51,35 @@ class Administracion_2 extends BaseController{
             $detalles = $detalle_compra->getFullDetalle($compra->id);
             $almacen_central = $almacen->getOne($almacenero->id_almacen);
 
+            
             $total = 0;
+            
             foreach($detalles as $key => $m){
+                $its = $item->asObject()->where(['id'=>$m->id_item])->first();
+                $it_als = $item_almacen->asObject()->where(['id_item' => $m->id_item,'id_almacen'=>$almacenero->id_almacen])->first();
+
+                $cantidad = $m->cantidad;
+                $stock = $its->stock;
+                $stock_alma=$it_als->stock;
+
+                $new_stock = $stock + $cantidad;
+                $new_stock_alma = $stock_alma + $cantidad;
+
+                $item->update($its->id,['stock'=>$new_stock]);
+                $item_almacen->update($it_als->id,['stock'=>$new_stock_alma]);
+
                 $total += $m->total;
             }
             $body = ['estado'=>1,
-                    'total'=>$total];
+                    'total'=>$total];  
+            
             if($pedido_compra->update($compra->id,$body)){
-                return redirect()->to('/administracion')->with('message', 'Pedido Compra CONFIRMADO!');
+                    return redirect()->to('/administracion')->with('message', 'Pedido Compra CONFIRMADO!');                   
             }
+            else{
+                return redirect()->to('/administracion')->with('message', 'No se pudo confirmar la Compra');
+            }
+            
        }
         else{
             return redirect()->to('/administracion')->with('message', 'No tiene el Rol de Almacen Central');
@@ -119,6 +139,44 @@ class Administracion_2 extends BaseController{
 		$this->_loadDefaultView( 'Listado',$data,'productos_compra');
     }
 
+    public function ver_items_filtrado($id_pedido){
+        $item = new m_item();
+        $pedido_compra = new m_pedido_compra();
+		
+		$condiciones = ['item.estado_sql' => '1'];
+        $pedido = $pedido_compra->getById($id_pedido);
+        $filtro = $this->request->getPost('filtro');
+        $array = [
+			'marca.nombre' => $filtro, 
+			'item.codigo' => $filtro, 
+			'item.descripcion' => $filtro, 
+			'subcategoria.nombre' => $filtro, 
+			'categoria.nombre' =>$filtro,
+		];
+
+        if($pedido==null){
+            return redirect()->to('/administracion')->with('message', 'No se pudo crear el nuevo Pedido.');
+        }
+		$data = [
+			'item' => $item->asObject()
+            ->select('item.*,marca.id AS marcaId, 
+					marca.nombre AS marca, subcategoria.id AS subcategoriaID, 
+					subcategoria.nombre AS subcategoria, categoria.id AS categoriaID, 
+					categoria.nombre AS categoria')
+			->join('marca','item.id_marca = marca.id')
+			->join('subcategoria','marca.id_subcategoria = subcategoria.id')
+			->join('categoria','subcategoria.id_categoria = categoria.id')
+			->where($condiciones)
+            ->like('item.nombre', $filtro)
+			->orlike($array)
+            ->paginate(10,'item'),
+
+            'id_pedido' =>$id_pedido
+        ];
+
+		$this->_loadDefaultView( 'Listado',$data,'productos_compra');
+    }
+
     public function agregar_linea($id_pedido){
         $pedido_compra = new m_pedido_compra();
         $detalle_compra = new m_detalle_compra();
@@ -128,7 +186,7 @@ class Administracion_2 extends BaseController{
         $id_item = $this->request->getPost('item_id');
         $producto = $item->getOne($id_item);
 
-        $total = ($producto->precio_unitario)*$cantidad;
+        $total = ($producto->precio_compra)*$cantidad;
         
         $pedido = $pedido_compra->getById($id_pedido);
         
@@ -141,7 +199,7 @@ class Administracion_2 extends BaseController{
             $new_detalle = ['id_pedido_compra'=>$pedido->id,
                             'id_item'=>$id_item,
                             'cantidad'=>$cantidad,
-                            'precio_unitario'=>$producto->precio_unitario,
+                            'precio_unitario'=>$producto->precio_compra,
                             'total'=> $total
                             ];               
             if($detalle_compra->insert($new_detalle)){
@@ -158,7 +216,7 @@ class Administracion_2 extends BaseController{
             $new_detalle = ['id_pedido_compra'=>$pedido->id,
                             'id_item'=>$id_item,
                             'cantidad'=>$new_cantidad,
-                            'precio_unitario'=>$producto->precio_unitario,
+                            'precio_unitario'=>$producto->precio_compra,
                             'total'=> $new_total
                             ];               
             if($detalle_compra->update($detalle['id'],$new_detalle)){

@@ -58,6 +58,9 @@ class Item extends BaseController {
     public function create(){
 
         $item = new m_item();
+        $categoria = new m_categoria();
+        $subcategoria = new m_subcategoria();
+        $marca = new m_marca();
 
         if($this->validate('items')){
             $foto = "";
@@ -77,11 +80,46 @@ class Item extends BaseController {
                         'stock' =>$this->request->getPost('stock'),
                         'precio_unitario' =>$this->request->getPost('precio_unitario'),
                         'precio_compra' =>$this->request->getPost('precio_compra'),
-                        'venta_esperada' =>$this->request->getPost('precio_compra'),
+                        'venta_esperada' =>$this->request->getPost('venta_esperada'),
                         'punto_reorden' =>$this->request->getPost('punto_reorden'),
                         'foto' => $foto,
                         'estado_sql' =>'1'
                     ])){
+                        $items = $item->asObject()->findAll();
+
+                    $cats = $categoria->asObject()->findAll();
+                    $subcats = $subcategoria->asObject()->findAll();
+                    $marcs = $marca->asObject()->findAll();
+
+                    foreach($marcs as $key => $b){
+                        $sum_it =0;
+                        foreach($items as $key => $c){
+                            if($c->id_marca == $b->id){
+                                $sum_it += $c->venta_esperada;
+                            }
+                        }
+                        $marca->update($b->id,['venta_esperada' =>$sum_it]);
+                    }
+                    $marcs = $marca->asObject()->findAll();
+                    foreach($subcats as $key => $a){
+                        $sum_mar =0;
+                        foreach($marcs as $key => $b){
+                            if($b->id_subcategoria == $a->id){
+                                $sum_mar += $b->venta_esperada;
+                            }
+                        }
+                        $subcategoria->update($a->id,['venta_esperada' =>$sum_mar]);
+                    }
+                    $subcats = $subcategoria->asObject()->findAll();
+                    foreach($cats as $key => $a){
+                        $sum_subc =0;
+                        foreach($subcats as $key => $b){
+                            if($b->id_categoria == $a->id){
+                                $sum_subc += $b->venta_esperada;
+                            }
+                        }
+                        $categoria->update($a->id,['venta_esperada' =>$sum_subc]);
+                    }
                         return redirect()->to("/item")->with('message', 'Item creado con éxito.');
                     }else{
                         return redirect()->back()->withInput()->with('message', '#1: Error al crear el Item');
@@ -102,6 +140,41 @@ class Item extends BaseController {
                     'punto_reorden' =>$this->request->getPost('punto_reorden'),
                     'estado_sql' =>'1'
                 ])){
+                    $items = $item->asObject()->findAll();
+
+                    $cats = $categoria->asObject()->findAll();
+                    $subcats = $subcategoria->asObject()->findAll();
+                    $marcs = $marca->asObject()->findAll();
+
+                    foreach($marcs as $key => $b){
+                        $sum_it =0;
+                        foreach($items as $key => $c){
+                            if($c->id_marca == $b->id){
+                                $sum_it += $c->venta_esperada;
+                            }
+                        }
+                        $marca->update($b->id,['venta_esperada' =>$sum_it]);
+                    }
+                    $marcs = $marca->asObject()->findAll();
+                    foreach($subcats as $key => $a){
+                        $sum_mar =0;
+                        foreach($marcs as $key => $b){
+                            if($b->id_subcategoria == $a->id){
+                                $sum_mar += $b->venta_esperada;
+                            }
+                        }
+                        $subcategoria->update($a->id,['venta_esperada' =>$sum_mar]);
+                    }
+                    $subcats = $subcategoria->asObject()->findAll();
+                    foreach($cats as $key => $a){
+                        $sum_subc =0;
+                        foreach($subcats as $key => $b){
+                            if($b->id_categoria == $a->id){
+                                $sum_subc += $b->venta_esperada;
+                            }
+                        }
+                        $categoria->update($a->id,['venta_esperada' =>$sum_subc]);
+                    }
                     return redirect()->to("/item")->with('message', 'Item creado con éxito.');
                 }
                 else{
@@ -132,6 +205,9 @@ class Item extends BaseController {
     public function update($id = null){
 
         $item = new m_item();
+        $categoria = new m_categoria();
+        $subcategoria = new m_subcategoria();
+        $marca = new m_marca();
 
         if ($item->find($id) == null)
         {
@@ -139,7 +215,8 @@ class Item extends BaseController {
         }  
 
         $foto = '';
-        
+       
+
         if($imagefile = $this->request->getFile('foto')) {
            
             if($foto != $imagefile->getName()){
@@ -163,8 +240,43 @@ class Item extends BaseController {
                         'foto' => $foto,
                         'estado_sql' =>'1'              
                     ]);
+                    $items = $item->asObject()->findAll();
+
+                    $cats = $categoria->asObject()->findAll();
+                    $subcats = $subcategoria->asObject()->findAll();
+                    $marcs = $marca->asObject()->findAll();
     
-                return redirect()->to('/item')->with('message', 'Item editad con éxito.');
+                    foreach($marcs as $key => $b){
+                        $sum_it =0;
+                        foreach($items as $key => $c){
+                            if($c->id_marca == $b->id){
+                                $sum_it += $c->venta_esperada;
+                            }
+                        }
+                        $marca->update($b->id,['venta_esperada' =>$sum_it]);
+                    }
+                    $marcs = $marca->asObject()->findAll();
+                    foreach($subcats as $key => $a){
+                        $sum_mar =0;
+                        foreach($marcs as $key => $b){
+                            if($b->id_subcategoria == $a->id){
+                                $sum_mar += $b->venta_esperada;
+                            }
+                        }
+                        $subcategoria->update($a->id,['venta_esperada' =>$sum_mar]);
+                    }
+                    $subcats = $subcategoria->asObject()->findAll();
+                    foreach($cats as $key => $a){
+                        $sum_subc =0;
+                        foreach($subcats as $key => $b){
+                            if($b->id_categoria == $a->id){
+                                $sum_subc += $b->venta_esperada;
+                            }
+                        }
+                        $categoria->update($a->id,['venta_esperada' =>$sum_subc]);
+                    }
+                    
+                return redirect()->to('/item')->with('message', 'Item editado con éxito.');
                 }         
                 return redirect()->back()->withInput();   
            }else{
@@ -183,7 +295,43 @@ class Item extends BaseController {
                     'estado_sql' =>'1'              
                 ]);
 
-                return redirect()->to('/item')->with('message', 'Item editad con éxito.');
+                $items = $item->asObject()->findAll();
+
+                $cats = $categoria->asObject()->findAll();
+                $subcats = $subcategoria->asObject()->findAll();
+                $marcs = $marca->asObject()->findAll();
+
+                foreach($marcs as $key => $b){
+                    $sum_it =0;
+                    foreach($items as $key => $c){
+                        if($c->id_marca == $b->id){
+                            $sum_it += $c->venta_esperada;
+                        }
+                    }
+                    $marca->update($b->id,['venta_esperada' =>$sum_it]);
+                }
+                $marcs = $marca->asObject()->findAll();
+                foreach($subcats as $key => $a){
+                    $sum_mar =0;
+                    foreach($marcs as $key => $b){
+                        if($b->id_subcategoria == $a->id){
+                            $sum_mar += $b->venta_esperada;
+                        }
+                    }
+                    $subcategoria->update($a->id,['venta_esperada' =>$sum_mar]);
+                }
+                $subcats = $subcategoria->asObject()->findAll();
+                foreach($cats as $key => $a){
+                    $sum_subc =0;
+                    foreach($subcats as $key => $b){
+                        if($b->id_categoria == $a->id){
+                            $sum_subc += $b->venta_esperada;
+                        }
+                    }
+                    $categoria->update($a->id,['venta_esperada' =>$sum_subc]);
+                }
+                
+                return redirect()->to('/item')->with('message', 'Item editado con éxito.');
                 }
             return redirect()->back()->withInput();
   

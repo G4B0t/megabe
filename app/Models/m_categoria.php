@@ -6,7 +6,7 @@ class m_categoria extends Model
 {
     protected $table = 'categoria';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['nombre','descripcion','foto','estado_sql'];
+    protected $allowedFields = ['nombre','descripcion','foto','venta_esperada','estado_sql'];
 
     public function getByID($id = null)
     {

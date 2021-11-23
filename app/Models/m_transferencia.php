@@ -54,4 +54,11 @@ class m_transferencia extends Model
         ->findAll();
     }
 
+    function getPedidoVigente($id_empleado){
+        $condicion = ['estado_sql' => 0, 'id_empleado1' => $id_empleado];
+        return $this->asObject()
+        ->select('transferencia.*')
+        ->where($condicion)
+        ->first();
+    }
 }

@@ -13,14 +13,14 @@
     </section><!-- End Breadcrumbs -->
 
     <div class="row">
-          <form action="/administracion/filtrado_items_venta" method="POST" role="form" enctype="multipart/form-data">
+          <form action="/administracion/filtrado_items_venta/<?=$id_pedido?>" method="POST" role="form" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-md-3 form-group">
                     <input type="text" name="filtro" class="form-control" id="filtro" placeholder="Producto" required>
                 </div>
                 <div class="col-md-3 form-group "> 
                     <button class="btn btn-success" type="submit" name="submit">Filtrar</button>
-                    <a href="/productos" class="btn btn-info" type="submit" name="submit">Ver Todo</a>
+                    <a href="/administracion/armar_pedido" class="btn btn-info" type="submit" name="submit">Ver Todo</a>
                 </div>
             </div>
           </form>
@@ -49,7 +49,7 @@
                 <td>
                     
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detalle_modal" data-bs-id="<?= $m->id ?>" data-bs-stock="<?= $m->stock ?>">Agregar Producto</button>                   
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detalle_modal" data-bs-id="<?= $m->id ?>" data-bs-nombre="<?= $m->nombre ?>" data-bs-stock="<?= $m->stock ?>">Agregar Producto</button>                   
             </td>
             </tr>
         <?php endforeach?>
@@ -60,7 +60,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Que Cantidad desea agarrar</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Que Cantidad desea agarrar de </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -87,10 +87,11 @@
    
     var recipient = button.getAttribute('data-bs-stock')
     var id_item = button.getAttribute('data-bs-id')
+    var nombre_item = button.getAttribute('data-bs-nombre')
 
     var modalTitle = detalle_modal.querySelector('.modal-title')
 
-    modalTitle.textContent = 'Agregar cantidades del productos'
+    modalTitle.textContent = 'Agregar cantidades del producto: ' + nombre_item
 
     var input = document.getElementById('cantidad')
     input.setAttribute("max",recipient)

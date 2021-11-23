@@ -1,12 +1,14 @@
 <?php
 
 /***
- * @DevelopedBy Villca
+ * @Developed By Villca
  ***/
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+namespace App\Models;
 
-class NumerosEnLetras extends CI_Model
+use CodeIgniter\Model;
+
+class NumerosEnLetras extends Model
 {
     private static $UNIDADES = [
         '',

@@ -1,13 +1,13 @@
-<?php namespace App\Models;
-//defined('BASEPATH') OR exit('No direct script access allowed');
+<?php
+
+namespace App\Models;
+
 use CodeIgniter\Model;
 
 class AllegedRC4 extends Model
 {
 	public static function encode($msg, $key, $mode='hex')
 	{
-		$AllegedRC4 = new AllegedRC4();
-		
 		$state = array();
 		for ($i=0; $i<256; $i++) $state[] = $i;
 		$x = $y = $i1 = $i2 = 0;
@@ -15,7 +15,7 @@ class AllegedRC4 extends Model
 		for ($i=0; $i<256; $i++)
 		{
 			$i2 = (ord($key[$i1])+$state[$i]+$i2) % 256;
-			$AllegedRC4->swap($state[$i], $state[$i2]);
+			self::swap($state[$i], $state[$i2]);
 			$i1 = ($i1+1) % $key_length;
 		}
 		$msg_length = strlen($msg);
@@ -24,7 +24,7 @@ class AllegedRC4 extends Model
 		{
 			$x = ($x + 1) % 256;
 			$y = ($state[$x] + $y) % 256;
-			$AllegedRC4->swap($state[$x], $state[$y]);
+			self::swap($state[$x], $state[$y]);
 			$xi = ($state[$x] + $state[$y]) % 256;
 			$r = ord($msg[$i]) ^ $state[$xi];
 			$msg[$i] = chr($r);
@@ -32,6 +32,7 @@ class AllegedRC4 extends Model
 		}
 		return ($mode=='hex'?$msg_hex:$msg);
 	}
+	
 	private static function swap(&$x, &$y)
 	{
 		$z = $x; $x = $y; $y = $z;

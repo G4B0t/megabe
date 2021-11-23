@@ -6,7 +6,7 @@ class m_subcategoria extends Model
 {
     protected $table = 'subcategoria';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['nombre','descripcion','foto','id_categoria','estado_sql'];
+    protected $allowedFields = ['nombre','descripcion','foto','venta_esperada','id_categoria','estado_sql'];
 
     public function getByID($id = null)
     {

@@ -1,5 +1,5 @@
-<?php namespace App\Models;
-/* 
+<?php
+/*
   CifrasEnLetras.php — ProInf.net — nov-2009, ago-2011
  
   CifrasEnLetras sirve para expresar una serie de cifras en letras.
@@ -21,22 +21,23 @@
 */
  
 //===============================================
-//defined('BASEPATH') OR exit('No direct script access allowed');
+namespace App\Models;
+
 use CodeIgniter\Model;
 
 class CifrasEnLetras extends Model{
  
   //---------------------------------------------
   // CONSTANTES
-  const $PREFIJO_ERROR = 'Error: ';
-  const $COMA = '.';
-  const $MENOS = '-';
+  const PREFIJO_ERROR = 'Error: ';
+  const COMA = '.';
+  const MENOS = '-';
  
   //---------------------------------------------
   // ENUMERACIONES
-  const $NEUTRO = 'neutro';
-  const $MASCULINO = 'masculino';
-  const $FEMENINO = 'femenino';
+  const NEUTRO = 'neutro';
+  const MASCULINO = 'masculino';
+  const FEMENINO = 'femenino';
  
   //---------------------------------------------
   // GLOBAL
@@ -85,7 +86,6 @@ class CifrasEnLetras extends Model{
     "", "décimo", "centésimo", "milésimo", "diezmilésimo", "cienmilésimo", "millonésimo"
   );
  
-  
   //---------------------------------------------
   // MÉTODOS PRINCIPALES
  
@@ -101,14 +101,14 @@ class CifrasEnLetras extends Model{
       if ($genero == 'masculino') return 'veintiuno';
       elseif ($genero == 'femenino') return 'veintiuna';
     }
-    return $listaUnidades[$unidades];
+    return self::$listaUnidades[$unidades];
   }
  
   /*
     Convierte a letras las centenas
   */
   protected static function convertirCentenas($centenas, $genero='neutro') {
-    $resultado = $listaCentenas[$centenas];
+    $resultado = self::$listaCentenas[$centenas];
     if ($genero == 'femenino') $resultado = str_replace('iento','ienta', $resultado);
     return $resultado;
   }
@@ -117,44 +117,39 @@ class CifrasEnLetras extends Model{
     Primer centenar: del cero al noventa y nueve
   */
   public static function convertirDosCifras($cifras, $genero='neutro') {
-    $CifrasEnLetras = new CifrasEnLetras();
-    
     $unidad = $cifras % 10;
     $decena = intval($cifras / 10);
-    if ($cifras < 30) return $CifrasEnLetras->convertirUnidades($cifras, $genero);
-    elseif ($unidad == 0) return $listaDecenas[$decena];
-    else return $listaDecenas[$decena].' y '.$CifrasEnLetras->convertirUnidades($unidad, $genero);
+    if ($cifras < 30) return self::convertirUnidades($cifras, $genero);
+    elseif ($unidad == 0) return self::$listaDecenas[$decena];
+    else return self::$listaDecenas[$decena].' y '.self::convertirUnidades($unidad, $genero);
   }
  
   /*
     Primer millar: del cero al novecientos noventa y nueve
   */
   public static function convertirTresCifras($cifras, $genero='neutro') {
-    $CifrasEnLetras = new CifrasEnLetras();
     $decenas_y_unidades = $cifras % 100;
     $centenas = intval($cifras / 100);
-    if ($cifras < 100) return $CifrasEnLetras->convertirDosCifras($cifras, $genero);
-    elseif ($decenas_y_unidades == 0) return $CifrasEnLetras->convertirCentenas($centenas, $genero);
-    elseif ($centenas == 1) return 'ciento '.$CifrasEnLetras->convertirDosCifras($decenas_y_unidades, $genero);
-    else return $CifrasEnLetras->convertirCentenas($centenas, $genero).' '.$CifrasEnLetras->convertirDosCifras($decenas_y_unidades, $genero);
+    if ($cifras < 100) return self::convertirDosCifras($cifras, $genero);
+    elseif ($decenas_y_unidades == 0) return self::convertirCentenas($centenas, $genero);
+    elseif ($centenas == 1) return 'ciento '.self::convertirDosCifras($decenas_y_unidades, $genero);
+    else return self::convertirCentenas($centenas, $genero).' '.self::convertirDosCifras($decenas_y_unidades, $genero);
   }
  
   /*
     Primer millón: del cero al novecientos noventa y nueve mil noventa y nueve
   */
   public static function convertirSeisCifras($cifras, $genero='neutro') {
-    $CifrasEnLetras = new CifrasEnLetras();
-
     $primer_millar = $cifras % 1000;
     $grupo_miles = intval($cifras / 1000);
     $genero_miles = $genero=='masculino'? 'neutro': $genero;
-    if ($grupo_miles == 0) return $CifrasEnLetras->convertirTresCifras($primer_millar, $genero);
+    if ($grupo_miles == 0) return self::convertirTresCifras($primer_millar, $genero);
     elseif ($grupo_miles == 1) {
       if ($primer_millar == 0) return 'mil';
-      else return 'mil '.$CifrasEnLetras->convertirTresCifras($primer_millar, $genero);
+      else return 'mil '.self::convertirTresCifras($primer_millar, $genero);
     }
-    elseif ($primer_millar == 0) return $CifrasEnLetras->convertirTresCifras($grupo_miles, $genero_miles).' mil';
-    else return $CifrasEnLetras->convertirTresCifras($grupo_miles, $genero_miles).' mil '.$CifrasEnLetras->convertirTresCifras($primer_millar, $genero);
+    elseif ($primer_millar == 0) return self::convertirTresCifras($grupo_miles, $genero_miles).' mil';
+    else return self::convertirTresCifras($grupo_miles, $genero_miles).' mil '.self::convertirTresCifras($primer_millar, $genero);
   }
  
   /*
@@ -164,21 +159,19 @@ class CifrasEnLetras extends Model{
   */
   public static function convertirCifrasEnLetras($cifras, $genero='neutro', $separadorGruposSeisCifras=null) {
  
-    $CifrasEnLetras = new CifrasEnLetras();
-
     // Inicialización
     $cifras = trim($cifras);
     $numeroCifras = strlen($cifras);
-    if ($separadorGruposSeisCifras == null) $separadorGruposSeisCifras = $SEPARADOR_SEIS_CIFRAS;
+    if ($separadorGruposSeisCifras == null) $separadorGruposSeisCifras = self::$SEPARADOR_SEIS_CIFRAS;
  
     // Comprobación
-    if ($numeroCifras == 0) return $PREFIJO_ERROR.'No hay ningún número';
+    if ($numeroCifras == 0) return self::PREFIJO_ERROR.'No hay ningún número';
     for ($indiceCifra=0; $indiceCifra<$numeroCifras; $indiceCifra++) {
       $cifra = substr($cifras, $indiceCifra, 1);
       $esDecimal = strpos('0123456789', $cifra) !== false;
-      if (!$esDecimal) return $PREFIJO_ERROR.'Uno de los caracteres no es una cifra decimal';
+      if (!$esDecimal) return self::PREFIJO_ERROR.'Uno de los caracteres no es una cifra decimal';
     }
-    if ($numeroCifras > 126) return $PREFIJO_ERROR.'El número es demasiado grande ya que tiene más de 126 cifras';
+    if ($numeroCifras > 126) return self::PREFIJO_ERROR.'El número es demasiado grande ya que tiene más de 126 cifras';
  
     // Preparación
     $numeroGruposSeisCifras = intval($numeroCifras / 6) + (($numeroCifras % 6)? 1: 0);
@@ -195,30 +188,30 @@ class CifrasEnLetras extends Model{
         if (count($resultado) > 0) $resultado[] = $separadorGruposSeisCifras;
  
         if ($ordenMillon == 0) {
-          $resultado[] = $CifrasEnLetras->convertirSeisCifras($seisCifras, $genero);
+          $resultado[] = self::convertirSeisCifras($seisCifras, $genero);
         }
         elseif ($seisCifras == 1) {
-          $resultado[] = 'un '.$listaOrdenesMillonSingular[$ordenMillon];
+          $resultado[] = 'un '.self::$listaOrdenesMillonSingular[$ordenMillon];
         }
         else {
-          $resultado[] = $CifrasEnLetras->convertirSeisCifras($seisCifras, 'neutro').' '.
-                         $listaOrdenesMillonPlural[$ordenMillon];
+          $resultado[] = self::convertirSeisCifras($seisCifras, 'neutro').' '.
+                         self::$listaOrdenesMillonPlural[$ordenMillon];
         }
       }
       $ordenMillon--;
     }
  
     // Finalización
-    if (count($resultado) == 0) $resultado[] = $listaUnidades[0];
+    if (count($resultado) == 0) $resultado[] = self::$listaUnidades[0];
     return implode('', $resultado);
   }
  
   public static function convertirCifrasEnLetrasMasculinas($cifras) {
-    return convertirCifrasEnLetras($cifras, "masculino");
+    return self::convertirCifrasEnLetras($cifras, "masculino");
   }
  
   public static function convertirCifrasEnLetrasFemeninas($cifras) {
-    return convertirCifrasEnLetras($cifras, "femenino");
+    return self::convertirCifrasEnLetras($cifras, "femenino");
   }
  
   /*
@@ -234,33 +227,33 @@ class CifrasEnLetras extends Model{
     $palabraDecimal='', $palabraDecimalPlural='', $esFemeninaPalabraDecimal=false)
   {
     // Argumentos
-    $cifras = is_float($cifras)? str_replace(".", $COMA, $cifras): "$cifras";
+    $cifras = is_float($cifras)? str_replace(".", self::COMA, $cifras): "$cifras";
     $palabraEnteraPlural = ($palabraEnteraPlural=='')? $palabraEntera.'s': $palabraEnteraPlural;
     $palabraDecimalPlural = ($palabraDecimalPlural=='')? $palabraDecimal.'s': $palabraDecimalPlural;
  
     // Limpieza
-    $cifras = $CifrasEnLetras->dejarSoloCaracteresDeseados($cifras, '0123456789' . $COMA . $MENOS);
+    $cifras = self::dejarSoloCaracteresDeseados($cifras, '0123456789' . self::COMA . self::MENOS);
  
     // Comprobaciones
-    $repeticionesMenos = substr_count($cifras, $MENOS);
-    $repeticionesComa = substr_count($cifras, $COMA);
-    if ($repeticionesMenos > 1 || ($repeticionesMenos == 1 && !$CifrasEnLetras->empiezaPor($cifras, self::MENOS)) ) {
-      return $PREFIJO_ERROR . 'Símbolo negativo incorrecto o demasiados símbolos negativos';
+    $repeticionesMenos = substr_count($cifras, self::MENOS);
+    $repeticionesComa = substr_count($cifras, self::COMA);
+    if ($repeticionesMenos > 1 || ($repeticionesMenos == 1 && !self::empiezaPor($cifras, self::MENOS)) ) {
+      return self::PREFIJO_ERROR . 'Símbolo negativo incorrecto o demasiados símbolos negativos';
     }
     else if ($repeticionesComa > 1) {
-      return $PREFIJO_ERROR . 'Demasiadas comas decimales';
+      return self::PREFIJO_ERROR . 'Demasiadas comas decimales';
     }
  
     // Negatividad
-    $esNegativo = $CifrasEnLetras->empiezaPor($cifras, $MENOS);
+    $esNegativo = self::empiezaPor($cifras, self::MENOS);
     if ($esNegativo) $cifras = substr($cifras, 1);
  
     // Preparación
-    $posicionComa = strpos($cifras, $COMA);
+    $posicionComa = strpos($cifras, self::COMA);
     if ($posicionComa === false) $posicionComa = strlen($cifras);
  
     $cifrasEntera = substr($cifras, 0, $posicionComa);
-    if ($cifrasEntera == "" || $cifrasEntera == $MENOS) $cifrasEntera = "0";
+    if ($cifrasEntera == "" || $cifrasEntera == self::MENOS) $cifrasEntera = "0";
     $cifrasDecimal = substr($cifras, min($posicionComa + 1, strlen($cifras)));
  
     $esAutomaticoNumeroDecimales = $numeroDecimales < 0;
@@ -274,23 +267,23 @@ class CifrasEnLetras extends Model{
     }
  
     // Cero
-    $esCero = $CifrasEnLetras->dejarSoloCaracteresDeseados($cifrasEntera,"123456789") == "" &&
-    $CifrasEnLetras->dejarSoloCaracteresDeseados($cifrasDecimal,"123456789") == "";
+    $esCero = self::dejarSoloCaracteresDeseados($cifrasEntera,"123456789") == "" &&
+      self::dejarSoloCaracteresDeseados($cifrasDecimal,"123456789") == "";
  
     // Procesar
     $resultado = array();
  
     if ($esNegativo && !$esCero) $resultado[]= "menos ";
  
-    $parteEntera = $CifrasEnLetras->procesarEnLetras($cifrasEntera,
+    $parteEntera = self::procesarEnLetras($cifrasEntera,
       $palabraEntera, $palabraEnteraPlural, $esFemeninaPalabraEntera);
-    if ($CifrasEnLetras->empiezaPor($parteEntera, $PREFIJO_ERROR)) return $parteEntera;
+    if (self::empiezaPor($parteEntera, self::PREFIJO_ERROR)) return $parteEntera;
     $resultado[]= $parteEntera;
  
     if ($cifrasDecimal != "") {
-      $parteDecimal = $CifrasEnLetras->procesarEnLetras($cifrasDecimal,
+      $parteDecimal = self::procesarEnLetras($cifrasDecimal,
         $palabraDecimal, $palabraDecimalPlural, $esFemeninaPalabraDecimal);
-      if ($CifrasEnLetras->empiezaPor($parteDecimal, $PREFIJO_ERROR)) return $parteDecimal;
+      if (self::empiezaPor($parteDecimal, self::PREFIJO_ERROR)) return $parteDecimal;
       $resultado[]= " con ";
       $resultado[]= $parteDecimal;
     }
@@ -307,14 +300,12 @@ class CifrasEnLetras extends Model{
       CifrasEnLetras::convertirEurosEnLetras(10200.35) --> "diez mil doscientos euros con treinta y cinco céntimos"
   */
   public static function convertirEurosEnLetras($euros, $numeroDecimales=2) {
-    $CifrasEnLetras = new CifrasEnLetras();
-    return $CifrasEnLetras->convertirNumeroEnLetras($euros, $numeroDecimales,
+    return self::convertirNumeroEnLetras($euros, $numeroDecimales,
       "euro", "euros", false, "céntimo", "céntimos", false);
   }
 
   public static function convertirBolivianosEnLetras($euros, $numeroDecimales=2) {
-    $CifrasEnLetras = new CifrasEnLetras();
-    return $CifrasEnLetras->convertirNumeroEnLetras($euros, $numeroDecimales,
+    return self::convertirNumeroEnLetras($euros, $numeroDecimales,
       "Boliviano", "Bolivianos", false, "Centavo", "Centavos", false);
   }
   /*
@@ -322,12 +313,11 @@ class CifrasEnLetras extends Model{
     Ejemplos: CifrasEnLetras::formatearCifras("-4739249,2") --> "-4_739.249,2"
    */
   public static function formatearCifras($cifras, $formato="") {
-    $CifrasEnLetras = new CifrasEnLetras();
-    $cifras = $CifrasEnLetras->dejarSoloCaracteresDeseados("$cifras", "0123456789" . self::COMA . self::MENOS);
+    $cifras = self::dejarSoloCaracteresDeseados("$cifras", "0123456789" . self::COMA . self::MENOS);
  
     if (strlen($cifras) == 0) return $cifras;
  
-    $esNegativo = $CifrasEnLetras->empiezaPor($cifras, self::MENOS);
+    $esNegativo = self::empiezaPor($cifras, self::MENOS);
     if ($esNegativo) $cifras = substr($cifras, 1);
  
     $posicionComa = strpos($cifras, self::COMA);
@@ -363,12 +353,12 @@ class CifrasEnLetras extends Model{
       $resultado[]= $tresCifras;
     }
  
-    if ($esNegativo) $resultado[]= $MENOS;
+    if ($esNegativo) $resultado[]= self::MENOS;
  
     $resultado = array_reverse($resultado);
  
     if ($esDecimal) {
-      $resultado[]= $COMA;
+      $resultado[]= self::COMA;
       $resultado[]= $cifrasDecimal;
     }
  
@@ -399,20 +389,19 @@ class CifrasEnLetras extends Model{
     para procesar por separado la parte entera y la decimal
   */
   private static function procesarEnLetras($cifras, $palabraSingular, $palabraPlural, $esFemenina) {
-    $CifrasEnLetras = new CifrasEnLetras();
     // Género
     $genero = "neutro";
     if ($esFemenina) $genero = "femenino";
     else if ($palabraSingular == "") $genero = "masculino";
  
     // Letras
-    $letras = $CifrasEnLetras->convertirCifrasEnLetras($cifras, $genero);
-    if ($CifrasEnLetras->empiezaPor($letras, $PREFIJO_ERROR)) return $letras;
+    $letras = self::convertirCifrasEnLetras($cifras, $genero);
+    if (self::empiezaPor($letras, self::PREFIJO_ERROR)) return $letras;
  
     // Propiedades
-    $esCero = $letras == $CifrasEnLetras->convertirUnidades(0, $genero) || $letras == "";
-    $esUno = $letras == $CifrasEnLetras->convertirUnidades(1, $genero);
-    $esMultiploMillon = !$esCero && $CifrasEnLetras->acabaPor($cifras, "000000");
+    $esCero = $letras == self::convertirUnidades(0, $genero) || $letras == "";
+    $esUno = $letras == self::convertirUnidades(1, $genero);
+    $esMultiploMillon = !$esCero && self::acabaPor($cifras, "000000");
  
     // Palabra
     $palabra = "";

@@ -197,6 +197,48 @@ class Administracion_4 extends BaseController{
         $this->_loadDefaultView( 'Cuadro de MANDO: Item', $data,'cuadro_mando/items');
 
     }
+    public function cuadro_marca_filtrado(){
+        $admin = new Administracion_1();
+        $generales = new m_generales();
+
+		$sesion = $admin->sesiones();
+        $admin = '';
+        foreach($sesion['rol'] as $key =>$m){
+            $admin = $m->nombre;
+        }
+        if($admin != 'Administrador'){
+           return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        }
+
+        $marca = new m_marca();
+
+        $fecha_inicio= $this->request->getPost('start');
+        $fecha_fin= $this->request->getPost('end');
+
+        $restriccion = ['fecha >=' =>$fecha_inicio.'-01','fecha <=' =>$fecha_fin.'-01'];
+
+        $firstDate  = $fecha_inicio.'-01';
+        $secondDate = $fecha_fin.'-01';
+        $dateDifference = abs(strtotime($secondDate) - strtotime($firstDate));
+        $years  = floor($dateDifference / (365 * 60 * 60 * 24));
+        $months = floor(($dateDifference - $years * 365 * 60 * 60 * 24) / (30 * 60 * 60 * 24));
+
+        $data = ['marca'=>$marca->asObject()
+                    ->select('marca.id,marca.nombre, marca.venta_esperada, sum(detalle_venta.cantidad) AS cantidad,((sum(detalle_venta.cantidad)/(marca.venta_esperada*'.$months.'))*100) AS promedio')
+                    ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
+                    ->join('categoria','categoria.id = subcategoria.id_categoria')
+                    ->join('item','marca.id = item.id_marca')
+                    ->join('detalle_venta','item.id = detalle_venta.id_item')
+                    ->join('pedido_venta','pedido_venta.id = detalle_venta.id_pedido_venta')
+                    ->where($restriccion)
+                    ->groupBy('marca.nombre,marca.id,marca.venta_esperada')
+                    ->paginate(10,'marca'),
+                'pagers'=>$marca->pager,
+
+                'generales' => $generales->asObject()->first()
+        ];
+        $this->_loadDefaultView( 'Cuadro de MANDO: Marca', $data,'cuadro_mando/marcas');
+    }
     public function cuadro_mando_marca($id){
 
         $admin = new Administracion_1();
@@ -222,6 +264,48 @@ class Administracion_4 extends BaseController{
                 'pagers'=>$marca->pager
         ];
         $this->_loadDefaultView( 'Cuadro de MANDO: Marca', $data,'cuadro_mando/marcas');
+    }
+    public function cuadro_subcategoria_filtrado(){
+        $admin = new Administracion_1();
+        $generales = new m_generales();
+
+		$sesion = $admin->sesiones();
+        $admin = '';
+        foreach($sesion['rol'] as $key =>$m){
+            $admin = $m->nombre;
+        }
+        if($admin != 'Administrador'){
+           return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        }
+
+        $subcategoria = new m_subcategoria();
+
+        $fecha_inicio= $this->request->getPost('start');
+        $fecha_fin= $this->request->getPost('end');
+
+        $restriccion = ['fecha >=' =>$fecha_inicio.'-01','fecha <=' =>$fecha_fin.'-01'];
+
+        $firstDate  = $fecha_inicio.'-01';
+        $secondDate = $fecha_fin.'-01';
+        $dateDifference = abs(strtotime($secondDate) - strtotime($firstDate));
+        $years  = floor($dateDifference / (365 * 60 * 60 * 24));
+        $months = floor(($dateDifference - $years * 365 * 60 * 60 * 24) / (30 * 60 * 60 * 24));
+
+        $data = ['subcategoria'=>$subcategoria->asObject()
+                    ->select('subcategoria.id,subcategoria.nombre, subcategoria.venta_esperada, sum(detalle_venta.cantidad) AS cantidad,((sum(detalle_venta.cantidad)/(subcategoria.venta_esperada*'.$months.'))*100) AS promedio')
+                    ->join('categoria','categoria.id = subcategoria.id_categoria')
+                    ->join('marca','subcategoria.id = marca.id_subcategoria')
+                    ->join('item','marca.id = item.id_marca')
+                    ->join('detalle_venta','item.id = detalle_venta.id_item')
+                    ->join('pedido_venta','pedido_venta.id = detalle_venta.id_pedido_venta')
+                    ->where($restriccion)
+                    ->groupBy('subcategoria.nombre,subcategoria.id,subcategoria.venta_esperada')
+                    ->paginate(10,'subcategoria'),
+                'pagers'=>$subcategoria->pager,
+
+                'generales' => $generales->asObject()->first()
+        ];
+        $this->_loadDefaultView( 'Cuadro de MANDO: Subcategoria', $data,'cuadro_mando/subcategorias');
     }
     public function cuadro_mando_subcategoria($id){
 
@@ -251,6 +335,8 @@ class Administracion_4 extends BaseController{
     }
     public function cuadro_mando_categoria(){
         $admin = new Administracion_1();
+        $generales = new m_generales();
+
 		$sesion = $admin->sesiones();
         $admin = '';
         foreach($sesion['rol'] as $key =>$m){
@@ -270,10 +356,55 @@ class Administracion_4 extends BaseController{
                     ->join('detalle_venta','item.id = detalle_venta.id_item')
                     ->groupBy('categoria.nombre,categoria.id,categoria.venta_esperada')
                     ->paginate(10,'categoria'),
-                'pagers'=>$categoria->pager
+                'pagers'=>$categoria->pager,
+
+                'generales' => $generales->asObject()->first()
         ];
         $this->_loadDefaultView( 'Cuadro de MANDO: Categoria', $data,'cuadro_mando/categorias');
     }
+    public function cuadro_categoria_filtrado(){
+        $admin = new Administracion_1();
+        $generales = new m_generales();
+
+		$sesion = $admin->sesiones();
+        $admin = '';
+        foreach($sesion['rol'] as $key =>$m){
+            $admin = $m->nombre;
+        }
+        if($admin != 'Administrador'){
+           return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        }
+
+        $categoria = new m_categoria();
+
+        $fecha_inicio= $this->request->getPost('start');
+        $fecha_fin= $this->request->getPost('end');
+
+        $restriccion = ['fecha >=' =>$fecha_inicio.'-01','fecha <=' =>$fecha_fin.'-01'];
+
+        $firstDate  = $fecha_inicio.'-01';
+        $secondDate = $fecha_fin.'-01';
+        $dateDifference = abs(strtotime($secondDate) - strtotime($firstDate));
+        $years  = floor($dateDifference / (365 * 60 * 60 * 24));
+        $months = floor(($dateDifference - $years * 365 * 60 * 60 * 24) / (30 * 60 * 60 * 24));
+
+        $data = ['categoria'=>$categoria->asObject()
+                    ->select('categoria.id,categoria.nombre, categoria.venta_esperada, sum(detalle_venta.cantidad) AS cantidad,((sum(detalle_venta.cantidad)/(categoria.venta_esperada*'.$months.'))*100) AS promedio')
+                    ->join('subcategoria','categoria.id = subcategoria.id_categoria')
+                    ->join('marca','subcategoria.id = marca.id_subcategoria')
+                    ->join('item','marca.id = item.id_marca')
+                    ->join('detalle_venta','item.id = detalle_venta.id_item')
+                    ->join('pedido_venta','pedido_venta.id = detalle_venta.id_pedido_venta')
+                    ->where($restriccion)
+                    ->groupBy('categoria.nombre,categoria.id,categoria.venta_esperada')
+                    ->paginate(10,'categoria'),
+                'pagers'=>$categoria->pager,
+
+                'generales' => $generales->asObject()->first()
+        ];
+        $this->_loadDefaultView( 'Cuadro de MANDO: Categoria', $data,'cuadro_mando/categorias');
+    }
+    
     public function nueva_gestion(){
 
         $admin = new Administracion_1();
@@ -390,32 +521,51 @@ class Administracion_4 extends BaseController{
         
     }
     public function cerrar_gestion(){
-        $gens = $generales->asObject()->first();
-
-        if($gens->balAper == 0){
-            return redirect()->to('/administracion')->with('message', 'Ya se ha realizado el CIERRE DE GESTION.');
-        }
         $generales = new m_generales();
+        helper("user");
+        $sesion = session();
+        $empleado = new m_empleado();
 
-        $general = $generales->asObject()->first();
-        $db = \Config\Database::connect();
-        $query = $db->query('DROP TABLE IF EXISTS plan_cuenta_'.$general->gestion);
-        if($query!=null){
-            $query2 = $db->query('CREATE TABLE plan_cuenta_'.$general->gestion.' LIKE plan_cuenta;');
-            if($query2!=null) {
-                $query3 = $db->query('INSERT INTO plan_cuenta_'.$general->gestion.' SELECT * FROM plan_cuenta;');
-                $this->cerrar_detalle_comprobante();
-                $this->cerrar_comprobante();
-                $db->query('UPDATE generales
+        $gens = $generales->asObject()->first();
+        $empl  = $empleado->getFullEmpleado($sesion->empleado);
+
+        $contrasena = $this->request->getPost('password');
+
+        if($empl->rol == 'Contador' || $empl->rol == 'Administrador'){
+            if(verificarPassword($contrasena,$empl->contrasena)){
+                if($gens->balAper == 0){
+                    return redirect()->to('/administracion')->with('message', 'No se puede realizar el Cierre de Gestion.');
+                }
+                
+                $db = \Config\Database::connect();
+
+                if($db->query('DROP TABLE IF EXISTS plan_cuenta_'.$gens->gestion)){
+                    if($db->query('CREATE TABLE plan_cuenta_'.$gens->gestion.' LIKE plan_cuenta;')) {
+                        if($db->query('INSERT INTO plan_cuenta_'.$gens->gestion.' SELECT * FROM plan_cuenta;')){
+                            $this->cerrar_detalle_comprobante();
+                            $this->cerrar_comprobante();
+                            if($db->query('UPDATE generales
                             SET balAper = 0
-                            WHERE nombre_empresa = "MEGABE"');
-                $db->close();
-                return redirect()->to('/administracion')->with('message', 'Se ha completado el Cierre de Gestion');
-            } else {
-                $db->close();
-                return redirect()->to('/administracion')->with('message', 'No se pudo realizar el Cierre de Gestion');
+                            WHERE nombre_empresa = "MEGABE"')){
+                                $db->close();
+                                return redirect()->to('/administracion')->with('message', 'Se ha completado el Cierre de Gestion');
+                            }
+                            
+                        } 
+                    } else {
+                        $db->close();
+                        return redirect()->to('/administracion')->with('message', 'No se pudo realizar el Cierre de Gestion');
+                    }
+                }
+            }else{
+                return redirect()->to('/administracion')->with('message', 'Contraseña Incorrecta.');
             }
+           
+        }else{
+            return redirect()->to('/administracion')->with('message', 'Esta funcion No cumple con su ROL.');
         }
+        
+       
         
         
     }

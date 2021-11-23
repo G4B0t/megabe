@@ -1,23 +1,22 @@
-<?php namespace App\Models;
-//defined('BASEPATH') OR exit('No direct script access allowed');
+<?php
+
+namespace App\Models;
+
 use CodeIgniter\Model;
 
 use App\Models\AllegedRC4;
 use App\Models\Verhoeff;
 
-class CodigoControlV7 extends Model{
-
+class CodigoControlV7 extends Model
+{
 	public static function generar($numautorizacion, $numfactura, $nitcliente, $fecha, $monto, $clave)
 	{
-		$AllegedRC4 = new AllegedRC4();
-		$CodigoControlV7 = new CodigoControlV7();
-
-		$numfactura = $CodigoControlV7->appendVerhoeff($numfactura, 2);
-		$nitcliente = $CodigoControlV7->appendVerhoeff($nitcliente, 2);
-		$fecha = $CodigoControlV7->appendVerhoeff($fecha, 2);
-		$monto = $CodigoControlV7->appendVerhoeff($monto, 2);
+		$numfactura = self::appendVerhoeff($numfactura, 2);
+		$nitcliente = self::appendVerhoeff($nitcliente, 2);
+		$fecha = self::appendVerhoeff($fecha, 2);
+		$monto = self::appendVerhoeff($monto, 2);
 		$suma = $numfactura + $nitcliente + $fecha + $monto;
-		$suma = $CodigoControlV7->appendVerhoeff($suma, 5);
+		$suma = self::appendVerhoeff($suma, 5);
 		$dv = substr($suma, -5);
 		$cads = array($numautorizacion, $numfactura, $nitcliente, $fecha, $monto);
 		$msg = '';
@@ -27,7 +26,7 @@ class CodigoControlV7 extends Model{
 			$msg .= $cads[$i] . substr($clave, $p, 1+$dv[$i]);
 			$p += 1 + $dv[$i];
 		}
-		$codif = $AllegedRC4->encode($msg, $clave.$dv);
+		$codif = AllegedRC4::encode($msg, $clave.$dv);
 		$st = 0;
 		$sp = array(0,0,0,0,0);
 		$codif_length = strlen($codif);
@@ -39,8 +38,9 @@ class CodigoControlV7 extends Model{
 		$stt = 0;
 		for ($i=0; $i<5; $i++)
 			$stt += (int)(($st * $sp[$i]) / (1 + $dv[$i]));
-		return implode('-', str_split($AllegedRC4->encode($CodigoControlV7->base64($stt), $clave.$dv), 2));
+		return implode('-', str_split(AllegedRC4::encode(self::base64($stt), $clave.$dv), 2));
 	}
+
 	public static function base64($n)
 	{
 		$d = array(
@@ -60,10 +60,10 @@ class CodigoControlV7 extends Model{
 		}
 		return $r;
 	}
+
 	public static function appendVerhoeff($n, $c)
 	{
-		$Verhoeff = new Verhoeff();
-		for (;$c>0; $c--) $n .= $Verhoeff->get($n);
+		for (;$c>0; $c--) $n .= Verhoeff::get($n);
 		return $n;
 	}
 }

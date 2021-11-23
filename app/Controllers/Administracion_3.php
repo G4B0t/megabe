@@ -41,16 +41,25 @@ class Administracion_3 extends BaseController{
 		$id_persona = $session->persona;
         $almacenero = $empleado->getAlmacen($id_persona);
 
-        $cDate = date('Y-m-d H:i:s');
-        $body = ['id_empleado1' => $almacenero->id,
-                'id_almacen_origen' =>$almacenero->id_almacen,
-                'fecha_envio' =>$cDate 
-                ];
+        $pedido_vigente = $transferencia->getPedidoVigente($almacenero->id);
 
-        if($transferencia->insert($body)){
-            $id_transferencia = $transferencia->getInsertID();
-            $this->show_items($id_transferencia);
+        if($pedido_vigente != null){
+            $this->show_items($pedido_vigente->id);
         }
+        else{
+            echo 'No';
+            $cDate = date('Y-m-d H:i:s');
+            $body = ['id_empleado1' => $almacenero->id,
+                    'id_almacen_origen' =>$almacenero->id_almacen,
+                    'fecha_envio' => $cDate
+                    ];
+            
+            if($transferencia->insert($body)){
+                $id_transferencia = $transferencia->getInsertID();
+                $this->show_items($id_transferencia);
+            }
+        }
+       
     }
     public function agregar_item_envio($id_transferencia){
         $transferencia = new m_transferencia();
@@ -118,12 +127,53 @@ class Administracion_3 extends BaseController{
         }
 
     }
+    
+    public function show_items_filtrado($id_transferencia){
+        $item = new m_item();
+        $transferencia = new m_transferencia();
+		
+		$condiciones = ['item.estado_sql' => '1'];
+        $pedido = $transferencia->getById($id_transferencia);
+
+        $filtro = $this->request->getPost('filtro');
+        $array = [
+			'marca.nombre' => $filtro, 
+			'item.codigo' => $filtro, 
+			'item.descripcion' => $filtro, 
+			'subcategoria.nombre' => $filtro, 
+			'categoria.nombre' =>$filtro,
+		];
+
+        if($pedido==null){
+            return redirect()->to('/administracion')->with('message', 'No existe el pedido aun!.');
+        }
+		$data = [
+			'item' => $item->asObject()
+            ->select('item.*,marca.id AS marcaId, 
+					marca.nombre AS marca, subcategoria.id AS subcategoriaID, 
+					subcategoria.nombre AS subcategoria, categoria.id AS categoriaID, 
+					categoria.nombre AS categoria')
+			->join('marca','item.id_marca = marca.id')
+			->join('subcategoria','marca.id_subcategoria = subcategoria.id')
+			->join('categoria','subcategoria.id_categoria = categoria.id')
+			->where($condiciones)
+            ->like('item.nombre', $filtro)
+			->orlike($array)
+            ->paginate(10,'item'),
+
+            'id_transferencia' =>$pedido->id,
+        ];
+
+		$this->_loadDefaultView( 'Listado para Envio',$data,'productos_transferencia');
+
+    }
     public function show_items($id_transferencia){
         $item = new m_item();
         $transferencia = new m_transferencia();
 		
 		$condiciones = ['item.estado_sql' => '1'];
         $pedido = $transferencia->getById($id_transferencia);
+
         if($pedido==null){
             return redirect()->to('/administracion')->with('message', 'No existe el pedido aun!.');
         }
@@ -147,13 +197,13 @@ class Administracion_3 extends BaseController{
     }
     public function delete_linea($id){
         $detalle_transferencia= new m_detalle_transferencia();
-        $pedido = $pedido_compra->getByDetalle($id);
+        $pedido = $detalle_transferencia->getByDetalle($id);
 
         if ($detalle_transferencia->find($id) == null)
         {
             throw PageNotFoundException::forPageNotFound();
         }  
-        $detalle_compra->update($id, [
+        $detalle_transferencia->update($id, [
             'estado_sql' =>'0'              
         ]);       
         return redirect()->to('/administracion/ver_pedido_trasferencia/'.$pedido->id)->with('message', 'Producto eliminado del detalle.');
@@ -180,12 +230,11 @@ class Administracion_3 extends BaseController{
         if ($transferencia->find($id_transferencia) == null){
             throw PageNotFoundException::forPageNotFound();
         }  
-
-        $body_transferencia = ['id_almacen_destino'=> $id_almacen_destino];
+        $cDate = date('Y-m-d H:i:s');
+        $body_transferencia = ['fecha_envio' =>$cDate, 'estado_sql'=>1,'id_almacen_destino'=> $id_almacen_destino];
                 if($transferencia->update($id_transferencia,$body_transferencia)){
                     $this->ver_enviados();
                 }
-
     }
     public function ver_enviados(){
         $transferencia = new m_transferencia();

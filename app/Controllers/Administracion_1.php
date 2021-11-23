@@ -506,9 +506,7 @@ class Administracion_1 extends BaseController{
         ];
         $this->_loadDefaultView( 'Listado de Pedidos',$data,'confirmacion');
     }
-    public function filtrar_producto_venta(){
-
-    }
+    
 
     public function confirmar_pedido($id_pedido){
         
@@ -695,6 +693,44 @@ class Administracion_1 extends BaseController{
         $this->ver_productos($id_pedido);
         }
         
+    }
+
+    public function filtrar_producto_venta($id_pedido){
+        $item = new m_item();
+        $pedido_venta = new m_pedido_venta();
+		
+		$condiciones = ['item.estado_sql' => '1'];
+        $filtro = $this->request->getPost('filtro');
+        $array = [
+			'marca.nombre' => $filtro, 
+			'item.codigo' => $filtro, 
+			'item.descripcion' => $filtro, 
+			'subcategoria.nombre' => $filtro, 
+			'categoria.nombre' =>$filtro,
+		];
+
+        $pedido = $pedido_venta->getById($id_pedido);
+        if($pedido==null){
+            return redirect()->to('/administracion')->with('message', 'No se pudo crear el nuevo Pedido.');
+        }
+		$data = [
+			'item' => $item->asObject()
+            ->select('item.*,marca.id AS marcaId, 
+					marca.nombre AS marca, subcategoria.id AS subcategoriaID, 
+					subcategoria.nombre AS subcategoria, categoria.id AS categoriaID, 
+					categoria.nombre AS categoria')
+			->join('marca','item.id_marca = marca.id')
+			->join('subcategoria','marca.id_subcategoria = subcategoria.id')
+			->join('categoria','subcategoria.id_categoria = categoria.id')
+			->where($condiciones)
+            ->like('item.nombre', $filtro)
+			->orlike($array)
+            ->paginate(10,'item'),
+
+            'id_pedido' =>$id_pedido
+        ];
+
+		$this->_loadDefaultView( 'Listado',$data,'productos');
     }
 
     public function ver_productos($id_pedido){

@@ -9,7 +9,32 @@
         <a href="#about" class="btn-get-started scrollto">Empecemos</a>
         <a href="https://www.youtube.com/watch?v=TvuZwGHAEMM" class="glightbox btn-watch-video"><i class="bi bi-play-circle"></i><span>Mirar Video</span></a>
       </div>
-    </div>
+  </div>
+      <div class="modal fade" id="cierre" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">Confirmacion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <form id="confirmForm2" action="/administracion/cierre_gestion" method="POST" enctype="multipart/form-data">
+                    
+                    <div class="mb-3 row">
+                        <strong>Confirmar Contraseña: </strong><input type="password" id="password" name="password" class="form-control" placeholder="contraseña">     
+                    </div> 
+                        <div class="modal-footer">  
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        
+                            <button type="submit" name="submit" class="btn btn-primary">Confirmar</button>
+                    
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+      </div>
+
     <div class="modal fade" id="caja" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -33,6 +58,7 @@
                 </div>
             </div>
         </div>
+        
   </section><!-- End Hero -->
     <?php if($rol == 'Vendedor' || $rol == 'Vendedor-Cajero'){?>
       <!-- ======= Portfolio Section ======= -->
@@ -87,5 +113,15 @@
 
     var formAction = document.getElementById('confirmForm')
     formAction.action = "/administracion/movimiento_caja/"+recipient
+    })
+
+    var detalle_modal1 = document.getElementById('cierre')
+    detalle_modal1.addEventListener('show.bs.modal', function (event1) {
+    // Button that triggered the modal
+    var button1 = event1.relatedTarget
+
+    var modalTitle1 = detalle_modal1.querySelector('.modal-title')
+
+    modalTitle1.textContent = 'Confirmarcion de Cierre de Gestion'
     })
 </script>     

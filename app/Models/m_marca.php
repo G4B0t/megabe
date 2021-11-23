@@ -6,7 +6,7 @@ class m_marca extends Model
 {
     protected $table = 'marca';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['nombre','descripcion','id_subcategoria','foto','estado_sql'];
+    protected $allowedFields = ['nombre','descripcion','venta_esperada','id_subcategoria','foto','estado_sql'];
 
     public function getByID($id = null)
     {

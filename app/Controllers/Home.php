@@ -21,21 +21,20 @@ class Home extends BaseController
 		$marca = new m_marca();
 		$categoria = new m_categoria();
 		$subcategoria = new m_subcategoria();
-
 		$data = [
 			'subcategoria' => $subcategoria->asObject()
             ->select('subcategoria.*,categoria.nombre as categoria')
             ->join('categoria','categoria.id = subcategoria.id_categoria')
-            ->paginate(10,'subcategoria'),
+            ->findAll(),
 
 			'marca' => $marca->asObject()
 			->select('marca.*,subcategoria.nombre as subcategoria')
             ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
-            ->paginate(10,'marca'),
+            ->findAll(),
 
 			'categoria' => $categoria->asObject()
             ->select('categoria.*')
-            ->paginate(10,'categoria')
+            ->findAll()
         ];
 
 		$this->_loadDefaultView( '',$data,'index','');
@@ -85,7 +84,7 @@ class Home extends BaseController
 			->where($condiciones)
 			->like('item.nombre', $filtro)
 			->orlike($array)
-            ->paginate(10,'item')
+            ->findAll()
         ];
 
 		$this->_loadDefaultView( 'Filtrado por: '.$filtro,$data,'productos','header-inner-pages');
@@ -108,7 +107,7 @@ class Home extends BaseController
 			->join('subcategoria','marca.id_subcategoria = subcategoria.id')
 			->join('categoria','subcategoria.id_categoria = categoria.id')
 			->where($condiciones)
-            ->paginate(10,'item'),
+            ->findAll(),
         ];
 
 		$this->_loadDefaultView( 'Tienda',$data,'productos','header-inner-pages');
@@ -134,7 +133,7 @@ class Home extends BaseController
 			->join('subcategoria','marca.id_subcategoria = subcategoria.id')
 			->join('categoria','subcategoria.id_categoria = categoria.id')
 			->where($condiciones)
-            ->paginate(10,'item')
+            ->findAll()
         ];
 
 		$this->_loadDefaultView( 'Categoria elegida: '.$nombre_subcat['nombre'],$data,'productos','header-inner-pages');
@@ -187,7 +186,7 @@ class Home extends BaseController
 			->join('subcategoria','marca.id_subcategoria = subcategoria.id')
 			->join('categoria','subcategoria.id_categoria = categoria.id')
 			->where($condiciones)
-            ->paginate(10,'item')
+            ->findAll()
         ];
 
 		$this->_loadDefaultView( 'Categoria elegida: '.$name['nombre'],$data,'productos','header-inner-pages');
@@ -211,7 +210,7 @@ class Home extends BaseController
 			->join('subcategoria','marca.id_subcategoria = subcategoria.id')
 			->join('categoria','subcategoria.id_categoria = categoria.id')
 			->where($condiciones)
-            ->paginate(10,'item')
+            ->findAll()
         ];
 
 		$this->_loadDefaultView( 'Subcategoria elegida: '.$name['nombre'],$data,'productos','header-inner-pages');
@@ -235,7 +234,7 @@ class Home extends BaseController
 			->join('subcategoria','marca.id_subcategoria = subcategoria.id')
 			->join('categoria','subcategoria.id_categoria = categoria.id')
 			->where($condiciones)
-            ->paginate(10,'item')
+            ->findAll()
         ];
 
 		$this->_loadDefaultView( 'Marca elegida: '.$name['nombre'],$data,'productos','header-inner-pages');
@@ -263,17 +262,17 @@ class Home extends BaseController
 
 			'categoria' => $categoria->asObject()
             ->select('categoria.*')
-            ->paginate(10,'categoria'),
+            ->findAll(),
 
 			'subcategoria' => $subcategoria->asObject()
             ->select('subcategoria.*')
             ->join('categoria','categoria.id = subcategoria.id_categoria')
-            ->paginate(10,'subcategoria'),
+            ->findAll(),
 
 			'marca' => $marca->asObject()
 			->select('marca.*')
             ->join('subcategoria','subcategoria.id = marca.id_subcategoria')
-            ->paginate(10,'marca'),
+            ->findAll(),
 
 			'rol' => $rol,
 

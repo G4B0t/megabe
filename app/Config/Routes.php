@@ -52,19 +52,21 @@ $routes->get('/administracion/armar_pedido', 'Administracion_1::armar_pedido');
 $routes->get('/administracion/mostrar_carrito/(:any)', 'Administracion_1::mostrar_carrito/$1');
 $routes->post('/administracion/agregar_carrito/(:any)', 'Administracion_1::agregar_carrito/$1');
 $routes->post('/administracion/borrar_producto/(:any)', 'Administracion_1::borrar_producto/$1');
-$routes->post('/administracion/filtrado_items_venta', 'Administracion_1::filtrar_producto_venta');
+$routes->post('/administracion/filtrado_items_venta/(:any)', 'Administracion_1::filtrar_producto_venta/$1');
 
 $routes->post('/administracion/confirmar_compra/(:any)', 'Administracion_2::confirmar_compra/$1');
 $routes->post('/administracion/agregar_item/(:any)', 'Administracion_2::agregar_linea/$1');
 $routes->get('/administracion/armar_compra', 'Administracion_2::new_compra');
 $routes->get('/administracion/ver_carrito/(:any)', 'Administracion_2::mostrar_linea/$1');
 $routes->get('/administracion/ver_items/(:any)', 'Administracion_2::ver_items/$1');
+$routes->post('/administracion/ver_items_filtrado/(:any)', 'Administracion_2::ver_items_filtrado/$1');
 $routes->post('/administracion/borrar_item/(:any)', 'Administracion_2::borrar_linea/$1');
 
 $routes->get('/administracion/armar_transferencia', 'Administracion_3::nueva_transferencia_envio');
 $routes->post('/administracion/sumar_producto/(:any)', 'Administracion_3::agregar_item_envio/$1');
 $routes->get('/administracion/ver_pedido_trasferencia/(:any)', 'Administracion_3::ver_carrito_envio/$1');
 $routes->get('/administracion/show_items/(:any)', 'Administracion_3::show_items/$1');
+$routes->post('/administracion/show_items_filtrado/(:any)', 'Administracion_3::show_items_filtrado/$1');
 $routes->post('/administracion/delete_item/(:any)', 'Administracion_3::delete_linea/$1');
 $routes->post('/administracion/confirmar_transferencia/(:any)', 'Administracion_3::confirm_transferencia/$1');
 $routes->get('/administracion/ver_enviados', 'Administracion_3::ver_enviados');
@@ -89,12 +91,17 @@ $routes->get('/administracion/ver_pagados', 'Administracion_2::listar');
 $routes->get('/administracion/detalle_pagados/(:any)', 'Administracion_2::mostrar_detalle/$1');
 $routes->post('/administracion/entrega_confirmada/(:any)', 'Administracion_2::confirmar_entrega/$1');
 
+$routes->post('/administracion/cuadro_mando/categoria_filtrado', 'Administracion_4::cuadro_categoria_filtrado');
+$routes->post('/administracion/cuadro_mando/subcategoria_filtrado', 'Administracion_4::cuadro_subcategoria_filtrado');
+$routes->post('/administracion/cuadro_mando/marca_filtrado', 'Administracion_4::cuadro_marca_filtrado');
+$routes->post('/administracion/cuadro_mando/item_filtrado', 'Administracion_4::cuadro_item_filtrado');
+
 $routes->get('/administracion/cuadro_categoria', 'Administracion_4::cuadro_mando_categoria');
 $routes->get('/administracion/cuadro_subcategoria/(:any)', 'Administracion_4::cuadro_mando_subcategoria/$1');
 $routes->get('/administracion/cuadro_marca/(:any)', 'Administracion_4::cuadro_mando_marca/$1');
 $routes->get('/administracion/cuadro_item/(:any)', 'Administracion_4::cuadro_mando_item/$1');
 $routes->get('/administracion/mayorizar', 'Administracion_4::plan_cuenta_mayorizar');
-$routes->get('/administracion/cierre_gestion', 'Administracion_4::cerrar_gestion');
+$routes->post('/administracion/cierre_gestion', 'Administracion_4::cerrar_gestion');
 $routes->get('/administracion/inicio_gestion', 'Administracion_4::iniciar_gestion');
 $routes->post('/administracion/cambiar_gestion', 'Administracion_4::nueva_gestion');
 $routes->get('/administracion/balance_general', 'Administracion_4::generar_balance_general');
