@@ -34,6 +34,10 @@
 
   <link href="<?= base_url()?>/css/imagenes.css" rel="stylesheet">
   <link href="<?= base_url()?>/bootstrap/css/bootstrap-table.min.css" rel="stylesheet">
+  <link href="<?= base_url()?>/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <script src="<?= base_url()?>/js/jquery.min.js"></script>
+  <script src="<?= base_url()?>/js/select2.min.js"></script>
 
 </head>
 <body>
@@ -51,12 +55,13 @@
           <?php $i = 0; foreach($rol as $key =>$m):  $i++; ?>
 
                    <?php if($m->nombre == 'Administrador') { ?>
-                      <li><a class="nav-link scrollto" href="/administracion/cuadro_categoria">CUADRO DE MANDO</a></li>
+                      <li><a class="nav-link scrollto" href="/administracion/cuadro_categoria">CUADROS DE MANDO</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/generales">GENERALES</a></li>
                       <li class="dropdown"><a href="#"><span>Menu</span> <i class="bi bi-chevron-down"></i></a>
                         <ul>
                         <li class="dropdown"><a href="/item"><span>Items</span> <i class="bi bi-chevron-down"></i></a>
                           <ul>  
+                            <li><a class="nav-link scrollto" href="/administracion/items_reorden">Puntos Reorden</a></li>
                             <li><a class="nav-link scrollto" href="/categoria">Categorias</a></li>
                             <li><a class="nav-link scrollto" href="/subcategoria">Subcategorias</a></li>
                             <li><a class="nav-link scrollto" href="/marca">Marcas</a></li>
@@ -73,7 +78,6 @@
                         <li class="dropdown"><a href="/almacen"><span>Almacen</span> <i class="bi bi-chevron-down"></i></a>
                           <ul>  
                             <li><a class="nav-link scrollto" href="/transferencia">Transferencias</a></li>
-                            <li><a class="nav-link scrollto" href="/item_almacen">Item - Almacen</a></li>
                           </ul>
                         </li>
                         </ul>
@@ -84,25 +88,11 @@
                           <li><a class="nav-link scrollto" href="/administracion/ver_pedidos">Confirmar Pagos</a></li>
                         </ul>
                       </li>
-                      <li class="dropdown"><a href="#"><span>Cajero</span> <i class="bi bi-chevron-down"></i></a>
-                        <ul>
-                          <li><a type="button" class="nav-link scrollto" data-bs-toggle="modal" data-bs-target="#caja" data-bs-id="abono">Abono a Caja</a></li>
-                          <li><a type="button" class="nav-link scrollto" data-bs-toggle="modal" data-bs-target="#caja" data-bs-id="retiro">Retiro de Caja</a></li>
-                        </ul>
-                      </li>
+                     
                       <li class="dropdown"><a href="#"><span>Almacenes</span> <i class="bi bi-chevron-down"></i></a>
                         <ul>
                           <li><a lass="nav-link scrollto" href="/administracion/ver_pagados">Entregas</a></li>
                           <li><a class="nav-link scrollto" href="/administracion/armar_transferencia">Armar Envio</a></li>
-                        </ul>
-                      </li>
-                      <li class="dropdown"><a href="#"><span>Contador</span> <i class="bi bi-chevron-down"></i></a>
-                        <ul>
-                          <li><a class="nav-link scrollto" href="/administracion/nuevo_comprobante">Comprobante</a></li>
-                          <li><a class="nav-link scrollto" href="/administracion/mayorizar">Mayorizacion</a></li>
-                          <li><a class="nav-link scrollto" href="/administracion/balance_general">Balance General</a></li>
-                          <li><a type="button" class="nav-link scrollto" data-bs-toggle="modal" data-bs-target="#cierre" data-bs-id="contraseña">Cierre de Gestion</a></li>
-                          <li><a class="nav-link scrollto" href="/administracion/inicio_gestion">Inicio de Gestion</a></li>
                         </ul>
                       </li>
                       <li><a class="nav-link scrollto" href="/administracion/configuracion">Perfil</a></li>
@@ -158,12 +148,14 @@
                   <?php if($m->nombre == "Vendedor"){ ?>
                     <!-- MENU VENDEDOR --> 
                     <li><a class="nav-link scrollto" href="/administracion/armar_pedido"><span>Armar Pedido</span></a></li>
+                    <li><a class="nav-link scrollto" href="/administracion/items_reorden">Puntos Reorden</a></li>
                   <?php } ?>
                     
                   <?php if($m->nombre == "Almacenes"){ ?>
                     <!-- MENU ALMACENERO --> 
                     <li><a class="nav-link scrollto" href="/administracion/ver_pagados">Entregas</a></li>
                     <li><a class="nav-link scrollto" href="/administracion/armar_transferencia">Armar Envio</a></li>
+                    <li><a class="nav-link scrollto" href="/administracion/items_reorden">Puntos Reorden</a></li>
                     <li><a class="nav-link scrollto" href="/administracion/ver_enviados">Ver Envios</a></li>
                     <li><a class="nav-link scrollto" href="/administracion/ver_recibidos">Ver Recepciones</a></li>
                       <?php if($central){?>
@@ -175,7 +167,6 @@
                   <?php if ($m->nombre == "Contador"){?>
                       <!-- MENU CONTADOR -->
                       <li><a class="nav-link scrollto" href="/administracion/nuevo_comprobante">Comprobante</a></li>
-                      <li><a class="nav-link scrollto" href="/administracion/configuracion">Perfil</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/mayorizar">Mayorizacion</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/balance_general">Balance General</a></li>
                       <li><a type="button" class="nav-link scrollto" data-bs-toggle="modal" data-bs-target="#cierre" data-bs-id="contraseña">Cierre de Gestion</a></li>

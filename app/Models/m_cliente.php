@@ -20,6 +20,7 @@ class m_cliente extends Model
         return $this->asObject()
         ->select('cliente.id, cliente.id_persona,CONCAT(persona.nombre, " ", persona.apellido_paterno) AS fullName')
         ->join('persona','persona.id = cliente.id_persona')
+        ->orderBy('fullName','ASC')
         ->findAll();
     }
 

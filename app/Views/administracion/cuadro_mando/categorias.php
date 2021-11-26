@@ -68,7 +68,7 @@
                         <td><?= $m->nombre ?></td>
                         <td><?= $m->venta_esperada ?></td>
                         <td><?= $m->cantidad ?></td>
-                        <td><?php if($m->promedio >= 100){echo '100!!';}else{ echo $m->promedio;} ?></td>
+                        <td><?php if($m->promedio >= 100){echo '100!!';}else{ echo round($m->promedio);} ?></td>
                         
                     </tr>
                 <?php endforeach?>

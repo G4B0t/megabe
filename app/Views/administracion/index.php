@@ -46,7 +46,7 @@
                     <form id="confirmForm" action="/administracion/movimiento_caja" method="POST" enctype="multipart/form-data">
                     
                     <div class="mb-3 row">
-                        <strong>Monto (bs): </strong><input type="number" id="monto" name="monto" step="1" class="form-control" placeholder="1" min="1">     
+                        <strong>Monto (bs): </strong><input type="number" id="monto" name="monto" step="1" class="form-control" placeholder="" min="1">     
                     </div> 
                         <div class="modal-footer">  
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -124,4 +124,5 @@
 
     modalTitle1.textContent = 'Confirmarcion de Cierre de Gestion'
     })
+    
 </script>     

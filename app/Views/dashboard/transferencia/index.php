@@ -16,6 +16,7 @@
 <table class="table table-hover" data-aos="fade-up">
     <thead>
         <tr>
+            <th>#</th>
             <th>Enviado por:</th>
             <th>Almacen Origen</th>
             <th>Fecha Envio</th>
@@ -26,6 +27,7 @@
 
         <?php foreach ($transferencia as $key => $m): ?>
             <tr>
+                <td><?= $m->id ?></td>
                 <td><?= $m->fullname ?></td>
                 <td><?= $m->origen ?></td>
                 <td><?= $m->fecha_envio ?></td>

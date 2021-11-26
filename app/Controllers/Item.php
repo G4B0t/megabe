@@ -1,5 +1,7 @@
 <?php namespace App\Controllers;
 use App\Models\m_item;
+use App\Models\m_item_almacen;
+use App\Models\m_almacen;
 use App\Controllers\BaseController;
 use App\Controllers\Administracion_1;
 use \CodeIgniter\Exceptions\PageNotFoundException;
@@ -36,6 +38,7 @@ class Item extends BaseController {
             ->join('marca','marca.id = item.id_marca')
             ->join('proveedor','item.id_proveedor = proveedor.id')
             ->join('persona','persona.id = proveedor.id_persona')
+            ->orderBy('marca','ASC')
             ->paginate(10,'item'),
             'pager' => $item->pager
         ];
@@ -54,7 +57,18 @@ class Item extends BaseController {
 
 
     }
+    public function crear_item_almacen($id_item){
+        $almacen = new m_almacen();
+        $item_almacen = new m_item_almacen();
+        $almacenes = $almacen->asObject()->findAll();
 
+        foreach($almacenes as $key => $m){
+            $item_almacen->insert(['id_almacen'=>$m->id,
+                                    'id_item'=>$id_item,
+                                    'stock'=>0]);
+        }
+        
+    }
     public function create(){
 
         $item = new m_item();
@@ -77,7 +91,6 @@ class Item extends BaseController {
                         'id_marca' =>$this->request->getPost('id_marca'),
                         'id_proveedor'=>$this->request->getPost('id_proveedor'),
                         'codigo' =>$this->request->getPost('codigo'),
-                        'stock' =>$this->request->getPost('stock'),
                         'precio_unitario' =>$this->request->getPost('precio_unitario'),
                         'precio_compra' =>$this->request->getPost('precio_compra'),
                         'venta_esperada' =>$this->request->getPost('venta_esperada'),
@@ -85,7 +98,10 @@ class Item extends BaseController {
                         'foto' => $foto,
                         'estado_sql' =>'1'
                     ])){
-                        $items = $item->asObject()->findAll();
+                    $id_item = $item->getInsertID();
+                    $this->crear_item_almacen($id_item);
+                       
+                    $items = $item->asObject()->findAll();
 
                     $cats = $categoria->asObject()->findAll();
                     $subcats = $subcategoria->asObject()->findAll();
@@ -133,13 +149,14 @@ class Item extends BaseController {
                     'id_marca' =>$this->request->getPost('id_marca'),
                     'id_proveedor'=>$this->request->getPost('id_proveedor'),
                     'codigo' =>$this->request->getPost('codigo'),
-                    'stock' =>$this->request->getPost('stock'),
                     'precio_unitario' =>$this->request->getPost('precio_unitario'),
                     'precio_compra' =>$this->request->getPost('precio_compra'),
                     'venta_esperada' =>$this->request->getPost('venta_esperada'),
                     'punto_reorden' =>$this->request->getPost('punto_reorden'),
                     'estado_sql' =>'1'
                 ])){
+                    $id_item = $item->getInsertID();
+                    $this->crear_item_almacen($id_item);
                     $items = $item->asObject()->findAll();
 
                     $cats = $categoria->asObject()->findAll();

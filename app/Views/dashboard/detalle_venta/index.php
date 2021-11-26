@@ -4,8 +4,8 @@
       <div class="container">
         <div class="d-flex justify-content-between align-items-center">
           <h2><?= $title ?></h2>
+          <h4><?= view("dashboard/partials/_session"); ?></h4>
           <ol>
-            <li><a class="btn btn-outline-dark" role="button" href="<?= route_to('contacto','Gabriel') ?>">Contacto</a></li>
             <li><a class="btn btn-outline-info" role="button" href="/productos" >Agregar más Productos</a></li>
             </ol>
         </div>
@@ -13,11 +13,10 @@
       </div>
     </section><!-- End Breadcrumbs -->
 
-<p><?= view("dashboard/partials/_session"); ?></p>
-
 <table class="table table-hover" data-aos="fade-up">
     <thead>
         <tr>
+            <th>#</th>
             <th>Producto</th>
             <th>Codigo</th>
             <th>Cantidad</th>
@@ -30,6 +29,7 @@
 
         <?php foreach ($detalle_venta as $key => $m): ?>
             <tr>
+                <td><?= $m->id ?></td>
                 <td><?= $m->item_nombre ?></td>
                 <td><?= $m->item_codigo ?></td>
                 <td><?= $m->cantidad ?></td>

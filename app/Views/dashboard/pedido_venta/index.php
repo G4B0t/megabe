@@ -18,6 +18,7 @@
             <table class="table table-hover" data-aos="fade-up">
             <thead>
                 <tr>
+                    <th>#</th>
                     <th>Fecha</th>
                     <th>Estado</th>
                     <th>Opciones</th>
@@ -27,7 +28,7 @@
 
                 <?php foreach ($pedido_venta as $key => $m): ?>
                     <tr>
-
+                        <td><?= $m->id ?></td>
                         <td><?= $m->fecha ?></td>
                         <td><?= $m->estado_ref ?></td>
                         <td>
@@ -47,7 +48,6 @@
             <table class="table table-hover" data-aos="fade-up">
                 <thead>
                     <tr>
-
                         <th>Codigo de Producto</th>
                         <th>Nombre de Producto</th>
                         <th>Cantidad</th>

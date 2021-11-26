@@ -6,7 +6,7 @@
           <h2><?= $title ?></h2>
           <h2><?= view("dashboard/partials/_session"); ?></h2>
           <ol>
-            <li><a class="btn btn-outline-dark" role="button" href="<?= route_to('contacto','Gabriel') ?>">Contacto</a></li>
+            <li><a class="btn btn-outline-dark" role="button" href="/item_almacen">Item Almacen</a></li>
             </ol>
         </div>
       </div>
@@ -56,8 +56,9 @@
                     <tr>
                         <th>Codigo de Producto</th>
                         <th>Nombre de Producto</th>
-                        <th>Cantidad</th>
                         <th>Precio Unitario</th>
+                        <th>Cantidad</th>
+                        <th>Stock en Almacen</th>
                         <th>Total</th>
                     </tr>
                 </thead>
@@ -67,8 +68,9 @@
                         <tr>
                             <td><?= $m->item_codigo ?></td>
                             <td><?= $m->item_nombre ?></td>
-                            <td><?= $m->cantidad ?></td>
                             <td><?= $m->precio_unitario ?></td>
+                            <td><?= $m->cantidad ?></td>
+                            <td><?= $m->stock_almacen ?></td>
                             <td><?= $m->total ?></td>
                         </tr>
                     <?php endforeach?>
@@ -169,5 +171,6 @@
         document.getElementById("bancos").disabled = !isChecked;
     }
 
+   
 </script>
 

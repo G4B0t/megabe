@@ -6,7 +6,6 @@
           <h2><?= $title ?></h2>
           <h5><?= view("dashboard/partials/_session"); ?></h5>
           <ol>
-            <li><a class="btn btn-outline-dark" role="button" href="<?= route_to('contacto','Gabriel') ?>">Contacto</a></li>
             <li><a class="btn btn-outline-info" role="button" href="/administracion/ver_productos/<?=$id_pedido?>" >Agregar más Productos</a></li>
             </ol>
         </div>
@@ -69,12 +68,11 @@
         
         <div class="mb-3">
                 <input type="checkbox" name="myCheckbox" id="clienteCB" value="1"/><span>Cliente</span>
-                <select class="form-select" name="cliente" id="cliente">
+                <select class="search form-select" name="cliente" >
                     <?php foreach ($cliente as $c): ?>
                         <option <?= $c->id !== $c->id_persona ?: "selected"?> value="<?= $c->id ?>"><?= $c->fullName ?> </option>
                     <?php endforeach?>
                 </select>
-                
         </div>
         <div class="mb-3 row">
             <label for="nombre" class="col-sm-2 col-form-label" >Nombre:</label>
@@ -114,7 +112,23 @@
   </div>
 </div>
 
+
 <script>
+    $('.cliente').select2({
+        placeholder: '--- Buscar Cliente ---',
+        ajax: {
+          url: '<?php echo base_url('administracion/searchCliente');?>',
+          dataType: 'json',
+          delay: 250,
+          processResults: function(data){
+            return {
+              results: data
+            };
+          },
+          cache: true
+        }
+      });
+
     var detalle_modal = document.getElementById('detalle_modal')
     detalle_modal.addEventListener('show.bs.modal', function (event) {
     // Button that triggered the modal
@@ -126,4 +140,6 @@
 
     modalTitle.textContent = 'Datos de Cliente'
     })
+
+    
 </script>

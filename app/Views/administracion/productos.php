@@ -6,7 +6,8 @@
           <h2><?= $title ?></h2>
           <h4><?= view("dashboard/partials/_session"); ?></h4>
           <ol>
-            <li><a class="btn btn-outline-dark" role="button" href="/administracion/mostrar_carrito/<?$id_pedido?>">Ver Carrito</a></li>
+            
+            <li><a class="btn btn-outline-dark" role="button" href="/administracion/mostrar_carrito/<?= $id_pedido?>">Ver Carrito</a></li>
             </ol>
         </div>
       </div>
@@ -99,4 +100,9 @@
     var item = document.getElementById('item_id')
     item.setAttribute("value",id_item)
     })
+
+    if(document.getElementById("cantidad"). value. length == 0)
+    {
+      alert("empty")
+    }
 </script>

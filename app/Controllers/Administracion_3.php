@@ -131,8 +131,13 @@ class Administracion_3 extends BaseController{
     public function show_items_filtrado($id_transferencia){
         $item = new m_item();
         $transferencia = new m_transferencia();
+        $empleado = new m_empleado();
+
+        $session = session();
+		$id_persona = $session->persona;
+        $almacenero = $empleado->getAlmacen($id_persona);
 		
-		$condiciones = ['item.estado_sql' => '1'];
+		$condiciones = ['item.estado_sql' => '1','item_almacen.id_almacen'=>$almacenero->id_almacen];
         $pedido = $transferencia->getById($id_transferencia);
 
         $filtro = $this->request->getPost('filtro');
@@ -152,16 +157,21 @@ class Administracion_3 extends BaseController{
             ->select('item.*,marca.id AS marcaId, 
 					marca.nombre AS marca, subcategoria.id AS subcategoriaID, 
 					subcategoria.nombre AS subcategoria, categoria.id AS categoriaID, 
-					categoria.nombre AS categoria')
+					categoria.nombre AS categoria, item_almacen.stock as stock_alma')
 			->join('marca','item.id_marca = marca.id')
 			->join('subcategoria','marca.id_subcategoria = subcategoria.id')
 			->join('categoria','subcategoria.id_categoria = categoria.id')
+            ->join('item_almacen','item.id = item_almacen.id_item')
 			->where($condiciones)
             ->like('item.nombre', $filtro)
 			->orlike($array)
             ->paginate(10,'item'),
 
+            'pager' =>$item->pager,
+
             'id_transferencia' =>$pedido->id,
+
+            'almacen' => $almacenero->direccion
         ];
 
 		$this->_loadDefaultView( 'Listado para Envio',$data,'productos_transferencia');
@@ -170,8 +180,13 @@ class Administracion_3 extends BaseController{
     public function show_items($id_transferencia){
         $item = new m_item();
         $transferencia = new m_transferencia();
+        $empleado = new m_empleado();
+
+        $session = session();
+		$id_persona = $session->persona;
+        $almacenero = $empleado->getAlmacen($id_persona);
 		
-		$condiciones = ['item.estado_sql' => '1'];
+		$condiciones = ['item.estado_sql' => '1','item_almacen.id_almacen'=>$almacenero->id_almacen];
         $pedido = $transferencia->getById($id_transferencia);
 
         if($pedido==null){
@@ -182,14 +197,19 @@ class Administracion_3 extends BaseController{
             ->select('item.*,marca.id AS marcaId, 
 					marca.nombre AS marca, subcategoria.id AS subcategoriaID, 
 					subcategoria.nombre AS subcategoria, categoria.id AS categoriaID, 
-					categoria.nombre AS categoria')
+					categoria.nombre AS categoria, item_almacen.stock as stock_alma')
 			->join('marca','item.id_marca = marca.id')
 			->join('subcategoria','marca.id_subcategoria = subcategoria.id')
 			->join('categoria','subcategoria.id_categoria = categoria.id')
+            ->join('item_almacen','item.id = item_almacen.id_item')
 			->where($condiciones)
             ->paginate(10,'item'),
 
+            'pager' =>$item->pager,
+
             'id_transferencia' =>$pedido->id,
+
+            'almacen' => $almacenero->direccion
         ];
 
 		$this->_loadDefaultView( 'Listado para Envio',$data,'productos_transferencia');
@@ -217,10 +237,16 @@ class Administracion_3 extends BaseController{
         $detalles = $detalle_transferencia->getFullDetalle($id_transferencia);
         $id_almacen_destino =  $this->request->getPost('id_almacen_destino');
         $transfe = $transferencia->getById($id_transferencia);
+        
 
         foreach($detalles as $key =>$m){
             $item_origen = $item_almacen->getStocks($transfe->id_almacen_origen,$m->id_item);
             $stock_origen = ($item_origen->stock) - ($m->cantidad);
+
+            if($stock_origen < 0){
+                return redirect()->to('/administracion/ver_pedido_trasferencia/'.$id_transferencia)->with('message', 'ERROR!! Verifique existencia de stock en ALMACEN!');
+            }  
+
             $prov = $item_almacen->update($item_origen->id,['stock'=>$stock_origen]);
             if(!$prov){
                 return redirect()->back()->withInput()->with('message', 'No se pudo confirmar el ENVIO!');
@@ -263,6 +289,7 @@ class Administracion_3 extends BaseController{
             ->join('empleado','empleado.id = transferencia.id_empleado1')
             ->join('persona','persona.id = empleado.id_persona')
             ->where($condiciones)
+            ->orderBy('fecha_envio','DESC')
             ->paginate(10,'transferencia'),
             'pagers' => $transferencia->pager,
 
@@ -299,6 +326,7 @@ class Administracion_3 extends BaseController{
             ->join('almacen B','B.id=transferencia.id_almacen_destino')
             ->join('empleado','empleado.id = transferencia.id_empleado1')
             ->join('persona','persona.id = empleado.id_persona')
+            ->orderBy('fecha_envio','DESC')
             ->where($condiciones)
             ->paginate(10,'transferencia'),
             'pagers' => $transferencia->pager,

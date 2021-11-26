@@ -27,7 +27,7 @@ class Transferencia extends BaseController {
             ->join('persona','persona.id = empleado.id_persona')
             ->join('almacen A','A.id = transferencia.id_almacen_origen')
             ->join('almacen B','B.id = transferencia.id_almacen_destino')
-            ->orderBy('fecha_envio', 'ASC')
+            ->orderBy('fecha_envio', 'DESC')
             ->paginate(10, 'transferencia'),
             'pager' => $transferencia->pager
         ];

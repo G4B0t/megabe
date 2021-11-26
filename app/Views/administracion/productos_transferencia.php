@@ -6,7 +6,8 @@
           <h2><?= $title ?></h2>
           <h4><?= view("dashboard/partials/_session"); ?></h4>
           <ol>
-            <li><a class="btn btn-outline-dark" role="button" href="<?= route_to('contacto','Gabriel') ?>">Contacto</a></li>
+            <li><a class="btn btn-outline-dark" role="button" href="/administracion/ver_pedido_trasferencia/<?= $id_transferencia?>">Ver Carrito</a></li>
+            <li><a class="btn btn-outline-dark" role="button" href="/item_almacen">Item Almacen</a></li>
             </ol>
         </div>
       </div>
@@ -28,12 +29,13 @@
 
 <table class="table table-hover" data-aos="fade-up">
     <thead>
+      <tr><h3>ALMACEN: <?= $almacen ?></h3></tr>
         <tr>
             <th>Id</th>
             <th>Producto</th>
             <th>Codigo</th>
             <th>Descripcion</th>
-            <th>Stock</th>
+            <th>Stock en Almacen</th>
             <th>Opciones</th>
         </tr>
     </thead>
@@ -45,16 +47,17 @@
                 <td><?= $m->nombre ?></td>
                 <td><?= $m->codigo ?></td>
                 <td><?= $m->descripcion ?></td>
-                <td><?= $m->stock ?></td>
+                <td><?= $m->stock_alma ?></td>
                 <td>
                     
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detalle_modal" data-bs-nombre="<?= $m->nombre ?>" data-bs-id="<?= $m->id ?>" data-bs-stock="<?= $m->stock ?>">Agregar Producto</button>                   
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detalle_modal" data-bs-nombre="<?= $m->nombre ?>" data-bs-id="<?= $m->id ?>" data-bs-stock="<?= $m->stock_alma ?>">Agregar Producto</button>                   
             </td>
             </tr>
         <?php endforeach?>
     </tbody>
 </table>
+<?= $pager->links('item','paginacion') ?>
 
 <div class="modal fade" id="detalle_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -99,4 +102,5 @@
     var item = document.getElementById('item_id')
     item.setAttribute("value",id_item)
     })
+  
 </script>

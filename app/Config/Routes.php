@@ -41,6 +41,7 @@ $routes->get('/categorias/(:any)', 'Home::menuCategoria/$1');
 $routes->get('/subcategorias/(:any)', 'Home::menuSubcategoria/$1');
 $routes->get('/marcas/(:any)', 'Home::menuMarca/$1');
 
+$routes->post('/administracion/searchCliente', 'Administracion_1::searchCliente');
 $routes->get('/administracion', 'Administracion_1::index');
 $routes->post('/administracion/confirmar_pago/(:any)', 'Administracion_1::confirmar_pago/$1');
 $routes->get('/administracion/mostrar_detalle/(:any)', 'Administracion_1::mostrar_detalle/$1');
@@ -76,10 +77,12 @@ $routes->get('/administracion/ver_recibidos', 'Administracion_3::ver_recepcion_t
 $routes->get('/administracion/detalles_recepcion/(:any)', 'Administracion_3::ver_detalle_recepcion/$1');
 $routes->post('/administracion/recepcion_confirmada/(:any)', 'Administracion_3::confirmar_recepcion/$1');
 
-
 $routes->get('/administracion/configuracion', 'Administracion_4::configuracion');
 $routes->post('/adminitracion/actualizar_usuario/(:any)', 'Administracion_4::actualizar_empleado/$1');
 $routes->get('/administracion/generales', 'Administracion_4::modificar_generales');
+$routes->post('/adminitracion/modificar_generales', 'Administracion_4::update_generales');
+$routes->get('/administracion/items_reorden', 'Administracion_4::items_reorden');
+$routes->post('/administracion/filtrar_punto_reorden', 'Administracion_4::filtrar_punto_reorden');
 
 $routes->get('/administracion/nuevo_comprobante', 'Administracion_2::nuevo_comprobante');
 $routes->get('/administracion/ver_comprobante/(:any)', 'Administracion_2::ver_comprobante/$1');
@@ -120,6 +123,7 @@ $routes->get('/mis_pedidos', 'Pedido_Venta::index');
 $routes->get('/actualizar/(:any)', 'Pedido_Venta::actualizarVigente/$1');
 
 $routes->resource('item');
+$routes->resource('item_almacen');
 $routes->resource('subcategoria');
 $routes->resource('categoria');
 $routes->resource('almacen');

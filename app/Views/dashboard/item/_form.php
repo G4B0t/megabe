@@ -46,13 +46,6 @@
         </div>
 
         <div class="mb-3 row">
-            <label for="stock" class="col-sm-2 col-form-label">Stock:</label>
-            <div class="col-sm-10">
-                <textarea class="form-control" name="stock" id="stock"><?=old('stock', $item->stock)?></textarea><br />
-            </div>
-        </div>
-
-        <div class="mb-3 row">
             <label for="precio_unitario" class="col-sm-2 col-form-label">Precio Unitario:</label>
             <div class="col-sm-10">
                 <textarea class="form-control" name="precio_unitario" id="precio_unitario"><?=old('precio_unitario', $item->precio_unitario)?></textarea><br />
@@ -89,7 +82,7 @@
         </div>
        
         <div class="col-sm-10">
-            <input class="btn btn-secondary"action="action" onclick="window.history.go(-1); return false;" type="submit" value="Cancel" />
+            <input class="btn btn-secondary"action="action" onclick="window.history.go(-1); return false;" type="submit" value="Cancelar" />
             <input class="btn btn-success" type="submit" name="submit" value="<?=$textButton?>" />
         </div>
     </div>

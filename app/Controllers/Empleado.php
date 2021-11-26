@@ -37,6 +37,7 @@ class Empleado extends BaseController {
             ->join('persona','persona.id = empleado.id_persona')
             ->join('almacen','almacen.id = empleado.id_almacen')
             ->whereNotIn('rol.nombre',['Administrador'])
+            ->orderBy('fullName','ASC')
             ->paginate(10,'empleado'),
             'pager' => $empleado->pager
         ];

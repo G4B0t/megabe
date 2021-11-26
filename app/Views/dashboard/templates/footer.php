@@ -71,8 +71,7 @@
 
   <!-- Template Main JS File -->
     <script src="<?= base_url()?>/js/main.js"></script>
-    <script src="<?= base_url()?>/js/jquery.min.js"></script>
-    <script src="<?= base_url()?>/js/select2.min.js"></script>
+    
     <script src="<?= base_url()?>/bootstrap/js/popper.min.js"></script>
 
     <script src="<?= base_url()?>/bootstrap/js/bootstrap.min.js"></script>

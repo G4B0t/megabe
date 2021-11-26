@@ -49,13 +49,90 @@ class Administracion_4 extends BaseController{
         $this->_loadDefaultView( 'Grafica de Torta', $data,'pie_chart');
     }
 
+    public function items_reorden(){
+        $item = new m_item();
+
+        $data = [
+            'item' => $item->asObject()->orderBy('nombre','ASC')->paginate(10,'item'),
+
+            'pagers' => $item->pager
+        ];
+
+        $this->_loadDefaultView( 'Listado de Items', $data,'cuadro_mando/punto_reorden');
+    }
+
+    public function filtrar_punto_reorden(){
+        $item = new m_item();
+        $filtro =  $this->request->getPost('filtro');
+        
+        $data = [
+            'item' =>$item->asObject()
+                            ->select('item.*')
+                            ->where(['item.estado_sql'=>1])
+                            ->like('item.codigo',$filtro)
+                            ->orLike('item.nombre',$filtro)
+                            ->paginate(10,'item'),
+            'pagers' => $item->pager
+        ];
+        $this->_loadDefaultView( 'Filtrado de Item', $data,'cuadro_mando/punto_reorden');
+    }
+
     public function modificar_generales(){
         $generales = new m_generales();
         $data =[
-            'generales' => $generales->asObject()->fi
+            'generales' => $generales->asObject()->first()
         ];
 
         $this->_loadDefaultView( 'Datos Generales', $data,'generales');
+    }
+
+    public function update_generales(){
+        $generales = new m_generales();
+        
+        $nit = $this->request->getPost('nit_empresa');
+        $name = $this->request->getPost('nombre_empresa');
+        $dir = $this->request->getPost('direccion');
+        $cont = $this->request->getPost('contacto');
+        $fechLimit = $this->request->getPost('fechaLimite');
+        $nro_aut = $this->request->getPost('nro_autorizacion');
+        $acti_pri = $this->request->getPost('actividad_principal');
+        $acti_sec = $this->request->getPost('actividad_secundaria');
+        $leye = $this->request->getPost('leyenda');
+        $foto = "";
+        $db = \Config\Database::connect();
+        if($imagefile = $this->request->getFile('foto')) {
+                
+         if ($imagefile->isValid() && ! $imagefile->hasMoved())
+            {
+                $foto = $imagefile->getRandomName();
+                $imagefile->move(WRITEPATH.'uploads/productos', $foto);
+                
+                if($db->query('UPDATE generales
+                                SET nit_empresa = "'.$nit.'", nombre_empresa = "'.$name.'"
+                                direccion = "'.$dir.'", fechaLimite = "'.$fechLimit.'"
+                                nro_autorizacion = "'.$nro_aut.'", actividad_principal = "'.$acti_pri.'"
+                                foto = "'.$foto.'", actividad_secundaria = "'.$acti_sec.'"
+                                WHERE nombre_empresa = "MEGABE"')){
+                    $db->close();
+                    return redirect()->to('/administracion')->with('message', 'Actualizacion exitosa de datos GENERALES!');
+                }else{
+                    return redirect()->to('/administracion/generales')->with('message', '#1 No se pudo Actualizar datos GENERALES!');
+                }
+            }
+            else{
+                if($db->query('UPDATE generales
+                                SET nit_empresa = "'.$nit.'", nombre_empresa = "'.$name.'",
+                                direccion = "'.$dir.'", fechaLimite = "'.$fechLimit.'",
+                                nro_autorizacion = "'.$nro_aut.'", actividad_principal = "'.$acti_pri.'",
+                                actividad_secundaria = "'.$acti_sec.'"
+                                WHERE nombre_empresa = "MEGABE"')){
+                    $db->close();
+                    return redirect()->to('/administracion')->with('message', 'Actualizacion exitosa de datos GENERALES!');
+                }else{
+                    return redirect()->to('/administracion/generales')->with('message', '#1 No se pudo Actualizar datos GENERALES!');
+                }
+            }
+        }
     }
 
     public function configuracion(){

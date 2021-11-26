@@ -6,7 +6,8 @@
           <h2><?= $title ?></h2>
           <h5><?= view("dashboard/partials/_session"); ?></h5>
           <ol>
-            <li><a class="btn btn-outline-dark" role="button" href="<?= route_to('contacto','Gabriel') ?>">Contacto</a></li>
+            <li><a class="btn btn-outline-dark" role="button" href="/item_almacen">Item Almacen</a></li>
+            <li><a class="btn btn-outline-dark" role="button" href="/administracion/ver_carrito/<?= $id_pedido?>">Ver Carrito</a></li>
             </ol>
         </div>
       </div>
@@ -55,6 +56,7 @@
         <?php endforeach?>
     </tbody>
 </table>
+<?= $pager->links('item','paginacion') ?>
 
 <div class="modal fade" id="detalle_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -99,4 +101,6 @@
     var item = document.getElementById('item_id')
     item.setAttribute("value",id_item)
     })
+
+    
 </script>

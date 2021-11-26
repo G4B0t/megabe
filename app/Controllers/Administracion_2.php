@@ -46,46 +46,50 @@ class Administracion_2 extends BaseController{
         $id_empleado = $session->empleado;
         $almacenero = $empleado->getAlmacenCental($id_empleado);
 
-        if($almacenero->caja=='Central'){
-            $compra = $pedido_compra->getById($id_pedido);
-            $detalles = $detalle_compra->getFullDetalle($compra->id);
-            $almacen_central = $almacen->getOne($almacenero->id_almacen);
+        helper("user");
+        $contrasena = $this->request->getPost('password');
+        if(verificarPassword($contrasena,$almacenero->contrasena)){
+                if($almacenero->caja=='Central'){
+                    $compra = $pedido_compra->getById($id_pedido);
+                    $detalles = $detalle_compra->getFullDetalle($compra->id);
+                    $almacen_central = $almacen->getOne($almacenero->id_almacen);
 
-            
-            $total = 0;
-            
-            foreach($detalles as $key => $m){
-                $its = $item->asObject()->where(['id'=>$m->id_item])->first();
-                $it_als = $item_almacen->asObject()->where(['id_item' => $m->id_item,'id_almacen'=>$almacenero->id_almacen])->first();
+                    $total = 0;
+                    
+                    foreach($detalles as $key => $m){
+                        $its = $item->asObject()->where(['id'=>$m->id_item])->first();
+                        $it_als = $item_almacen->asObject()->where(['id_item' => $m->id_item,'id_almacen'=>$almacenero->id_almacen])->first();
 
-                $cantidad = $m->cantidad;
-                $stock = $its->stock;
-                $stock_alma=$it_als->stock;
+                        $cantidad = $m->cantidad;
+                        $stock = $its->stock;
+                        $stock_alma=$it_als->stock;
 
-                $new_stock = $stock + $cantidad;
-                $new_stock_alma = $stock_alma + $cantidad;
+                        $new_stock = $stock + $cantidad;
+                        $new_stock_alma = $stock_alma + $cantidad;
 
-                $item->update($its->id,['stock'=>$new_stock]);
-                $item_almacen->update($it_als->id,['stock'=>$new_stock_alma]);
+                        $item->update($its->id,['stock'=>$new_stock]);
+                        $item_almacen->update($it_als->id,['stock'=>$new_stock_alma]);
 
-                $total += $m->total;
+                        $total += $m->total;
+                    }
+                    $body = ['estado'=>1,
+                            'total'=>$total];  
+                    
+                    if($pedido_compra->update($compra->id,$body)){
+                            return redirect()->to('/administracion')->with('message', 'Pedido Compra CONFIRMADO!');                   
+                        }
+                    else{
+                        return redirect()->to('/administracion')->with('message', 'No se pudo confirmar la Compra');
+                    }
+                    
             }
-            $body = ['estado'=>1,
-                    'total'=>$total];  
-            
-            if($pedido_compra->update($compra->id,$body)){
-                    return redirect()->to('/administracion')->with('message', 'Pedido Compra CONFIRMADO!');                   
-            }
-            else{
-                return redirect()->to('/administracion')->with('message', 'No se pudo confirmar la Compra');
-            }
-            
-       }
-        else{
-            return redirect()->to('/administracion')->with('message', 'No tiene el Rol de Almacen Central');
+                else{
+                    return redirect()->to('/administracion')->with('message', 'No tiene el Rol de Almacen Central');
+                }
+        
+        }else{
+            return redirect()->to('/administracion/ver_carrito/'.$id_pedido)->with('message', 'Contraseña Incorrecta');
         }
-        
-        
     }
 
     public function new_compra(){
@@ -132,6 +136,7 @@ class Administracion_2 extends BaseController{
 			->join('categoria','subcategoria.id_categoria = categoria.id')
 			->where($condiciones)
             ->paginate(10,'item'),
+            'pager'=>$item->pager,
 
             'id_pedido' =>$id_pedido
         ];

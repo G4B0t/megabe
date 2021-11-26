@@ -51,7 +51,7 @@ class Pedido_Venta extends BaseController {
             ->where($restricciones)
             ->paginate(10,'detalle_venta'),
 
-            'pager' => $detalle_venta->pager,
+            'pager' => $detalle_venta->pager
         ];
 
         $this->_loadDefaultView( 'Listado de Pedidos',$data,'index');
