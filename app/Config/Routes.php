@@ -84,6 +84,8 @@ $routes->post('/adminitracion/modificar_generales', 'Administracion_4::update_ge
 $routes->get('/administracion/items_reorden', 'Administracion_4::items_reorden');
 $routes->post('/administracion/filtrar_punto_reorden', 'Administracion_4::filtrar_punto_reorden');
 
+$routes->post('/administracion/modificar_cuentas', 'Administracion_2::update_cuentas');
+$routes->get('/administracion/cuentas_generales', 'Administracion_2::cuentas_generales');
 $routes->get('/administracion/nuevo_comprobante', 'Administracion_2::nuevo_comprobante');
 $routes->get('/administracion/ver_comprobante/(:any)', 'Administracion_2::ver_comprobante/$1');
 $routes->post('/administracion/save_comprobante/(:any)', 'Administracion_2::guardar_comprobante/$1');
@@ -108,6 +110,8 @@ $routes->post('/administracion/cierre_gestion', 'Administracion_4::cerrar_gestio
 $routes->get('/administracion/inicio_gestion', 'Administracion_4::iniciar_gestion');
 $routes->post('/administracion/cambiar_gestion', 'Administracion_4::nueva_gestion');
 $routes->get('/administracion/balance_general', 'Administracion_4::generar_balance_general');
+$routes->post('/administracion/filtrado_anulacion', 'Anulacion::filtrado_anulacion');
+$routes->post('/administracion/confirmar_anulacion', 'Anulacion::confirmar_password');
 
 $routes->get('/imagen/(:any)/(:any)', 'Home::imagen/$1/$2',['as' =>'get_image']);
 $routes->get('/contacto/(:any)', 'Home::contacto/$1',['as' => 'contacto']);
@@ -133,6 +137,7 @@ $routes->resource('plan_cuenta');
 $routes->resource('proveedor');
 $routes->resource('empleado_rol');
 $routes->resource('marca');
+$routes->resource('anulacion');
 
 $routes->get('/empleado/asignacion/(:any)', 'Empleado::asginar/$1');
 $routes->get('/cambiar_caja/(:any)', 'Empleado::modificar_caja/$1');

@@ -46,6 +46,9 @@ class Validation
 		'direccion' => 'min_length[6]|max_length[255]',
 		'telefono' => 'min_length[7]|max_length[18]'
 	];
+	public $anulaciones =[
+		'motivo' => 'required'
+	];
 	public $plan_cuentas =[
 		'nombre_cuenta' => 'min_length[1]|max_length[70]',
 		'codigo_cuenta' => 'min_length[1]|max_length[18]'

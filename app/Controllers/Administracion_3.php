@@ -267,11 +267,13 @@ class Administracion_3 extends BaseController{
         $detalle_transferencia = new m_detalle_transferencia();
         $empleado = new m_empleado();
         $empleado_rol = new m_empleado_rol();
+        $generales = new m_generales();
 
         $session = session();
 		$id_persona = $session->persona;
         $almacenero = $empleado->getAlmacen($id_persona);
         $admin = $empleado_rol->getAdmin($almacenero->id);
+        $gen = $generales->asObject()->first();
 
         $pedido_transferencia = $transferencia->getFirst($almacenero->id);
 
@@ -279,7 +281,7 @@ class Administracion_3 extends BaseController{
             return redirect()->to('/administracion')->with('message', 'NO hay transferencias de ENVIO');
         }
 
-        $condiciones = ['transferencia.estado_sql' => 1];
+        $condiciones = ['transferencia.estado_sql' => 1,'fecha_envio >=' =>$gen->gestion.'-01-01','fecha_envio <=' =>$gen->gestion.'-12-31'];
         $restricciones = ['detalle_transferencia.estado_sql'=> '1','id_transferencia' => $pedido_transferencia->id];
         $data = [
             'transferencia' => $transferencia->asObject()
@@ -310,14 +312,16 @@ class Administracion_3 extends BaseController{
         $transferencia = new m_transferencia();
         $detalle_transferencia = new m_detalle_transferencia();
         $empleado = new m_empleado();
+        $generales = new m_generales();
 
         $session = session();
 		$id_persona = $session->persona;
         $almacenero = $empleado->getAlmacen($id_persona);
+        $gen = $generales->asObject()->first();
 
         $pedido_transferencia = $transferencia->getById($id_trasnferencia);
 
-        $condiciones = ['transferencia.estado_sql' => 1];
+        $condiciones = ['transferencia.estado_sql' => 1,'fecha_envio >=' =>$gen->gestion.'-01-01','fecha_envio <=' =>$gen->gestion.'-12-31'];
         $restricciones = ['detalle_transferencia.estado_sql'=> '1','id_transferencia' => $pedido_transferencia->id];
         $data = [
             'transferencia' => $transferencia->asObject()
@@ -359,7 +363,7 @@ class Administracion_3 extends BaseController{
             return redirect()->to('/administracion')->with('message', 'No hay mas Transferencias Enviadas a este Almacen!');
         }
         
-        $condiciones = ['transferencia.id_almacen_destino' => $almacenero->id_almacen, 'transferencia.estado_sql' => 1];
+        $condiciones = ['transferencia.id_almacen_destino' => $almacenero->id_almacen, 'transferencia.estado_sql' => 1,'fecha_envio >=' =>$gen->gestion.'-01-01','fecha_envio <=' =>$gen->gestion.'-12-31'];
         $restricciones = ['detalle_transferencia.estado_sql'=> '1','detalle_transferencia.id_transferencia' => $pedido_transferencia->id];
         $data = [
             'transferencia' => $transferencia->asObject()
@@ -400,7 +404,7 @@ class Administracion_3 extends BaseController{
             return redirect()->to('/administracion')->with('message', 'No hay Transferencias Enviadas a este Almacen!');
         }
 
-        $condiciones = ['transferencia.id_almacen_destino' => $almacenero->id_almacen, 'transferencia.estado_sql' => 1];
+        $condiciones = ['transferencia.id_almacen_destino' => $almacenero->id_almacen, 'transferencia.estado_sql' => 1,'fecha_envio >=' =>$gen->gestion.'-01-01','fecha_envio <=' =>$gen->gestion.'-12-31'];
         $restricciones = ['detalle_transferencia.estado_sql'=> '1','detalle_transferencia.id_transferencia' => $pedido_transferencia->id];
         $data = [
             'transferencia' => $transferencia->asObject()

@@ -59,6 +59,14 @@ class m_plan_cuenta extends Model
             ->where($restricciones)
             ->first();
      }
+     public function getCuenta_Generales($codigo_cuenta){
+        $restricciones = ['grupo' => 'D','codigo_cuenta'=>$codigo_cuenta];
+        return $this->asObject()
+            ->select('plan_cuenta.*')
+            ->where($restricciones)
+            ->first();
+     }
+    
      public function getCajaGeneral(){
         $restricciones = ['grupo' => 'D','nombre_cuenta'=>'CAJA 1 CENTRAl'];
         return $this->asObject()
@@ -86,6 +94,17 @@ class m_plan_cuenta extends Model
      public function getAll(){
         return $this->asObject()
         ->findAll();
+     }
+
+     public function getCaja_Venta($id_factura){
+
+        return $this->asObject()
+                    ->select('plan_cuenta.*')
+                    ->join('detalle_comprobante','detalle_comprobante.id_cuenta = plan_cuenta.id')
+                    ->join('comprobante','comprobante.id = detalle_comprobante.id_comprobante')
+                    ->join('factura_venta','comprobante.id_factura = factura_venta.id')
+                    ->where(['factura_venta.id_pedido_venta'=>$id_factura,'factura_venta.estado_sql'=>1])
+                    ->first();
      }
 
 

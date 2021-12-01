@@ -13,6 +13,21 @@
       </div>
     </section><!-- End Breadcrumbs -->
 
+    <div class="container">
+    <div class="row">
+          <form action="/administracion/filtrado_anulacion" method="POST" role="form" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-3 form-group">
+                    <input type="text" name="filtro" class="form-control" id="filtro" placeholder="Producto" required>
+                </div>
+                <div class="col-md-3 form-group "> 
+                    <button class="btn btn-success" type="submit" name="submit">Filtrar</button>
+                    <a href="/anulacion" class="btn btn-info" type="submit" name="submit">Ver Todo</a>
+                </div>
+            </div>
+          </form>
+    </div>
+
 <table class="table table-hover" data-aos="fade-up">
     <thead>
         <tr>
@@ -49,3 +64,5 @@
 </table>
 
 <?= $pager->links('item','paginacion') ?>
+
+</div>

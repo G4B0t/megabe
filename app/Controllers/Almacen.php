@@ -9,10 +9,13 @@ class Almacen extends BaseController {
 
         $admin = new Administracion_1();
 		$sesion = $admin->sesiones();
-        if($sesion['rol'] != 'Administrador'){
-            return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        $admin = '';
+        foreach($sesion['rol'] as $key =>$m){
+            $admin = $m->nombre;
         }
-
+        if($admin != 'Administrador'){
+           return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
+        }
         $almacen = new m_almacen();
 
         $data = [
@@ -97,6 +100,19 @@ class Almacen extends BaseController {
                 {
                     $foto = $imagefile->getRandomName();
                     $imagefile->move(WRITEPATH.'uploads/almacenes', $foto);
+
+                    if($this->validate('almacenes')){
+                        $almacen->update($id, [
+                            'telefono' =>$this->request->getPost('telefono'),
+                            'direccion' =>$this->request->getPost('direccion'),
+                            'latitud' =>$this->request->getPost('latitud'),
+                            'longitud' =>$this->request->getPost('longitud'),
+                            'foto' => $foto,
+                            'estado_sql' =>'1'          
+                        ]);
+            
+                        return redirect()->to('/almacen')->with('message', 'Almacen editado con éxito.');            
+                    }
                 }
             
         }
@@ -107,7 +123,6 @@ class Almacen extends BaseController {
                 'direccion' =>$this->request->getPost('direccion'),
                 'latitud' =>$this->request->getPost('latitud'),
                 'longitud' =>$this->request->getPost('longitud'),
-                'foto' => $foto,
                 'estado_sql' =>'1'          
             ]);
 

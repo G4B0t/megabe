@@ -11,12 +11,13 @@ use App\Models\m_pedido_venta;
 use App\Models\m_detalle_venta;
 use App\Models\m_item;
 use App\Models\m_factura_venta;
+use App\Models\m_generales;
 
 use App\Models\m_plan_cuenta;
 use App\Models\m_comprobante;
 use App\Models\m_detalle_comprobante;
 use App\Models\m_item_almacen;
-use App\Models\m_generales;
+
 
 use App\Models\m_persona;
 use App\Models\m_rol;
@@ -351,7 +352,8 @@ class Administracion_1 extends BaseController{
                                 $qrCode->render($codigo_qr,$dirQR);
                                                                 
                                 if($factura_venta->update($id_factura,['id_comprobante'=>$id_comprobante]) && $comprobante->update($id_comprobante,['id_factura'=>$id_factura])){
-                                    $cuenta_haber = $plan_cuenta->getHaber();
+                                    $gen = $generales->asObject()->first();
+                                    $cuenta_haber = $plan_cuenta->getCuenta_Generales($gen->cuenta_ventas);
                                     $body_debe = ['id_comprobante'=>$id_comprobante,
                                                     'id_cuenta'=>$cuenta['id'],
                                                     'debe'=>$factura['total'],
@@ -359,7 +361,7 @@ class Administracion_1 extends BaseController{
                                                     'estado_sql'=> 1
                                                     ];
                                     $body_haber = ['id_comprobante'=>$id_comprobante,
-                                                    'id_cuenta'=>$cuenta_haber['id'],
+                                                    'id_cuenta'=>$cuenta_haber->id,
                                                     'debe'=>  '0',
                                                     'haber' =>$factura['total'],
                                                     'estado_sql'=> 1
@@ -428,14 +430,16 @@ class Administracion_1 extends BaseController{
         $detalle_venta = new m_detalle_venta();
         $empleado = new m_empleado();
         $plan_cuenta = new m_plan_cuenta();
+        $generales = new m_generales();
 
         $id_pedido = $pedido_venta->getPedidoConfir($id_pedido);
  
         $session = session();
         $id_empleado = $session->empleado;
         $emple = $empleado->getOne($id_empleado);
+        $gen = $generales->asObject()->first();
 
-        $condiciones = ['pedido_venta.estado' => '1', 'pedido_venta.estado_sql' => 1];
+        $condiciones = ['pedido_venta.estado' => '1', 'pedido_venta.estado_sql' => 1,'fecha >=' =>$gen->gestion.'-01-01','fecha <=' =>$gen->gestion.'-12-31'];
         $restricciones = ['detalle_venta.estado_sql'=> '1','id_pedido_venta' => $id_pedido['id'],'item_almacen.id_almacen'=>$emple['id_almacen']];
 
         $cajas = $plan_cuenta->getCaja($emple['caja']);
@@ -481,6 +485,7 @@ class Administracion_1 extends BaseController{
         $detalle_venta = new m_detalle_venta();
         $plan_cuenta = new m_plan_cuenta();
         $empleado = new m_empleado();
+        $generales = new m_generales();
 
         $id_primer_pedido = $pedido_venta->getFirst();
         
@@ -488,8 +493,9 @@ class Administracion_1 extends BaseController{
         $id_empleado = $session->empleado;
         $emple = $empleado->getOne($id_empleado);
         $empleado_caja = $emple['caja'];
+        $gen = $generales->asObject()->first();
 
-        $condiciones = ['pedido_venta.estado' => '1', 'pedido_venta.estado_sql' => 1];
+        $condiciones = ['pedido_venta.estado' => '1', 'pedido_venta.estado_sql' => 1,'fecha >=' =>$gen->gestion.'-01-01','fecha <=' =>$gen->gestion.'-12-31'];
         $restricciones = ['detalle_venta.estado_sql'=> '1','id_pedido_venta' => $id_primer_pedido['id'],'item_almacen.id_almacen'=>$emple['id_almacen']];
 
         $cajas = $plan_cuenta->getCaja($empleado_caja);
@@ -593,10 +599,12 @@ class Administracion_1 extends BaseController{
         $detalle_venta = new m_detalle_venta();
         $cliente = new m_cliente();
         $persona = new m_persona();
+        $generales = new m_generales();
+        $gen = $generales->asObject()->first();
 
         if($pedido = $pedido_venta->getById($id_pedido)){
 
-            $restricciones = ['detalle_venta.estado_sql'=> '1','id_pedido_venta' => $pedido->id];
+            $restricciones = ['detalle_venta.estado_sql'=> '1','id_pedido_venta' => $pedido->id,'fecha >=' =>$gen->gestion.'-01-01','fecha <=' =>$gen->gestion.'-12-31'];
 
             $detalles = $detalle_venta->getFullDetalle($pedido->id);
             $total = 0;
@@ -685,7 +693,7 @@ class Administracion_1 extends BaseController{
             if($detalle_venta->update($detalle['id'],$nuevo_detalle)){
                 $this->mostrar_carrito($pedido->id);
             }else{
-                echo "fail";
+                echo "No se pudo agregar al carrito";
             }
         }
 

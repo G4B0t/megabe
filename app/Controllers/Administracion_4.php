@@ -247,7 +247,7 @@ class Administracion_4 extends BaseController{
         $this->_loadDefaultView( 'Balance General', $data,'balance_general');
     }
     public function cuadro_mando_item($id){
-
+        $generales = new m_generales();
         $admin = new Administracion_1();
 		$sesion = $admin->sesiones();
         $admin = '';
@@ -269,7 +269,9 @@ class Administracion_4 extends BaseController{
                     ->where('marca.id',$id)
                     ->groupBy('item.nombre,item.id,item.venta_esperada')
                     ->paginate(10,'item'),
-                'pagers'=>$item->pager
+                'pagers'=>$item->pager,
+
+                'generales' => $generales->asObject()->first()
         ];
         $this->_loadDefaultView( 'Cuadro de MANDO: Item', $data,'cuadro_mando/items');
 
@@ -317,7 +319,7 @@ class Administracion_4 extends BaseController{
         $this->_loadDefaultView( 'Cuadro de MANDO: Marca', $data,'cuadro_mando/marcas');
     }
     public function cuadro_mando_marca($id){
-
+        $generales = new m_generales();
         $admin = new Administracion_1();
 		$sesion = $admin->sesiones();
         $admin = '';
@@ -338,7 +340,9 @@ class Administracion_4 extends BaseController{
                     ->where('subcategoria.id',$id)
                     ->groupBy('marca.nombre,marca.id,marca.venta_esperada')
                     ->paginate(10,'marca'),
-                'pagers'=>$marca->pager
+                'pagers'=>$marca->pager,
+
+                'generales' => $generales->asObject()->first()
         ];
         $this->_loadDefaultView( 'Cuadro de MANDO: Marca', $data,'cuadro_mando/marcas');
     }
@@ -385,7 +389,7 @@ class Administracion_4 extends BaseController{
         $this->_loadDefaultView( 'Cuadro de MANDO: Subcategoria', $data,'cuadro_mando/subcategorias');
     }
     public function cuadro_mando_subcategoria($id){
-
+        $generales = new m_generales();
         $admin = new Administracion_1();
 		$sesion = $admin->sesiones();
         $admin = '';
@@ -406,7 +410,9 @@ class Administracion_4 extends BaseController{
                     ->where('categoria.id',$id)
                     ->groupBy('subcategoria.nombre,subcategoria.id,subcategoria.venta_esperada')
                     ->paginate(10,'subcategoria'),
-                'pagers'=>$subcategoria->pager
+                'pagers'=>$subcategoria->pager,
+
+                'generales' => $generales->asObject()->first()
         ];
         $this->_loadDefaultView( 'Cuadro de MANDO: Subcategoria', $data,'cuadro_mando/subcategorias');
     }
@@ -483,7 +489,7 @@ class Administracion_4 extends BaseController{
     }
     
     public function nueva_gestion(){
-
+        helper("user");
         $admin = new Administracion_1();
 		$sesion = $admin->sesiones();
         $admin = '';
@@ -493,6 +499,8 @@ class Administracion_4 extends BaseController{
         if($admin != 'Contador'){
            return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
         }
+
+        $contrasena = $this->request->getPost('password');
 
         $generales = new m_generales();
         $comprobante = new m_comprobante();
@@ -514,29 +522,39 @@ class Administracion_4 extends BaseController{
         if($db->query('UPDATE generales
             SET balAper = 1, gestion = "'.$gestion.'"
             WHERE nombre_empresa = "MEGABE"')){
-                var_dump($contador);
-            if($detalle_comprobante->truncate() && $comprobante->truncate()){
-                $body_comprobante = [
-                    'tipo_respaldo'=>'Comprobante',
-                    'fecha'=>$cDate,
-                    'beneficiario'=>$contador->fullname,
-                    'glosa'=>'Inicio de Gestion',
-                    'id_empleado' => $contador->id
-                ];
-                
-                    if($comprobante->insert($body_comprobante)){
-                        $id_comprobante = $comprobante->getInsertID();
-                        foreach($cuentas as $key => $m){
-                            $body_detalle = [
-                                'id_comprobante'=>$id_comprobante,
-                                'id_cuenta' => $m->id,
-                                'debe' => $m->debe,
-                                'haber'=>$m->haber
-                            ];
-                            $detalle_comprobante->insert($body_detalle);
+            $db->close();
+            if($detalle_comprobante->truncate()){
+                $pru = $detalle_comprobante->asObject()->findAll();
+                if($pru == null){
+                    if($comprobante->truncate()){
+                        $body_comprobante = [
+                            'tipo_respaldo'=>'Comprobante',
+                            'fecha'=>$cDate,
+                            'beneficiario'=>$contador->fullname,
+                            'glosa'=>'Inicio de Gestion',
+                            'id_empleado' => $contador->id
+                        ];
+                    
+                        if($comprobante->insert($body_comprobante)){
+                            $id_comprobante = $comprobante->getInsertID();
+                            foreach($cuentas as $key => $m){
+                                $body_detalle = [
+                                    'id_comprobante'=>$id_comprobante,
+                                    'id_cuenta' => $m->id,
+                                    'debe' => $m->debe,
+                                    'haber'=>$m->haber
+                                ];
+                                $detalle_comprobante->insert($body_detalle);
+                            }
+                        
+                            return redirect()->to('/administracion')->with('message', 'Inicio de Gestion Completado');
                         }
-                        return redirect()->to('/administracion')->with('message', 'Inicio de Gestion Completado');
+                    }else{
+                        return redirect()->to('/administracion')->with('message', '#1 Falla Comprobante');
                     }
+                }else{
+                    return redirect()->to('/administracion')->with('message', '#2 Falla Detalle Comprobante');
+                }
             }
         }
         return redirect()->to('/administracion')->with('message', 'No se pudo realizar el Inicio de Gestion');
@@ -640,10 +658,7 @@ class Administracion_4 extends BaseController{
            
         }else{
             return redirect()->to('/administracion')->with('message', 'Esta funcion No cumple con su ROL.');
-        }
-        
-       
-        
+        }    
         
     }
     public function sumar_recursivo($id_cuenta, $debe, $haber,$d,$h){
@@ -687,7 +702,7 @@ class Administracion_4 extends BaseController{
             'plan_cuenta' => $plan_cuenta->asObject()
                             ->select('plan_cuenta.*')
                             ->paginate(10,'plan_cuenta'),
-            'pagers' => $plan_cuenta->pager,
+            'pagers' => $plan_cuenta->pager
             
         ];
 

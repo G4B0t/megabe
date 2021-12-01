@@ -41,10 +41,15 @@ class Administracion_2 extends BaseController{
         $item_almacen = new m_item_almacen();
         $almacen = new m_almacen();
         $empleado = new m_empleado();
+        $plan_cuenta = new m_plan_cuenta();
+        $generales = new m_generales();
+        $comprobante = new m_comprobante();
+        $detalle_comprobante = new m_detalle_comprobante();
 
         $session = session();
         $id_empleado = $session->empleado;
         $almacenero = $empleado->getAlmacenCental($id_empleado);
+        $cDate = date('Y-m-d H:i:s');
 
         helper("user");
         $contrasena = $this->request->getPost('password');
@@ -76,7 +81,36 @@ class Administracion_2 extends BaseController{
                             'total'=>$total];  
                     
                     if($pedido_compra->update($compra->id,$body)){
-                            return redirect()->to('/administracion')->with('message', 'Pedido Compra CONFIRMADO!');                   
+                            $body_comprobante = [ 'id_empleado' =>$almacenero->id ,
+                                                'tipo_respaldo' => 'Comprobante Compra',
+                                                'fecha' => $cDate,
+                                                'beneficiario' => $almacenero->fullname ,
+                                                'glosa' => 'Compra de Productos',
+                                                'estado_sql'=> 1
+                            ];
+                            if($comprobante->insert($body_comprobante)){
+                                $gen = $generales->asObject()->first();
+                                $cuenta_haber = $plan_cuenta->getCuenta_Generales($gen->cuenta_compras);
+                                $cuenta_debe = $plan_cuenta->getCuenta_Generales($gen->cuenta_bancos);
+                                $id_comp = $comprobante->getInsertID();
+                                $body_debe =[ 'id_comprobante' => $id_comp,
+                                            'id_cuenta' => $cuenta_debe->id,
+                                            'debe' => $total,
+                                            'haber'=>'0',
+                                            'estado_sql'=>1
+                                ];
+                                $body_haber=['id_comprobante' => $id_comp,
+                                            'id_cuenta' => $cuenta_haber->id,
+                                            'debe' => '0',
+                                            'haber'=>$total,
+                                            'estado_sql'=>1
+                                ];
+                                if($detalle_comprobante->insert($body_debe) && $detalle_comprobante->insert($body_haber)){
+                                    return redirect()->to('/administracion')->with('message', 'Compra CONFIRMADO!');
+                                }
+                            }else{
+                                return redirect()->to('/administracion')->with('message', 'Error Comprobante de Compra!');
+                            }                                        
                         }
                     else{
                         return redirect()->to('/administracion')->with('message', 'No se pudo confirmar la Compra');
@@ -235,10 +269,12 @@ class Administracion_2 extends BaseController{
     public function mostrar_linea($id_pedido){
         $pedido_compra = new m_pedido_compra();
         $detalle_compra = new m_detalle_compra();
+        $generales = new m_generales();
+        $gen = $generales->asObject()->first();
 
         if($pedido = $pedido_compra->getById($id_pedido)){
 
-            $restricciones = ['detalle_compra.estado_sql'=> '1','id_pedido_compra' => $pedido->id];
+            $restricciones = ['detalle_compra.estado_sql'=> '1','id_pedido_compra' => $pedido->id,'fecha >=' =>$gen->gestion.'-01-01','fecha <=' =>$gen->gestion.'-12-31'];
 
             $detalles = $detalle_compra->getFullDetalle($pedido->id);
             $total = 0;
@@ -302,10 +338,12 @@ class Administracion_2 extends BaseController{
         $detalle_venta = new m_detalle_venta();
         $empleado = new m_empleado();
         $plan_cuenta = new m_plan_cuenta();
+        $generales = new m_generales();
+        $gen = $generales->asObject()->first();
 
         $id_pedido = $pedido_venta->getPedidoPagado($id_pedido);
 
-        $condiciones = ['pedido_venta.estado' => '2', 'pedido_venta.estado_sql' => 1];
+        $condiciones = ['pedido_venta.estado' => '2', 'pedido_venta.estado_sql' => 1,'fecha >=' =>$gen->gestion.'-01-01','fecha <=' =>$gen->gestion.'-12-31'];
         $restricciones = ['detalle_venta.estado_sql'=> '1','id_pedido_venta' => $id_pedido['id']];
 
        
@@ -335,9 +373,11 @@ class Administracion_2 extends BaseController{
         $detalle_venta = new m_detalle_venta();
         $plan_cuenta = new m_plan_cuenta();
         $empleado = new m_empleado();
+        $generales = new m_generales();
+        $gen = $generales->asObject()->first();
 
         $id_primer_pedido = $pedido_venta->getPrimer();
-        $condiciones = ['pedido_venta.estado' => '2', 'pedido_venta.estado_sql' => 1];
+        $condiciones = ['pedido_venta.estado' => '2', 'pedido_venta.estado_sql' => 1,'fecha >=' =>$gen->gestion.'-01-01','fecha <=' =>$gen->gestion.'-12-31'];
         $restricciones = ['detalle_venta.estado_sql'=> '1','id_pedido_venta' => $id_primer_pedido['id']];
 
     
@@ -530,8 +570,35 @@ class Administracion_2 extends BaseController{
             return redirect()->to('/administracion/ver_comprobante/'.$id)->with('message', 'Generando Nuevo Comprobante');
         }
     }
-    public function reportes(){
+    public function cuentas_generales(){
+        $generales = new m_generales();
+        $plan_cuenta = new m_plan_cuenta();
 
+        $data = ['generales' => $generales->asObject()->first(),
+                'plan_cuenta'=> $plan_cuenta->getCuentas()
+                ];
+
+        $this->_loadDefaultView( 'Modificar Cuentas Generales',$data,'plan_cuentas');
+
+    }
+    public function update_cuentas(){
+        $generales = new m_generales();
+
+        $cuenta_bancos = $this->request->getPost('cuenta_bancos');
+        $cuenta_compras = $this->request->getPost('cuenta_compras');
+        $cuenta_ventas = $this->request->getPost('cuenta_ventas');
+        $db = \Config\Database::connect();
+      
+        if($db->query('UPDATE generales
+                SET cuenta_bancos = "'.$cuenta_bancos.'", cuenta_ventas = "'.$cuenta_ventas.'"
+                cuenta_compras = "'.$cuenta_compras.'"
+                WHERE nombre_empresa = "MEGABE"')){
+            $db->close();
+            return redirect()->to('/administracion')->with('message', 'Actualizacion exitosa de CUENTAS GENERALES!');
+        }else{
+            $db->close();
+            return redirect()->to('/administracion/cuentas_generales')->with('message', '#1 No se pudo Actualizar las CUENTAS GENERALES!');
+        }
     }
     private function _loadDefaultView($title,$data,$view){
 

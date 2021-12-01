@@ -57,6 +57,7 @@
                    <?php if($m->nombre == 'Administrador') { ?>
                       <li><a class="nav-link scrollto" href="/administracion/cuadro_categoria">CUADROS DE MANDO</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/generales">GENERALES</a></li>
+                      <li><a class="nav-link scrollto" href="/anulacion">Anulacion de Facturas</a></li>
                       <li class="dropdown"><a href="#"><span>Menu</span> <i class="bi bi-chevron-down"></i></a>
                         <ul>
                         <li class="dropdown"><a href="/item"><span>Items</span> <i class="bi bi-chevron-down"></i></a>
@@ -168,6 +169,7 @@
                       <!-- MENU CONTADOR -->
                       <li><a class="nav-link scrollto" href="/administracion/nuevo_comprobante">Comprobante</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/mayorizar">Mayorizacion</a></li>
+                      <li><a class="nav-link scrollto" href="/administracion/cuentas_generales">Cuentas Generales</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/balance_general">Balance General</a></li>
                       <li><a type="button" class="nav-link scrollto" data-bs-toggle="modal" data-bs-target="#cierre" data-bs-id="contraseña">Cierre de Gestion</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/inicio_gestion">Inicio de Gestion</a></li>

@@ -101,8 +101,4 @@
     item.setAttribute("value",id_item)
     })
 
-    if(document.getElementById("cantidad"). value. length == 0)
-    {
-      alert("empty")
-    }
 </script>
