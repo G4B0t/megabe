@@ -132,6 +132,9 @@ class Administracion_1 extends BaseController{
                 $file = str_ireplace('[GLOSA]',$glosa, $file);
                 $file = str_ireplace('[TOTAL]',$this->request->getPost('monto'), $file);
                 $file = str_ireplace('[LITERAL]',$literal, $file);
+                $file = str_ireplace('[ACTIVIDAD_PRINCIPAL]',$empresa['actividad_principal'], $file);
+                $file = str_ireplace('[ACTIVIDAD_SECUNDARIA]',$empresa['actividad_secundaria'], $file);
+                $file = str_ireplace('[LEYENDA]',$empresa['leyenda'], $file);
                 //$file = str_ireplace('[QR]',$dirQR, $file);
                 $sefini="";
                 $debe_comprobante='<tr><td>'.$caja_general->codigo_cuenta.'</td><td>'.$caja_general->nombre_cuenta.'</td><td>'.$this->request->getPost('monto').'</td><td> </td></tr>';      
@@ -207,6 +210,9 @@ class Administracion_1 extends BaseController{
                 $file = str_ireplace('[GLOSA]',$glosa, $file);
                 $file = str_ireplace('[TOTAL]',$this->request->getPost('monto'), $file);
                 $file = str_ireplace('[LITERAL]',$literal, $file);
+                $file = str_ireplace('[ACTIVIDAD_PRINCIPAL]',$empresa['actividad_principal'], $file);
+                $file = str_ireplace('[ACTIVIDAD_SECUNDARIA]',$empresa['actividad_secundaria'], $file);
+                $file = str_ireplace('[LEYENDA]',$empresa['leyenda'], $file);
                 //$file = str_ireplace('[QR]',$dirQR, $file);
                 $sefini="";
                 $debe_comprobante='<tr><td>'.$caja->codigo_cuenta.'</td><td>'.$caja->nombre_cuenta.'</td><td>'.$this->request->getPost('monto').'</td><td> </td></tr>';      
@@ -389,6 +395,9 @@ class Administracion_1 extends BaseController{
                                         $file = str_ireplace('[LITERAL]',$literal, $file);
                                         $file = str_ireplace('[CODIGO_CONTROL]',$codControl, $file);                                        
                                         $file = str_ireplace('[AUTORIZACION]',$empresa['nro_autorizacion'], $file);
+                                        $file = str_ireplace('[ACTIVIDAD_PRINCIPAL]',$empresa['actividad_principal'], $file);
+                                        $file = str_ireplace('[ACTIVIDAD_SECUNDARIA]',$empresa['actividad_secundaria'], $file);
+                                        $file = str_ireplace('[LEYENDA]',$empresa['leyenda'], $file);
                                         $file = str_ireplace('[QR]',base_url().'/'.$dirQR, $file);
                                         $sefini="";
                                         foreach($productos as $key => $m){
@@ -404,10 +413,139 @@ class Administracion_1 extends BaseController{
                             }
                             
                 }else{
-                    return redirect()->to('/administracion/ver_pedidos')->with('message', 'Formato de Archivo incorrecto');
+                    $empresa = $generales->getEmpresa();
+                    $cDate = date('Y-m-d H:i:s');
+                    $fecha_hora =date('Y-m-d_H-i-s');
+                    $fecha_cod = date('Ymd');
+                    $codControl = $CodigoControlV7->generar($empresa['nro_autorizacion'],
+                                                                    $id_pedido,
+                                                                    $empresa['nit_empresa'],
+                                                                    $fecha_cod,
+                                                                    $pedido['total'],
+                                                                    $empresa['llave']);
+                                                                    
+                    $literal = $numerosEnLetras->Convertir($pedido['total'],'Bolivianos',true);
+    
+                    $dirQR = 'dashboard/assets/qr_ventas/'.$fecha_hora.'_'.$beneficiario['nit'].'.png';                                       
+                    $body_factura = ['id_pedido_venta'=>$id_pedido,
+                                    'nit_empresa'=> $empresa['nit_empresa'],
+                                    'nro_factura'=> $id_pedido,
+                                    'autorizacion'=>$empresa['nro_autorizacion'],
+                                    'fecha_emision'=> $cDate,
+                                    'nit_cliente'=> $beneficiario['nit'],
+                                    'beneficiario'=> $beneficiario['razon_social'],
+                                    'total'=> $pedido['total'],
+                                    'codigo_control'=> $codControl,
+                                    'fecha_limite'=> $empresa['fechaLimite'],
+                                    'codigo_qr'=> $dirQR,
+                                    'observaciones'=> 'Pago en Efectivo'
+                                    ];
+    
+                    $body_comprobante = [
+                                        'id_empleado' => $trabajador['id'],
+                                        'tipo_respaldo'=>$tipo_respaldo,
+                                        'fecha'=> $cDate,
+                                        'beneficiario'=>$beneficiario['fullName'],
+                                        'glosa'=>$glosa,
+                                        'estado_sql' => 1
+                                        ];
+    
+                    if($pedido_venta->update($id_pedido, [
+                        'estado' =>'2'              
+                    ]) ){
+                        if($factura_venta->insert($body_factura) && $comprobante->insert($body_comprobante)){
+                            $nuevo_stock = 0;
+                                foreach($productos as $key => $m){   
+                                    $items = $item_almacen->getOne($m->id_item,$trabajador['id_almacen']);
+                                    $product = $item->getOne($m->id_item);
+                                    $stock_almacen = $items['stock'];
+                                    $stock_items =  $product->stock;
+                                    $cantidad = $m->cantidad;
+                                    $nuevo_stock = $stock_almacen - $cantidad; 
+                                    $nuevo_item_stock = $stock_items - $cantidad;
+                                    $item_almacen->update($items['id'],['stock'=> $nuevo_stock]);
+                                    $item->update($product->id,['stock'=> $nuevo_item_stock]);
+                               }
+    
+                            $id_factura = $factura_venta->getInsertID();
+                            $factura = $factura_venta->getFactura($id_factura);
+                            $id_comprobante = $comprobante->getInsertID();
+    
+                                                                      
+                            $QR[0]=$beneficiario['nit'];
+                            $QR[1]=$id_factura;
+                            $QR[2]=$empresa['nro_autorizacion'];
+                            $QR[3]=$fecha_hora;
+                            $QR[4]=$factura['total'];
+                            $QR[5]=$codControl;
+                                            
+                            $codigo_qr = implode('|', $QR);
+                            
+                            $options = new QROptions([
+                                'outputType' => QRCode::OUTPUT_IMAGE_PNG,
+                                'eccLevel' => QRCode::ECC_M
+                            ]);
+                            $qrCode = new QRCode($options);
+                            $qrCode->render($codigo_qr,$dirQR);
+                                                            
+                            if($factura_venta->update($id_factura,['id_comprobante'=>$id_comprobante]) && $comprobante->update($id_comprobante,['id_factura'=>$id_factura])){
+                                $gen = $generales->asObject()->first();
+                                $cuenta_haber = $plan_cuenta->getCuenta_Generales($gen->cuenta_ventas);
+                                $body_debe = ['id_comprobante'=>$id_comprobante,
+                                                'id_cuenta'=>$cuenta['id'],
+                                                'debe'=>$factura['total'],
+                                                'haber' => '0',
+                                                'estado_sql'=> 1
+                                                ];
+                                $body_haber = ['id_comprobante'=>$id_comprobante,
+                                                'id_cuenta'=>$cuenta_haber->id,
+                                                'debe'=>  '0',
+                                                'haber' =>$factura['total'],
+                                                'estado_sql'=> 1
+                                                ];
+                                if($detalle_comprobante->insert($body_debe) && $detalle_comprobante->insert($body_haber)){
+                                     
+                                $dirLogo = base_url().'/imagen/empresa/'.$empresa['foto'];
+                                
+                                    $dirComp= base_url()."/dashboard/assets/factura.html";
+                                    $file = file_get_contents($dirComp,0);
+                                    $file = str_ireplace('[LOGO]',$dirLogo, $file);
+                                    $file = str_ireplace('[TIPO]',$tipo_respaldo, $file);
+                                    $file = str_ireplace('[NIT_CLIENTE]',$beneficiario['nit'], $file);
+                                    $file = str_ireplace('[CLIENTE]',$beneficiario['razon_social'], $file);
+                                    $file = str_ireplace('[NIT]',$empresa['nit_empresa'], $file);
+                                    $file = str_ireplace('[NRO]',$id_factura, $file);
+                                    $file = str_ireplace('[RAZON_SOCIAL]',$empresa['nombre_empresa'], $file);
+                                    $file = str_ireplace('[DIRECCION]',$empresa['direccion'], $file);  
+                                    $file = str_ireplace('[CONTACTO]',$empresa['contacto'], $file); 
+                                    $file = str_ireplace('[BENEFICIARIO]',$beneficiario['fullName'], $file);
+                                    $file = str_ireplace('[FECHA_LIMITE_EMISION]',$empresa['fechaLimite'], $file);
+                                    $file = str_ireplace('[FECHA]',$cDate, $file);  
+                                    $file = str_ireplace('[GLOSA]',$glosa, $file);
+                                    $file = str_ireplace('[TOTAL]',$factura['total'], $file);
+                                    $file = str_ireplace('[LITERAL]',$literal, $file);
+                                    $file = str_ireplace('[CODIGO_CONTROL]',$codControl, $file);                                        
+                                    $file = str_ireplace('[AUTORIZACION]',$empresa['nro_autorizacion'], $file);
+                                    $file = str_ireplace('[ACTIVIDAD_PRINCIPAL]',$empresa['actividad_principal'], $file);
+                                    $file = str_ireplace('[ACTIVIDAD_SECUNDARIA]',$empresa['actividad_secundaria'], $file);
+                                    $file = str_ireplace('[LEYENDA]',$empresa['leyenda'], $file);
+                                    $file = str_ireplace('[QR]',base_url().'/'.$dirQR, $file);
+                                    $sefini="";
+                                    foreach($productos as $key => $m){
+                                        $sefini .= '<tr><td>'.$m->nombre.'</td><td>'.$m->cantidad.'</td><td>'.$m->precio_unitario.'</td><td>'.$m->total.'</td><td> </td></tr>';
+                                    } 
+                                    $file = str_ireplace('[DETALLE]', $sefini, $file);
+                                  
+                                    //$this->generatePDF($file);
+                                    echo $file;
+                                    }          
+                                }
+                            }   
+                        }
+                    
                 }         
             }else{
-                return redirect()->to('/administracion/ver_pedidos')->with('message', 'DEBE ESCOGER EL PDF DE RESPALDO DE LA FACTURA');
+                return redirect()->to('/administracion/ver_pedidos')->with('message', '#1 Error respaldo');
             }
         }
         else{
@@ -755,6 +893,7 @@ class Administracion_1 extends BaseController{
             ->like('item.nombre', $filtro)
 			->orlike($array)
             ->paginate(10,'item'),
+            'pager' => $item->pager,
 
             'id_pedido' =>$id_pedido
         ];
@@ -782,6 +921,8 @@ class Administracion_1 extends BaseController{
 			->join('categoria','subcategoria.id_categoria = categoria.id')
 			->where($condiciones)
             ->paginate(10,'item'),
+
+            'pager' => $item->pager,
 
             'id_pedido' =>$id_pedido
         ];

@@ -39,7 +39,7 @@ class m_transferencia extends Model
     }
    
     public function getByEmpleado($id_almacen_destino){
-        $restriccion = ['transferencia.id_almacen_destino'=>$id_almacen_destino, 'transferencia.estado_sql'=>1];
+        $restriccion = ['transferencia.id_almacen_destino'=>$id_almacen_destino, 'transferencia.estado_sql'=>1, 'transferencia.id_empleado2'=>null];
         return $this->asObject()
         ->select('transferencia.*')
         ->where($restriccion)

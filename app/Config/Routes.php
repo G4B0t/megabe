@@ -138,6 +138,7 @@ $routes->resource('proveedor');
 $routes->resource('empleado_rol');
 $routes->resource('marca');
 $routes->resource('anulacion');
+$routes->resource('comprobante');
 
 $routes->get('/empleado/asignacion/(:any)', 'Empleado::asginar/$1');
 $routes->get('/cambiar_caja/(:any)', 'Empleado::modificar_caja/$1');
@@ -148,6 +149,11 @@ $routes->post('/detalle_venta/confirmar_pedido_cliente/(:any)', 'Detalle_Venta::
 $routes->post('/detalle_venta/delete/(:any)', 'Detalle_Venta::delete/$1');
 $routes->post('/detalle_venta/carrito/(:any)', 'Detalle_Venta::carrito/$1');
 $routes->get('/detalle_venta', 'Detalle_Venta::index');
+$routes->get('/ventas', 'Administracion_4::ver_ventas');
+$routes->post('/ventas/filtrado', 'Administracion_4::filtrar_ventas');
+$routes->post('/administracion/filtrar_item', 'Item::filtrar_item');
+$routes->post('/administracion/filtrar_kardex/(:any)', 'Item::filtrar_kardex/$1');
+
 
 $routes->post('/user/crear', 'User::crear');
 $routes->post('/user/actualizar', 'User::actualizar');

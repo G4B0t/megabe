@@ -1,5 +1,6 @@
 <?php namespace App\Controllers;
 use App\Models\m_comprobante;
+use App\Models\m_detalle_comprobante;
 use App\Controllers\BaseController;
 use App\Controllers\Administracion_1;
 use \CodeIgniter\Exceptions\PageNotFoundException;
@@ -14,7 +15,7 @@ class Comprobante extends BaseController {
         foreach($sesion['rol'] as $key =>$m){
             $admin = $m->nombre;
         }
-        if($admin != 'Administrador'){
+        if($admin != 'Contador'){
            return redirect()->to('/administracion')->with('message', 'No cumple con su funcion.');
         }
 
@@ -39,136 +40,46 @@ class Comprobante extends BaseController {
 
     }
 
-    public function create(){
-
-        $categoria = new m_categoria();
-        
-        $foto = "";
-        if($imagefile = $this->request->getFile('foto')) {
-            
-            if ($imagefile->isValid() && ! $imagefile->hasMoved())
-                {
-                    $foto = $imagefile->getRandomName();
-                    $imagefile->move(WRITEPATH.'uploads/categorias', $foto);
-                }
-            
-        }
-
-        if($this->validate('categorias')){
-            $id = $categoria->insert([
-                'nombre' =>$this->request->getPost('nombre'),
-                'descripcion' =>$this->request->getPost('descripcion'),
-                'foto' => $foto,
-                'estado_sql' =>'1'
-            ]);
-
-            return redirect()->to("/categoria")->with('message', 'Categoria creado con éxito.');
-
-        }
-        
-        return redirect()->back()->withInput();
-    }
-
+    
     public function edit($id = null){
 
-        $categoria = new m_categoria();
+        $comprobante = new m_comprobante();
+        $detalle_comprobante = new m_detalle_comprobante();
 
-        if ($categoria->find($id) == null)
+        if ($comprobante->find($id) == null)
         {
             throw PageNotFoundException::forPageNotFound();
-        }  
+        } 
+        $restriccion = ['detalle_comprobante.id_comprobante' => $id,'detalle_comprobante.estado_sql' => 1];
+        $condicion = ['id' => $id, 'estado_sql' =>1];
 
-        echo "Sesión: ".session('message');
+        $detalles = $detalle_comprobante->asObject()->getDetalles($id);
+        $debe = 0;$haber = 0; 
+        foreach($detalles as $key => $m){
+            $debe += $m->debe;
+            $haber += $m->haber;
+        }
+
+        $total = (object)['debe'=>$debe,'haber'=>$haber];
+
+        $data = [
+            'detalle_comprobante' => $detalle_comprobante->asObject()
+            ->select('detalle_comprobante.*,plan_cuenta.nombre_cuenta, plan_cuenta.codigo_cuenta')
+            ->join('plan_cuenta','detalle_comprobante.id_cuenta = plan_cuenta.id')
+            ->where($restriccion)
+            ->paginate(10,'detalle_comprobante'),
+
+            'pager' => $detalle_comprobante->pager,
+
+            'comprobante' =>$comprobante->asObject()->where($condicion)->first(),
+
+            'total' => $total 
+        ];
 
         $validation =  \Config\Services::validation();
-        $this->_loadDefaultView('Modificar Categoria',['validation'=>$validation,
-                                'categoria'=> $categoria->asObject()->find($id),],'edit','');
+        $this->_loadDefaultView('Visualizar Comprobante #'.$id,$data,'edit');
     }
 
-    public function update($id = null){
-
-        $categoria = new m_categoria();
-
-        if ($categoria->find($id) == null)
-        {
-            throw PageNotFoundException::forPageNotFound();
-        }  
-
-        $foto = $categoria->getByID($id);
-        
-        if($imagefile = $this->request->getFile('foto')) {
-
-            if($foto == $imagefile->getName()){
-
-                if($this->validate('categorias')){
-                    $categoria->update($id, [
-                        'nombre' =>$this->request->getPost('nombre'),
-                        'descripcion' =>$this->request->getPost('descripcion'),
-                        'estado_sql' =>'1'              
-                    ]);
-    
-                return redirect()->to('/categoria')->with('message', 'Categoria editada con éxito.');
-                }
-                return redirect()->back()->withInput();
-
-     
-           }else{
-                   
-                if ($imagefile->isValid() && ! $imagefile->hasMoved())
-                {
-                    $foto = $imagefile->getRandomName();
-                    $imagefile->move(WRITEPATH.'uploads/categorias', $foto);
-                }
-                
-                if($this->validate('categorias')){
-                    $categoria->update($id, [
-                        'nombre' =>$this->request->getPost('nombre'),
-                        'descripcion' =>$this->request->getPost('descripcion'),
-                        'foto'=>$foto,
-                        'estado_sql' =>'1'              
-                    ]);
-    
-                return redirect()->to('/categoria')->with('message', 'Categoria editada con éxito.');
-                }    
-                return redirect()->back()->withInput();  
-               
-            }
-        }
-    }
-
-    public function delete($id = null){
-
-        $categoria = new m_categoria();
-
-        if ($categoria->find($id) == null)
-        {
-            throw PageNotFoundException::forPageNotFound();
-        }  
-       
-        try
-        {
-            $categoria->delete($id);
-            return redirect()->to('/categoria')->with('message', 'Categoria eliminada con éxito.');
-        }
-        catch (\Exception $e)
-        {
-            return redirect()->to('/categoria')->with('message', 'No se puede eliminar el registro.');
-        }
-       
-    }
-
-    public function show($id = null){
-        
-        $categoria = new m_categoria();
-
-        if ($categoria->find($id) == null)
-        {
-            throw PageNotFoundException::forPageNotFound();
-        }   
-
-        var_dump($categoria->asObject()->find($id)->id);
-
-    }
 
     private function _loadDefaultView($title,$data,$view){
 
@@ -177,6 +88,7 @@ class Comprobante extends BaseController {
 
         $dataHeader =[
             'title' => $title,
+
             'tipo'=> 'header-inner-pages',
 
             'rol' => $sesion['rol'],
@@ -186,12 +98,12 @@ class Comprobante extends BaseController {
             'central'=>$sesion['almacen'],
             
             'vista' => 'administracion'
-
         ];
 
         echo view("dashboard/templates/header",$dataHeader);
         echo view("dashboard/comprobante/$view",$data);
         echo view("dashboard/templates/footer");
     }
+        
 
 }

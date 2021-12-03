@@ -27,8 +27,8 @@
                     <tr>
                         <td><?= $m->codigo_cuenta ?></td>
                         <td><?= $m->nombre_cuenta ?></td>
-                        <td><?= $m->debe ?></td>
-                        <td><?= $m->haber ?></td>
+                        <td><?php echo number_format($m->debe) ?></td>
+                        <td><?php echo number_format($m->haber) ?></td>
                     </tr>
                 <?php endforeach?>
             </tbody>

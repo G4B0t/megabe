@@ -60,6 +60,7 @@
                       <li><a class="nav-link scrollto" href="/anulacion">Anulacion de Facturas</a></li>
                       <li class="dropdown"><a href="#"><span>Menu</span> <i class="bi bi-chevron-down"></i></a>
                         <ul>
+                        <li><a class="nav-link scrollto" href="/ventas">Ventas</a></li>
                         <li class="dropdown"><a href="/item"><span>Items</span> <i class="bi bi-chevron-down"></i></a>
                           <ul>  
                             <li><a class="nav-link scrollto" href="/administracion/items_reorden">Puntos Reorden</a></li>
@@ -156,9 +157,9 @@
                     <!-- MENU ALMACENERO --> 
                     <li><a class="nav-link scrollto" href="/administracion/ver_pagados">Entregas</a></li>
                     <li><a class="nav-link scrollto" href="/administracion/armar_transferencia">Armar Envio</a></li>
-                    <li><a class="nav-link scrollto" href="/administracion/items_reorden">Puntos Reorden</a></li>
                     <li><a class="nav-link scrollto" href="/administracion/ver_enviados">Ver Envios</a></li>
                     <li><a class="nav-link scrollto" href="/administracion/ver_recibidos">Ver Recepciones</a></li>
+                    <li><a class="nav-link scrollto" href="/administracion/items_reorden">Puntos Reorden</a></li>
                       <?php if($central){?>
                         <li><a class="nav-link scrollto" href="/administracion/armar_compra">Ingresar Compra</a></li>
                       <?php } ?>
@@ -167,10 +168,14 @@
                     
                   <?php if ($m->nombre == "Contador"){?>
                       <!-- MENU CONTADOR -->
-                      <li><a class="nav-link scrollto" href="/administracion/nuevo_comprobante">Comprobante</a></li>
-                      <li><a class="nav-link scrollto" href="/administracion/mayorizar">Mayorizacion</a></li>
-                      <li><a class="nav-link scrollto" href="/administracion/cuentas_generales">Cuentas Generales</a></li>
-                      <li><a class="nav-link scrollto" href="/administracion/balance_general">Balance General</a></li>
+                      <li class="dropdown"><a  href="/administracion/nuevo_comprobante"><span>Generar Comprobantes</span> <i class="bi bi-chevron-down"></i></a>
+                          <ul>  
+                            <li><a class="nav-link scrollto" href="/administracion/mayorizar">Mayorizacion</a></li>
+                            <li><a class="nav-link scrollto" href="/administracion/cuentas_generales">Cuentas Generales</a></li>
+                            <li><a class="nav-link scrollto" href="/administracion/balance_general">Balance General</a></li>
+                          </ul>
+                      </li>
+                      <li><a class="nav-link scrollto" href="/comprobante">Ver Comprobantes</a></li>
                       <li><a type="button" class="nav-link scrollto" data-bs-toggle="modal" data-bs-target="#cierre" data-bs-id="contraseña">Cierre de Gestion</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/inicio_gestion">Inicio de Gestion</a></li>
                       <li><a class="nav-link scrollto" href="/administracion/configuracion">Perfil</a></li>

@@ -294,7 +294,7 @@ class Administracion_4 extends BaseController{
         $fecha_inicio= $this->request->getPost('start');
         $fecha_fin= $this->request->getPost('end');
 
-        $restriccion = ['fecha >=' =>$fecha_inicio.'-01','fecha <=' =>$fecha_fin.'-01'];
+        $restriccion = ['fecha >=' =>$fecha_inicio.'-01','fecha <=' =>$fecha_fin.'-12'];
 
         $firstDate  = $fecha_inicio.'-01';
         $secondDate = $fecha_fin.'-01';
@@ -364,7 +364,7 @@ class Administracion_4 extends BaseController{
         $fecha_inicio= $this->request->getPost('start');
         $fecha_fin= $this->request->getPost('end');
 
-        $restriccion = ['fecha >=' =>$fecha_inicio.'-01','fecha <=' =>$fecha_fin.'-01'];
+        $restriccion = ['fecha >=' =>$fecha_inicio.'-01','fecha <=' =>$fecha_fin.'-12'];
 
         $firstDate  = $fecha_inicio.'-01';
         $secondDate = $fecha_fin.'-01';
@@ -463,7 +463,7 @@ class Administracion_4 extends BaseController{
         $fecha_inicio= $this->request->getPost('start');
         $fecha_fin= $this->request->getPost('end');
 
-        $restriccion = ['fecha >=' =>$fecha_inicio.'-01','fecha <=' =>$fecha_fin.'-01'];
+        $restriccion = ['fecha >=' =>$fecha_inicio.'-01','fecha <=' =>$fecha_fin.'-12'];
 
         $firstDate  = $fecha_inicio.'-01';
         $secondDate = $fecha_fin.'-01';
@@ -522,40 +522,34 @@ class Administracion_4 extends BaseController{
         if($db->query('UPDATE generales
             SET balAper = 1, gestion = "'.$gestion.'"
             WHERE nombre_empresa = "MEGABE"')){
-            $db->close();
-            if($detalle_comprobante->truncate()){
-                $pru = $detalle_comprobante->asObject()->findAll();
-                if($pru == null){
-                    if($comprobante->truncate()){
+            if($db->query('CALL borrarDatos();')){
                         $body_comprobante = [
                             'tipo_respaldo'=>'Comprobante',
                             'fecha'=>$cDate,
                             'beneficiario'=>$contador->fullname,
                             'glosa'=>'Inicio de Gestion',
-                            'id_empleado' => $contador->id
+                            'id_empleado' => $contador->id,
+                            'estado_sql'=>1
                         ];
                     
                         if($comprobante->insert($body_comprobante)){
                             $id_comprobante = $comprobante->getInsertID();
                             foreach($cuentas as $key => $m){
-                                $body_detalle = [
+                                if($m->debe > 0 || $m->haber > 0 ){
+                                    $body_detalle = [
                                     'id_comprobante'=>$id_comprobante,
                                     'id_cuenta' => $m->id,
                                     'debe' => $m->debe,
                                     'haber'=>$m->haber
-                                ];
-                                $detalle_comprobante->insert($body_detalle);
+                                    ];
+                                    $detalle_comprobante->insert($body_detalle);
+                                }
                             }
-                        
                             return redirect()->to('/administracion')->with('message', 'Inicio de Gestion Completado');
                         }
                     }else{
-                        return redirect()->to('/administracion')->with('message', '#1 Falla Comprobante');
-                    }
-                }else{
-                    return redirect()->to('/administracion')->with('message', '#2 Falla Detalle Comprobante');
-                }
-            }
+                        return redirect()->to('/administracion')->with('message', 'No se ejecutar el procedimiento almacenado');
+               }
         }
         return redirect()->to('/administracion')->with('message', 'No se pudo realizar el Inicio de Gestion');
     }
@@ -708,6 +702,60 @@ class Administracion_4 extends BaseController{
 
         $this->_loadDefaultView( 'Mayorizacion de Plan de Cuentas', $data,'mayorizacion');
     }
+
+    public function ver_ventas(){
+        $pedido_venta = new m_pedido_venta();
+        $generales = new m_generales();
+
+        $restriccion = ['estado'=>3,'estado_sql'=>1];
+        $ventas = $pedido_venta->asObject()
+                ->select('pedido_venta.*')
+                ->where($restriccion)
+                ->orderBy('fecha','ASC')
+                ->paginate(10,'ventas');
+        $total = 0;
+        foreach($ventas as $key => $m){
+            $total += $m->total;
+        }
+        $data = [
+            'ventas' => $ventas,
+            'pager' =>$pedido_venta->pager,
+
+            'total' => $total,
+
+            'generales' => $generales->asObject()->first()
+        ];
+
+        $this->_loadDefaultView( 'Listado de Ventas',$data,'ventas');
+    }
+    public function filtrar_ventas(){
+        $pedido_venta = new m_pedido_venta();
+        $generales = new m_generales();
+
+        $fecha_inicio= $this->request->getPost('start');
+        $fecha_fin= $this->request->getPost('end');
+
+        $restriccion = ['estado'=>3,'estado_sql'=>1,
+                        'fecha >=' =>$fecha_inicio.'-01','fecha <=' =>$fecha_fin.'-12'];
+        $ventas = $pedido_venta->asObject()
+                ->select('pedido_venta.*')
+                ->where($restriccion)
+                ->orderBy('fecha','ASC')
+                ->paginate(10,'ventas');
+        $total = 0;
+        foreach($ventas as $key => $m){
+            $total += $m->total;
+        }
+        $data = [
+            'ventas' => $ventas,
+            'pager' =>$pedido_venta->pager,
+
+            'total' => $total,
+
+            'generales' => $generales->asObject()->first()
+        ];
+        $this->_loadDefaultView( 'Filtrado de Ventas',$data,'ventas');
+    } 
 
     private function _loadDefaultView($title,$data,$view){
 

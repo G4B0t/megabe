@@ -68,10 +68,10 @@
                         <tr>
                             <td><?= $m->item_codigo ?></td>
                             <td><?= $m->item_nombre ?></td>
-                            <td><?= $m->precio_unitario ?></td>
+                            <td><?php echo number_format($m->precio_unitario) ?></td>
                             <td><?= $m->cantidad ?></td>
                             <td><?= $m->stock_almacen ?></td>
-                            <td><?= $m->total ?></td>
+                            <td><?php echo number_format($m->total) ?></td>
                         </tr>
                     <?php endforeach?>
                     <tr>

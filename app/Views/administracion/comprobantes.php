@@ -6,7 +6,7 @@
           <h2><?= $title ?></h2>
           <h5><?= view("dashboard/partials/_session"); ?></h5>
           <ol>
-            <li><a class="btn btn-outline-dark" role="button" href="<?= route_to('contacto','Gabriel') ?>">Contacto</a></li>
+            <li><a class="btn btn-outline-dark" role="button" href="/comprobante">Ver Comprobantes</a></li>
             </ol>
         </div>
       </div>
@@ -48,8 +48,8 @@
             <tr>
                 <td> <?= $m->codigo_cuenta ?> </td>
                 <td> <?= $m->nombre_cuenta ?> </td>
-                <td> <?= $m->debe ?> </td>
-                <td> <?= $m->haber ?> </td>
+                <td> <?php echo number_format(($m->debe)) ?> </td>
+                <td> <?php echo number_format(($m->haber)) ?> </td>
                 <td>
                     <form action="/administracion/borrar_detalle/<?=$m->id_detalle?>" method="POST">
                         <input type="submit" name="submit" value="Borrar" class="btn btn-outline-danger"/>
@@ -64,8 +64,8 @@
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#comprobante_modal" data-bs-id="" data-bs-accion="nuevo_detalle/<?= $comprobante->id ?>" >Agregar</button>
             </td> 
             <td>TOTAL </td>
-            <td><?= $total->debe?></td>
-            <td><?= $total->haber?></td>
+            <td><?php echo number_format(($total->debe)) ?></td>
+            <td><?php echo number_format(($total->haber)) ?></td>
         </tr>
 
     </tbody>

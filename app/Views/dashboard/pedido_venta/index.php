@@ -4,14 +4,15 @@
       <div class="container">
         <div class="d-flex justify-content-between align-items-center">
           <h2><?= $title ?></h2>
+          <h4><?= view("dashboard/partials/_session"); ?></h4>
           <ol>
-            <li><a class="btn btn-outline-dark" role="button" href="<?= route_to('contacto','Gabriel') ?>">Contacto</a></li>
+            <li><a class="btn btn-outline-info" role="button" href="/productos" >Ver Productos</a></li>
             </ol>
         </div>
       </div>
     </section><!-- End Breadcrumbs -->
 
-    <?= view("dashboard/partials/_session"); ?>
+    
 
     <div class="row">
         <div class="col-lg-4 col-md-6">
@@ -43,8 +44,9 @@
         </div>
         <div class="col-lg-1 col-md-2">
         </div>
-
+        
         <div class="col-lg-6 col-md-9">
+            <h4>Detalle de Pedido #<?= $pedido ?></h4>
             <table class="table table-hover" data-aos="fade-up">
                 <thead>
                     <tr>
@@ -63,8 +65,8 @@
                             <td><?= $m->item_codigo ?></td>
                             <td><?= $m->item_nombre ?></td>
                             <td><?= $m->cantidad ?></td>
-                            <td><?= $m->precio_unitario ?></td>
-                            <td><?= $m->total ?></td>
+                            <td><?php echo number_format(($m->precio_unitario)) ?></td>
+                            <td><?php echo number_format(($m->total)) ?></td>
 
                         </tr>
                         <?php endforeach?>

@@ -68,7 +68,7 @@
         
         <div class="mb-3">
                 <input type="checkbox" name="myCheckbox" id="clienteCB" value="1"/><span>Cliente</span>
-                <select class="search form-select" name="cliente" >
+                <select class="search form-select" name="cliente" id="cliente" >
                     <?php foreach ($cliente as $c): ?>
                         <option <?= $c->id !== $c->id_persona ?: "selected"?> value="<?= $c->id ?>"><?= $c->fullName ?> </option>
                     <?php endforeach?>

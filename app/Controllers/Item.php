@@ -9,6 +9,9 @@ use \CodeIgniter\Exceptions\PageNotFoundException;
 use App\Models\m_subcategoria;
 use App\Models\m_categoria;
 use App\Models\m_marca;
+use App\Models\m_pedido_venta;
+use App\Models\m_detalle_venta;
+use App\Models\m_generales;
 
 use App\Models\m_persona;
 use App\Models\m_proveedor;
@@ -369,18 +372,126 @@ class Item extends BaseController {
 
         return redirect()->to('/item')->with('message', 'Item eliminada con éxito.');
     }
+    public function filtrar_item(){
+        $item = new m_item();
+        $filtro = $this->request->getPost('filtro');
 
-    public function show($id = null){
+		$array = [
+			'marca.nombre' => $filtro, 
+			'item.codigo' => $filtro, 
+			'item.descripcion' => $filtro 
+		];
+
+		$condiciones = ['item.estado_sql' => '1'];
+
+		$data = [
+            'item' => $item->asObject()
+            ->select('item.*,marca.nombre as marca, proveedor.nombre_empresa AS proveedor')
+            ->join('marca','marca.id = item.id_marca')
+            ->join('proveedor','item.id_proveedor = proveedor.id')
+            ->join('persona','persona.id = proveedor.id_persona')
+            ->where($condiciones)
+			->like('item.nombre', $filtro)
+			->orlike($array)
+            ->orderBy('marca','ASC')
+            ->paginate(10,'item'),
+            'pager' => $item->pager
+        ];
+
+        $this->_loadDefaultView( 'Listado de productos',$data,'index');
+    }
+
+    public function show($id){
         
         $item = new m_item();
+        $pedido_venta = new m_pedido_venta();
+        $detalle_venta = new m_detalle_venta();
+        $generales = new m_generales();
 
         if ($item->find($id) == null)
         {
             throw PageNotFoundException::forPageNotFound();
         }   
+        
+        $total=0;
 
-        var_dump($item->asObject()->find($id)->id);
+        $detalles = $detalle_venta->asObject()->join('pedido_venta','pedido_venta.id = detalle_venta.id_pedido_venta')
+                                                ->where(['detalle_venta.estado_sql'=>1,'pedido_venta.estado'=>3])->findAll();
+        foreach ($detalles as $key => $m){
+            if($m->id_item == $id){
+                $total += $m->cantidad;
+            }
+        }
 
+        $restriccion = ['detalle_venta.id_item' => $id, 'pedido_venta.estado'=>3];
+        $data = [
+                'item' => $item->asObject()
+                ->select('item.*,marca.nombre as marca, proveedor.nombre_empresa AS proveedor')
+                ->join('marca','marca.id = item.id_marca')
+                ->join('proveedor','item.id_proveedor = proveedor.id')
+                ->join('persona','persona.id = proveedor.id_persona')
+                ->first(),
+
+                'ventas'=> $pedido_venta->asObject()
+                ->select('pedido_venta.fecha, detalle_venta.cantidad')
+                ->join('detalle_venta','pedido_venta.id = detalle_venta.id_pedido_venta')
+                ->where($restriccion)
+                ->orderBy('fecha','ASC')
+                ->paginate(10,'ventas'),
+
+                'pager' =>$pedido_venta->pager,
+
+                'total'=> $total,
+
+                'generales' => $generales->asObject()->first()
+        ];
+        
+        $this->_loadDefaultView( 'Kardex',$data,'kardex');
+    }
+    public function filtrar_kardex($id){
+        $item = new m_item();
+        $generales = new m_generales();
+        $pedido_venta = new m_pedido_venta();
+        $detalle_venta = new m_detalle_venta();
+
+        $fecha_inicio= $this->request->getPost('start');
+        $fecha_fin= $this->request->getPost('end');
+
+        $total=0;
+
+        $detalles = $detalle_venta->asObject()->join('pedido_venta','pedido_venta.id = detalle_venta.id_pedido_venta')
+                                                ->where(['detalle_venta.estado_sql'=>1,'pedido_venta.estado'=>3])->findAll();
+        foreach ($detalles as $key => $m){
+            if($m->id_item == $id){
+                $total += $m->cantidad;
+            }
+        }
+
+        $restriccion = ['pedido_venta.fecha >=' =>$fecha_inicio.'-01','pedido_venta.fecha <=' =>$fecha_fin.'-12',
+                        'detalle_venta.id_item' => $id, 'pedido_venta.estado'=>3];
+
+        $data = [
+                'item' => $item->asObject()
+                ->select('item.*,marca.nombre as marca, proveedor.nombre_empresa AS proveedor')
+                ->join('marca','marca.id = item.id_marca')
+                ->join('proveedor','item.id_proveedor = proveedor.id')
+                ->join('persona','persona.id = proveedor.id_persona')
+                ->first(),
+            
+                'ventas'=> $pedido_venta->asObject()
+                ->select('pedido_venta.fecha, detalle_venta.cantidad')
+                ->join('detalle_venta','pedido_venta.id = detalle_venta.id_pedido_venta')
+                ->where($restriccion)
+                ->orderBy('fecha','ASC')
+                ->paginate(10,'ventas'),
+            
+                'pager' =>$pedido_venta->pager,
+            
+                'total'=> $total,
+
+                'generales' => $generales->asObject()->first()
+        ];
+        $this->_loadDefaultView( 'Kardex',$data,'kardex');
     }
 
     private function _loadDefaultView($title,$data,$view){
@@ -403,8 +514,6 @@ class Item extends BaseController {
             'central'=>$sesion['almacen'],
             
             'vista' => 'administracion'
-
-
         ];
 
         echo view("dashboard/templates/header",$dataHeader);

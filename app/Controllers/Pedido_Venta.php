@@ -6,6 +6,7 @@ use App\Models\m_item;
 use App\Models\m_subcategoria;
 use App\Models\m_categoria;
 use App\Models\m_marca;
+use App\Models\m_generales;
 
 
 use App\Controllers\BaseController;
@@ -75,6 +76,7 @@ class Pedido_Venta extends BaseController {
         $session = session();
         $id_cliente = $session->cliente;
         $condiciones = ['estado >=' => '0', 'estado_sql' => '1', 'id_cliente' => $id_cliente];
+        $restriccion =['detalle_venta.estado_sql'=>'1', 'detalle_venta.id_pedido_venta' => $id];
         $data = [
             'pedido_venta' => $pedido_venta->asObject()
             ->select('pedido_venta.*, auxiliar.nombre as estado_ref')
@@ -86,14 +88,17 @@ class Pedido_Venta extends BaseController {
             'detalle_venta' => $detalle_venta->asObject()
             ->select('detalle_venta.*, item.nombre as item_nombre, item.codigo as item_codigo')
             ->join('item','item.id = detalle_venta.id_item')
-            ->where('id_pedido_venta', $id)
+            ->where($restriccion)
             ->paginate(10,'detalle_venta'),
             'pager' => $detalle_venta->pager,
+
+            'pedido' => $id
         ];
 
         $this->_loadDefaultView( 'Listado de Pedidos',$data,'index');
     }
 
+    
     public function actualizarVigente($id){
         $pedido_venta = new m_pedido_venta();
         $detalle_venta = new m_detalle_venta();
