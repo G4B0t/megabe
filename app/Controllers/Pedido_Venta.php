@@ -52,6 +52,8 @@ class Pedido_Venta extends BaseController {
             ->where($restricciones)
             ->paginate(10,'detalle_venta'),
 
+            'pedido' => $id_pedido_vigente['id'],
+
             'pager' => $detalle_venta->pager
         ];
 

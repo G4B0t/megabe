@@ -34,7 +34,7 @@
                         <td><?= $m->id_cliente ?></td>
                         <td><?= $m->cliente_nombre ?></td>
                         <td><?= $m->fecha ?></td>
-                        <td><?= $m->total ?></td>
+                        <td><?php echo number_format($m->total) ?></td>
                         <td>
                             <a href="/administracion/mostrar_detalle/<?= $m->id ?>" class="btn btn-primary">Detalle</a>
                         </td>

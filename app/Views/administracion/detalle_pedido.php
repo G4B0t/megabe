@@ -31,7 +31,7 @@
                 <td><?= $m->item_codigo ?></td>
                 <td><?= $m->item_nombre ?></td>
                 <td><?= $m->cantidad ?></td>
-                <td><?= $m->total ?></td>
+                <td><?php echo number_format($m->total) ?></td>
                 <td><?= $m->moneda ?> </td>
                 <td>
                     <form action="/administracion/borrar_producto/<?= $m->id ?>" method="POST">

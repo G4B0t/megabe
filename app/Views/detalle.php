@@ -37,7 +37,7 @@
               <ul>
                 <li><strong>Producto</strong>: <?= $item->nombre?></li>
                 <li><strong>Stock</strong>: <?= $item->stock?></li>
-                <li><strong>Precio</strong>: <?= $item->precio_unitario?></li>
+                <li><strong>Precio</strong>: <?php echo number_format($item->precio_unitario) ?></li>
                 <li>
                     <form action="/detalle_venta/carrito/<?= $item->id ?>" method="POST" enctype="multipart/form-data">
                     <strong>Cantidad </strong>:<input type="number" id="cantidad" name="cantidad" step="1" class="form-control" placeholder="0" min="1" max="<?= $item->stock?>">   

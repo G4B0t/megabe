@@ -44,7 +44,7 @@
         <?php endforeach?>
 
         <tr>
-            <td>Total: <span><?= $total ?></span></td>
+            <td>Total: <span><?php echo number_format(($total)) ?></span></td>
             <td>
                 <!-- Button trigger modal -->
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detalle_modal" data-bs-id="<?=$id_pedido?>" >Confirmar Pedido</button>

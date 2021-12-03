@@ -4,7 +4,7 @@
         <div class="mb-3 row">
             <label class="col-sm-2 col-form-label" for="id_persona">Persona: </label>
             <div class="col-sm-10">
-                <select class="form-select" name="id_persona" id="id_persona">
+                <select class="search form-select" name="id_persona" id="id_persona">
                     <?php foreach ($persona as $c): ?>
                         <option <?= $empleado->id_persona !== $c->id ?: "selected"?> value="<?= $c->id ?>"><?=  $c->fullName?> </option>
                     <?php endforeach?>
@@ -61,3 +61,21 @@
 
     </div>
 </section>
+
+<script>
+    $('.id_persona').select2({
+        placeholder: '--- Buscar Cliente ---',
+        ajax: {
+          url: '<?php echo base_url('administracion/persona_search');?>',
+          dataType: 'json',
+          delay: 250,
+          processResults: function(data){
+            return {
+              results: data
+            };
+          },
+          cache: true
+        }
+      });
+    
+</script>

@@ -70,7 +70,7 @@
                          <td>
                          <form id="formComprobante" action="/administracion/entrega_confirmada/<?= $id ?>" method="POST" enctype="multipart/form-data">  
                             <!-- Button trigger modal -->
-                            <button type="submit" class="btn btn-success">Confirmar Entrega</button>
+                            <a type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#cierre" data-bs-id="contraseña">Confirmar Entrega</a>
                          </td>
                         </form>
                     </tr>
@@ -80,3 +80,50 @@
             <?= $pager->links('detalle_venta','paginacion') ?>
     </div>
 </div>
+
+<div class="modal fade" id="cierre" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">Confirmacion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <form id="confirmForm2" action="/administracion/entrega_confirmada/<?= $id ?>"  method="POST" enctype="multipart/form-data">
+                    
+                    <div class="mb-3 row">
+                        <strong>Confirmar Contraseña: </strong><input type="password" id="password" name="password" class="form-control" placeholder="contraseña">     
+                    </div> 
+                        <div class="modal-footer">  
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        
+                            <button type="submit" name="submit" class="btn btn-primary">Confirmar</button>
+                    
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+      </div>
+
+    <script>
+    var detalle_modal = document.getElementById('detalle_modal')
+    detalle_modal.addEventListener('show.bs.modal', function (event) {
+    // Button that triggered the modal
+    var button = event.relatedTarget
+   
+    var recipient = button.getAttribute('data-bs-stock')
+    var id_item = button.getAttribute('data-bs-id')
+    var nombre_item = button.getAttribute('data-bs-nombre')
+
+    var modalTitle = detalle_modal.querySelector('.modal-title')
+
+    modalTitle.textContent = 'Agregar cantidades del producto: ' + nombre_item
+
+    var input = document.getElementById('cantidad')
+    input.setAttribute("max",recipient)
+
+    var item = document.getElementById('item_id')
+    item.setAttribute("value",id_item)
+    })
+</script>

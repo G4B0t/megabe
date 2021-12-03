@@ -322,12 +322,23 @@ class Administracion_2 extends BaseController{
 
     public function confirmar_entrega($id_pedido){
         $pedido_venta = new m_pedido_venta();
+        $empleado = new m_empleado();
 
-        if($pedido_venta->update($id_pedido,['estado'=>'3'])){
-            return redirect()->to('/administracion/ver_pagados')->with('message', 'Pedido Entregado!');
-        }
-        else{
-            return redirect()->to('/administracion/detalle_pagados/'.$id_pedido)->with('message', 'No se pudo confirmar entrega!');
+        $sesion = session();
+        helper("user");
+        $empl  = $empleado->getFullEmpleado($sesion->empleado);
+        $contrasena = $this->request->getPost('password');
+
+        if(verificarPassword($contrasena,$empl->contrasena)){
+
+            if($pedido_venta->update($id_pedido,['estado'=>'3'])){
+                return redirect()->to('/administracion/ver_pagados')->with('message', 'Pedido Entregado!');
+            }
+            else{
+                return redirect()->to('/administracion/detalle_pagados/'.$id_pedido)->with('message', 'No se pudo confirmar entrega!');
+            }
+        }else{
+            return redirect()->to('/administracion/ver_pagados')->with('message', 'Contraseña Incorrecta!');
         }
         
     }
@@ -342,9 +353,14 @@ class Administracion_2 extends BaseController{
         $gen = $generales->asObject()->first();
 
         $id_pedido = $pedido_venta->getPedidoPagado($id_pedido);
+        $session = session();
+        $id_empleado = $session->empleado;
+        $almacenero = $empleado->getFullEmpleado($id_empleado);
 
-        $condiciones = ['pedido_venta.estado' => '2', 'pedido_venta.estado_sql' => 1,'fecha >=' =>$gen->gestion.'-01-01','fecha <=' =>$gen->gestion.'-12-31'];
-        $restricciones = ['detalle_venta.estado_sql'=> '1','id_pedido_venta' => $id_pedido['id']];
+        $condiciones = ['pedido_venta.estado' => '2', 'pedido_venta.estado_sql' => 1,'fecha >=' =>$gen->gestion.'-01-01','fecha <=' =>$gen->gestion.'-12-31',
+                        'empleado.id_almacen' => $almacenero->id_almacen];
+        $restricciones = ['detalle_venta.estado_sql'=> '1','id_pedido_venta' => $id_pedido['id'],
+                        'empleado.id_almacen' => $almacenero->id_almacen];
 
        
         $data = [
@@ -352,6 +368,8 @@ class Administracion_2 extends BaseController{
             ->select('pedido_venta.*, persona.nombre as cliente_nombre, cliente.id as id_cliente')
             ->join('cliente','cliente.id = pedido_venta.id_cliente')
             ->join('persona','persona.id = cliente.id_persona')
+            ->join('empleado','empleado.id = pedido_venta.id_empleado')
+            ->join('almacen','almacen.id = empleado.id_almacen')
             ->where($condiciones)
             ->paginate(10,'pedido_venta'),
             'pagers' => $pedido_venta->pager,
@@ -359,6 +377,9 @@ class Administracion_2 extends BaseController{
             'detalle_venta' => $detalle_venta->asObject()
             ->select('detalle_venta.*, item.nombre as item_nombre, item.codigo as item_codigo')
             ->join('item','item.id = detalle_venta.id_item')
+            ->join('pedido_venta','pedido_venta.id = detalle_venta.id_pedido_venta')
+            ->join('empleado','empleado.id = pedido_venta.id_empleado')
+            ->join('almacen','almacen.id = empleado.id_almacen')
             ->where($restricciones)
             ->paginate(10,'detalle_venta'),
             'pager' => $detalle_venta->pager,
@@ -377,8 +398,14 @@ class Administracion_2 extends BaseController{
         $gen = $generales->asObject()->first();
 
         $id_primer_pedido = $pedido_venta->getPrimer();
-        $condiciones = ['pedido_venta.estado' => '2', 'pedido_venta.estado_sql' => 1,'fecha >=' =>$gen->gestion.'-01-01','fecha <=' =>$gen->gestion.'-12-31'];
-        $restricciones = ['detalle_venta.estado_sql'=> '1','id_pedido_venta' => $id_primer_pedido['id']];
+        $session = session();
+        $id_empleado = $session->empleado;
+        $almacenero = $empleado->getFullEmpleado($id_empleado);
+
+        $condiciones = ['pedido_venta.estado' => '2', 'pedido_venta.estado_sql' => 1,'fecha >=' =>$gen->gestion.'-01-01','fecha <=' =>$gen->gestion.'-12-31',
+                        'empleado.id_almacen' => $almacenero->id_almacen];
+        $restricciones = ['detalle_venta.estado_sql'=> '1','id_pedido_venta' => $id_primer_pedido['id'],
+                        'empleado.id_almacen' => $almacenero->id_almacen];
 
     
         $data = [
@@ -386,6 +413,8 @@ class Administracion_2 extends BaseController{
             ->select('pedido_venta.*, persona.nombre as cliente_nombre, cliente.id as id_cliente')
             ->join('cliente','cliente.id = pedido_venta.id_cliente')
             ->join('persona','persona.id = cliente.id_persona')
+            ->join('empleado','empleado.id = pedido_venta.id_empleado')
+            ->join('almacen','almacen.id = empleado.id_almacen')
             ->where($condiciones)
             ->paginate(10,'pedido_venta'),
             'pagers' => $pedido_venta->pager,
@@ -393,6 +422,9 @@ class Administracion_2 extends BaseController{
             'detalle_venta' => $detalle_venta->asObject()
             ->select('detalle_venta.*, item.nombre as item_nombre, item.codigo as item_codigo')
             ->join('item','item.id = detalle_venta.id_item')
+            ->join('pedido_venta','pedido_venta.id = detalle_venta.id_pedido_venta')
+            ->join('empleado','empleado.id = pedido_venta.id_empleado')
+            ->join('almacen','almacen.id = empleado.id_almacen')
             ->where($restricciones)
             ->paginate(10,'detalle_venta'),
             'pager' => $detalle_venta->pager,
@@ -400,7 +432,7 @@ class Administracion_2 extends BaseController{
             'id' => $id_primer_pedido['id']
             
         ];
-        $this->_loadDefaultView( 'Pedidos para Entregar',$data,'pagados');
+       $this->_loadDefaultView( 'Pedidos para Entregar',$data,'pagados');
     }
 
     public function guardar_comprobante($id){

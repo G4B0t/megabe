@@ -121,6 +121,7 @@ class Administracion_1 extends BaseController{
                 $dir_logo = base_url().'/imagen/empresa/'.$empresa['foto'];
                 $literal = $numerosEnLetras->Convertir($this->request->getPost('monto'),'Bolivianos',true);
 
+                $tot = $this->request->getPost('monto');
                 $file = file_get_contents($dirComp,0);
                 $file = str_ireplace('[LOGO]',$dir_logo, $file);
                 $file = str_ireplace('[RAZON_SOCIAL]',$empresa['nombre_empresa'], $file);
@@ -130,15 +131,15 @@ class Administracion_1 extends BaseController{
                 $file = str_ireplace('[BENEFICIARIO]',$cajero_general->fullname, $file);
                 $file = str_ireplace('[FECHA]',$cDate, $file);  
                 $file = str_ireplace('[GLOSA]',$glosa, $file);
-                $file = str_ireplace('[TOTAL]',$this->request->getPost('monto'), $file);
+                $file = str_ireplace('[TOTAL]',number_format($tot), $file);
                 $file = str_ireplace('[LITERAL]',$literal, $file);
                 $file = str_ireplace('[ACTIVIDAD_PRINCIPAL]',$empresa['actividad_principal'], $file);
                 $file = str_ireplace('[ACTIVIDAD_SECUNDARIA]',$empresa['actividad_secundaria'], $file);
                 $file = str_ireplace('[LEYENDA]',$empresa['leyenda'], $file);
                 //$file = str_ireplace('[QR]',$dirQR, $file);
                 $sefini="";
-                $debe_comprobante='<tr><td>'.$caja_general->codigo_cuenta.'</td><td>'.$caja_general->nombre_cuenta.'</td><td>'.$this->request->getPost('monto').'</td><td> </td></tr>';      
-                $haber_comprobante='<tr><td>'.$caja->codigo_cuenta.'</td><td>'.$caja->nombre_cuenta.'</td><td></td><td>'.$this->request->getPost('monto').'</td></tr>';
+                $debe_comprobante='<tr><td>'.$caja_general->codigo_cuenta.'</td><td>'.$caja_general->nombre_cuenta.'</td><td>'.number_format($tot).'</td><td> </td></tr>';      
+                $haber_comprobante='<tr><td>'.$caja->codigo_cuenta.'</td><td>'.$caja->nombre_cuenta.'</td><td></td><td>'.number_format($tot).'</td></tr>';
                 $sefini = $debe_comprobante.$haber_comprobante;
                 $file = str_ireplace('[DETALLE]', $sefini, $file);
                 //$this->generatePDF($file);
@@ -198,7 +199,7 @@ class Administracion_1 extends BaseController{
                 $dirComp= base_url()."/dashboard/assets/comprobante.html";
                 $dir_logo = base_url().'/imagen/empresa/'.$empresa['foto'];
                 $literal = $numerosEnLetras->Convertir($this->request->getPost('monto'),'Bolivianos',true);
-                
+                $tot = $this->request->getPost('monto');
                 $file = file_get_contents($dirComp,0);
                 $file = str_ireplace('[LOGO]',$dir_logo, $file);
                 $file = str_ireplace('[RAZON_SOCIAL]',$empresa['nombre_empresa'], $file);
@@ -208,15 +209,15 @@ class Administracion_1 extends BaseController{
                 $file = str_ireplace('[BENEFICIARIO]',$cajero_general->fullname, $file);
                 $file = str_ireplace('[FECHA]',$cDate, $file);  
                 $file = str_ireplace('[GLOSA]',$glosa, $file);
-                $file = str_ireplace('[TOTAL]',$this->request->getPost('monto'), $file);
+                $file = str_ireplace('[TOTAL]',number_format($tot), $file);
                 $file = str_ireplace('[LITERAL]',$literal, $file);
                 $file = str_ireplace('[ACTIVIDAD_PRINCIPAL]',$empresa['actividad_principal'], $file);
                 $file = str_ireplace('[ACTIVIDAD_SECUNDARIA]',$empresa['actividad_secundaria'], $file);
                 $file = str_ireplace('[LEYENDA]',$empresa['leyenda'], $file);
                 //$file = str_ireplace('[QR]',$dirQR, $file);
                 $sefini="";
-                $debe_comprobante='<tr><td>'.$caja->codigo_cuenta.'</td><td>'.$caja->nombre_cuenta.'</td><td>'.$this->request->getPost('monto').'</td><td> </td></tr>';      
-                $haber_comprobante='<tr><td>'.$caja_general->codigo_cuenta.'</td><td>'.$caja_general->nombre_cuenta.'</td><td></td><td>'.$this->request->getPost('monto').'</td></tr>';
+                $debe_comprobante='<tr><td>'.$caja->codigo_cuenta.'</td><td>'.$caja->nombre_cuenta.'</td><td>'.number_format($tot).'</td><td> </td></tr>';      
+                $haber_comprobante='<tr><td>'.$caja_general->codigo_cuenta.'</td><td>'.$caja_general->nombre_cuenta.'</td><td></td><td>'.number_format($tot).'</td></tr>';
                 $sefini = $debe_comprobante.$haber_comprobante;
                 $file = str_ireplace('[DETALLE]', $sefini, $file);
 
@@ -320,7 +321,7 @@ class Administracion_1 extends BaseController{
                                             ];
 
                         if($pedido_venta->update($id_pedido, [
-                            'estado' =>'2'              
+                            'estado' =>'2', 'id_empleado' => $trabajador['id']
                         ]) ){
                             if($factura_venta->insert($body_factura) && $comprobante->insert($body_comprobante)){
                                 $nuevo_stock = 0;
@@ -391,7 +392,7 @@ class Administracion_1 extends BaseController{
                                         $file = str_ireplace('[FECHA_LIMITE_EMISION]',$empresa['fechaLimite'], $file);
                                         $file = str_ireplace('[FECHA]',$cDate, $file);  
                                         $file = str_ireplace('[GLOSA]',$glosa, $file);
-                                        $file = str_ireplace('[TOTAL]',$factura['total'], $file);
+                                        $file = str_ireplace('[TOTAL]',number_format($factura['total']), $file);
                                         $file = str_ireplace('[LITERAL]',$literal, $file);
                                         $file = str_ireplace('[CODIGO_CONTROL]',$codControl, $file);                                        
                                         $file = str_ireplace('[AUTORIZACION]',$empresa['nro_autorizacion'], $file);
@@ -401,7 +402,7 @@ class Administracion_1 extends BaseController{
                                         $file = str_ireplace('[QR]',base_url().'/'.$dirQR, $file);
                                         $sefini="";
                                         foreach($productos as $key => $m){
-                                            $sefini .= '<tr><td>'.$m->nombre.'</td><td>'.$m->cantidad.'</td><td>'.$m->precio_unitario.'</td><td>'.$m->total.'</td><td> </td></tr>';
+                                            $sefini .= '<tr><td>'.$m->nombre.'</td><td>'.$m->cantidad.'</td><td>'.number_format($m->precio_unitario).'</td><td>'.number_format($m->total).'</td><td> </td></tr>';
                                         } 
                                         $file = str_ireplace('[DETALLE]', $sefini, $file);
                                       
@@ -451,7 +452,7 @@ class Administracion_1 extends BaseController{
                                         ];
     
                     if($pedido_venta->update($id_pedido, [
-                        'estado' =>'2'              
+                        'estado' =>'2','id_empleado' => $trabajador['id']            
                     ]) ){
                         if($factura_venta->insert($body_factura) && $comprobante->insert($body_comprobante)){
                             $nuevo_stock = 0;
@@ -522,7 +523,7 @@ class Administracion_1 extends BaseController{
                                     $file = str_ireplace('[FECHA_LIMITE_EMISION]',$empresa['fechaLimite'], $file);
                                     $file = str_ireplace('[FECHA]',$cDate, $file);  
                                     $file = str_ireplace('[GLOSA]',$glosa, $file);
-                                    $file = str_ireplace('[TOTAL]',$factura['total'], $file);
+                                    $file = str_ireplace('[TOTAL]',number_format($factura['total']), $file);
                                     $file = str_ireplace('[LITERAL]',$literal, $file);
                                     $file = str_ireplace('[CODIGO_CONTROL]',$codControl, $file);                                        
                                     $file = str_ireplace('[AUTORIZACION]',$empresa['nro_autorizacion'], $file);
@@ -532,7 +533,7 @@ class Administracion_1 extends BaseController{
                                     $file = str_ireplace('[QR]',base_url().'/'.$dirQR, $file);
                                     $sefini="";
                                     foreach($productos as $key => $m){
-                                        $sefini .= '<tr><td>'.$m->nombre.'</td><td>'.$m->cantidad.'</td><td>'.$m->precio_unitario.'</td><td>'.$m->total.'</td><td> </td></tr>';
+                                        $sefini .= '<tr><td>'.$m->nombre.'</td><td>'.$m->cantidad.'</td><td>'.number_format($m->precio_unitario).'</td><td>'.number_format($m->total).'</td><td> </td></tr>';
                                     } 
                                     $file = str_ireplace('[DETALLE]', $sefini, $file);
                                   

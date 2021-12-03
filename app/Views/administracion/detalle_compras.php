@@ -43,7 +43,7 @@
         <?php endforeach?>
 
         <tr>
-            <td>Total: <span><?= $total ?></span></td>
+            <td>Total: <span><?php echo number_format($total) ?></span></td>
             <td>
             <form id="confirmForm" action="/administracion/confirmar_compra/<?= $id_pedido ?>" method="POST" enctype="multipart/form-data">
                 <!-- Button trigger modal -->
