@@ -61,6 +61,7 @@
                       <li class="dropdown"><a href="#"><span>Menu</span> <i class="bi bi-chevron-down"></i></a>
                         <ul>
                         <li><a class="nav-link scrollto" href="/ventas">Ventas</a></li>
+                        <li><a class="nav-link scrollto" href="/ventas_detalle">Detalle de Ventas</a></li>
                         <li class="dropdown"><a href="/item"><span>Items</span> <i class="bi bi-chevron-down"></i></a>
                           <ul>  
                             <li><a class="nav-link scrollto" href="/administracion/items_reorden">Puntos Reorden</a></li>

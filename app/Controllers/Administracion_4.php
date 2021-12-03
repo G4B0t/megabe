@@ -756,6 +756,65 @@ class Administracion_4 extends BaseController{
         ];
         $this->_loadDefaultView( 'Filtrado de Ventas',$data,'ventas');
     } 
+    public function ver_ventas_detalle(){
+        $detalle_venta = new m_detalle_venta();
+        $generales = new m_generales();
+
+        $restriccion = ['pedido_venta.estado' => 3, 'detalle_venta.estado_sql'=>1];
+        $detalles = $detalle_venta->asObject()
+                    ->select('detalle_venta.*, item.codigo ,item.nombre, pedido_venta.fecha')
+                    ->join('pedido_venta','pedido_venta.id = detalle_venta.id_pedido_venta')
+                    ->join('item','detalle_venta.id_item = item.id')
+                    ->where($restriccion)
+                    ->orderBy('pedido_venta.fecha','ASC')
+                    ->paginate(10,'detalle_venta');
+        $total = 0;
+        foreach($detalles as $key =>$m){
+            $total += $m->total;
+        }
+
+        $data=[
+            'detalle_venta' => $detalles,
+            'pager'=>$detalle_venta->pager,
+
+            'total' =>$total,
+
+            'generales' =>$generales->asObject()->first()
+        ];
+        $this->_loadDefaultView( 'Filtrado de Ventas',$data,'ventas_detalle');
+    }
+    public function filtrar_ventas_detalle(){
+
+        $detalle_venta = new m_detalle_venta();
+        $generales = new m_generales();
+        $fecha_inicio= $this->request->getPost('start');
+        $fecha_fin= $this->request->getPost('end');
+
+        $restriccion = ['pedido_venta.estado' => 3, 'detalle_venta.estado_sql'=>1,
+                         'pedido_venta.fecha >=' =>$fecha_inicio.'-01','pedido_venta.fecha <=' =>$fecha_fin.'-12'];
+        $detalles = $detalle_venta->asObject()
+                    ->select('detalle_venta.*, item.codigo ,item.nombre, pedido_venta.fecha')
+                    ->join('pedido_venta','pedido_venta.id = detalle_venta.id_pedido_venta')
+                    ->join('item','detalle_venta.id_item = item.id')
+                    ->where($restriccion)
+                    ->orderBy('pedido_venta.fecha','ASC')
+                    ->paginate(10,'detalle_venta');
+        $total = 0;
+        foreach($detalles as $key =>$m){
+            $total += $m->total;
+        }
+
+        $data=[
+            'detalle_venta' => $detalles,
+            'pager'=>$detalle_venta->pager,
+
+            'total' =>$total,
+
+            'generales' =>$generales->asObject()->first()
+        ];
+        $this->_loadDefaultView( 'Filtrado de Ventas',$data,'ventas_detalle');
+        
+    }
 
     private function _loadDefaultView($title,$data,$view){
 

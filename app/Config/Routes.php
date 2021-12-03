@@ -150,6 +150,8 @@ $routes->post('/detalle_venta/delete/(:any)', 'Detalle_Venta::delete/$1');
 $routes->post('/detalle_venta/carrito/(:any)', 'Detalle_Venta::carrito/$1');
 $routes->get('/detalle_venta', 'Detalle_Venta::index');
 $routes->get('/ventas', 'Administracion_4::ver_ventas');
+$routes->get('/ventas_detalle', 'Administracion_4::ver_ventas_detalle');
+$routes->post('/ventas_detalle/filtrado', 'Administracion_4::filtrar_ventas_detalle');
 $routes->post('/ventas/filtrado', 'Administracion_4::filtrar_ventas');
 $routes->post('/administracion/filtrar_item', 'Item::filtrar_item');
 $routes->post('/administracion/filtrar_kardex/(:any)', 'Item::filtrar_kardex/$1');
